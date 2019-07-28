@@ -32,3 +32,5 @@ WebsocketServerV3_ref/simulator/SimulatorThread.java
 WebsocketServerV3_ref/simulator/NetObjectSnapshot.java
 WebsocketServerV3_ref/simulator/NetObjectManager.java
 WebsocketServerV3_ref/simulator/NetObject.java
+*.jks
+website/test.php

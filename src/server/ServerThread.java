@@ -1,5 +1,11 @@
 package server;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import threads.Threads;
@@ -16,8 +22,12 @@ public class ServerThread implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		Server server = new Server();
+		Server server;
+
+		server = new Server();
 		server.start();
+		
+		
 		//server.stop();
 		
 		while(true) {
@@ -44,11 +54,6 @@ public class ServerThread implements Runnable {
 				e.printStackTrace();
 			}
 		}
-		
-	}
-	
-	public class Srv extends Server {
-		
 		
 	}
 	

@@ -16,7 +16,7 @@ public class Config {
 		
 	}
 	public Config(String[] args) {
-		ServerPort = Integer.parseInt(args[3]);
+		ServerPort = 443;//Integer.parseInt(args[3]);
 		DatabaseAddress = args[2];
 		DatabaseUsername = args[0];
 		DatabasePassword = args[1];

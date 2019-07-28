@@ -2,10 +2,10 @@
 
 	require("../apnetwork/dbconfig.php");
 
-	$filename =  "../apnetwork/projects/status";
+	$filename =  "../apnetwork/status.tmp";
 	$queryTime = filemtime($filename);
 
-	if (time() > $queryTime + 300) { // every 5 minutes query the database
+	if (time() > $queryTime + 300) { // every 5 minutes allow the database to be queried
 
 		$sql = new mysqli($sqlAddress, $sqlUsername, $sqlPassword, $sqlDatabase, $sqlPort);
 		if (!$sql->connect_errno) {
@@ -15,24 +15,24 @@
 
 					$sqlResult = $ps->fetch();
 					if($sqlResult==TRUE) {
-						$status = "{\"status\":\"1\"}";
+						$status = "{\"message\":\"Online\", \"result\":0}";
 					}
 					else {
-						$status = "{\"status\":\"0\"}";
+						$status = "{\"message\":\"Offline\", \"result\":1}";
 					}
 
 				}
 				else {
-					$status = "{\"status\":\"-1\"}";
+					$status = "{\"message\":\"Error 1\", \"result\":2}";
 				}
 				$ps->close();
 			}
 			else {
-				$status = "{\"status\":\"-2\"}";
+				$status = "{\"message\":\"Error 2\", \"result\":3}"; // prepared badly, tables probably different 
 			}
 		}
 		else {
-			$status = "{\"status\":\"-3\"}";
+			$status = "{\"message\":\"Error 3\", \"result\":4}"; // cannot connect to database
 		}
 		$sql->close();
 
@@ -45,7 +45,7 @@
 	else {
 
 		$len = filesize($filename);
-		$status = "{\"status\":\"-4\"}";
+		$status = "{\"message\":\"Error 3\", \"result\":4}";
 		if ($len > 0) {
 			$file = fopen($filename, "r");
 			$status = fread($file, $len); // get the freakin' status
@@ -54,6 +54,7 @@
 
 	}
 
+	header('Content-Type: application/json');
 	echo $status;
 
 ?>

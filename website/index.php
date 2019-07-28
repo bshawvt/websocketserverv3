@@ -149,7 +149,7 @@
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-		<script type="text/javascript" src="/3rd/sjcl.js"></script>
+		<script type="text/javascript" src="/src/3rd/sjcl.js"></script>
 
 		<script type="text/javascript">
 
@@ -165,18 +165,17 @@
 					dataType: "json",
 					success: function(e) {
 						console.log(e);
-						if (e.status == 1) {
-							jQuery("#status").html("Offline");
+						if (e.result == 0) {
 							jQuery("#status").addClass("status-online");
 						}
-						else if (e.status == 0) {
-							jQuery("#status").html("Offline");
+						else if (e.result == 1) {
 							jQuery("#status").addClass("status-offline");
 						}
 						else {
-							jQuery("#status").html("error " + e.status);
 							jQuery("#status").addClass("status-error");
 						}
+
+						jQuery("#status").html(e.message);
 					}
 				});
 				jQuery("#more").click(function() {
