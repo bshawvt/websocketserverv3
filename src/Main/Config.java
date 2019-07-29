@@ -7,6 +7,7 @@ public class Config {
 	public static String DatabaseUsername;
 	public static String DatabasePassword;
 	public static boolean DatabaseReporting = false; // server write to status table
+	public static boolean UseSSL = false;
 	
 	public Config() {
 		ServerPort = 29980;
@@ -16,7 +17,7 @@ public class Config {
 		
 	}
 	public Config(String[] args) {
-		ServerPort = 443;//Integer.parseInt(args[3]);
+		ServerPort = Integer.parseInt(args[3]);
 		DatabaseAddress = args[2];
 		DatabaseUsername = args[0];
 		DatabasePassword = args[1];

@@ -31,45 +31,44 @@ public class Server extends WebSocketServer {
 		this.setReuseAddr(true);
 		this.setTcpNoDelay(true);
 		
-		// uncomment for untested ssl
-		/*
-		try {
-			KeyStore ks = KeyStore.getInstance("JKS");
-			File kf = new File("E:\\Development\\Projects\\Java\\workspaces\\WebsocketServerV3\\website\\keystore.jks");
-			ks.load(new FileInputStream(kf), (new String("apassword")).toCharArray());
-			
-			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-			kmf.init(ks, (new String("bpassword")).toCharArray());
-			
-			TrustManagerFactory tmf = TrustManagerFactory.getInstance( "SunX509" );
-			tmf.init( ks );
-			
-			SSLContext sslContext = SSLContext.getInstance("TLS");
-			sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
-			
-			this.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
-		}
-		catch (CertificateException ce) {
-			
-		} catch (KeyStoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnrecoverableKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (KeyManagementException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+		if (Config.UseSSL)// untested with project and doesn't seem to work with self signed certificates
+			try {
+				KeyStore ks = KeyStore.getInstance("JKS");
+				File kf = new File("E:\\Development\\Projects\\Java\\workspaces\\WebsocketServerV3\\website\\keystore.jks");
+				ks.load(new FileInputStream(kf), (new String("apassword")).toCharArray());
+				
+				KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+				kmf.init(ks, (new String("bpassword")).toCharArray());
+				
+				TrustManagerFactory tmf = TrustManagerFactory.getInstance( "SunX509" );
+				tmf.init( ks );
+				
+				SSLContext sslContext = SSLContext.getInstance("TLS");
+				sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+				
+				this.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
+			}
+			catch (CertificateException ce) {
+				
+			} catch (KeyStoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnrecoverableKeyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (KeyManagementException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		
 		
 		System.out.println("Server: bound to port " + Config.ServerPort);
@@ -98,7 +97,7 @@ public class Server extends WebSocketServer {
 	@Override
 	public void onClose(WebSocket connection, int code, String message, boolean remote) {
 		// TODO Auto-generated method stub
-		System.out.println(connection + " has closed their connection");
+		System.out.println(connection + " has closed their connection, code: " + code + ", message: " + message);
 	}
 
 	@Override

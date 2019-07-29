@@ -1,13 +1,6 @@
 package server;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.util.concurrent.LinkedBlockingQueue;
-
+import main.Config;
 import threads.Threads;
 
 public class ServerThread implements Runnable {
@@ -24,6 +17,10 @@ public class ServerThread implements Runnable {
 		// TODO Auto-generated method stub
 		Server server;
 
+		if (Config.UseSSL) {
+			System.out.println("ServerThread has set Config.ServerPort to 443");
+			Config.ServerPort = 443;
+		}
 		server = new Server();
 		server.start();
 		
