@@ -1,42 +1,53 @@
-create database if not exists virtualworld1;
-use virtualworld1;
+create database if not exists wss_debug;
+use wss_debug;
 
-#drop table if exists playercharacters;
-#drop table if exists characters;
-#drop table if exists useraccounts;
-#drop table if exists useraccountrecovery;
-#drop table if exists serverstatus;
+drop table if exists useraccounts;
+drop table if exists useraccountrecovery;
 drop table if exists activesessions;
+#drop table if exists serverstatus;
+#drop table if exists characters;
 #drop table if exists items;
 #drop table if exists actions;
 
-CREATE TABLE IF NOT EXISTS activesessions (
-	id BIGINT(20) NOT NULL AUTO_INCREMENT,
-    useraccountid BIGINT(20) NOT NULL, # activesessionsuseraccount id
-    token BLOB NOT NULL, # generated on login
-    dateOfCreation DATETIME NOT NULL,
-    
-    active BOOL NOT NULL,
-    
-    PRIMARY KEY (id)
-);
-
 CREATE TABLE IF NOT EXISTS useraccounts (
 	id BIGINT(20) NOT NULL AUTO_INCREMENT, # primary key
-    lastLoginDate DATETIME NULL, # date of last login
 	username VARCHAR(64) NOT NULL, # username
-	hash BLOB NOT NULL, # hash
+	combinedHash BLOB NOT NULL, # hash
 	salt BLOB NOT NULL, # a random salt
     email VARCHAR(128) NOT NULL, # email 
-	dateOfCreation DATETIME NOT NULL, # account creation date
     permission INT NOT NULL, # permissions given to this
     locked BOOL NOT NULL,
+	dateOfCreation DATETIME NOT NULL, # account creation date
+    lastLoginDate DATETIME NULL, # date of last login
     #lastLoginAttempt DATETIME NULL, # date of any login attempt, successful or not
     #failedLogins BIGINT(20) NULL, # reset on successful login
     #lastLoginAddress VARCHAR(64) NULL, # last known ip
 	PRIMARY KEY (id)
 );
+CREATE TABLE IF NOT EXISTS useraccountrecovery (
+	id BIGINT(20) NOT NULL AUTO_INCREMENT,
+	token BLOB NOT NULL, 
+    email VARCHAR(128),
+    active BOOL NOT NULL,
+    creationDate DATETIME NOT NULL,
+    
+    PRIMARY KEY (id)
+);
 
+CREATE TABLE IF NOT EXISTS activesessions (
+	id BIGINT(20) NOT NULL AUTO_INCREMENT,
+    useraccountid BIGINT(20) NOT NULL, # useraccounts.id
+    token BLOB NOT NULL, # generated on login
+    dateOfCreation DATETIME NOT NULL,
+    
+    active BOOL NOT NULL,
+    
+    PRIMARY KEY (id),
+    FOREIGN KEY (useraccountid) REFERENCES useraccounts(id)
+);
+
+
+# todo
 CREATE TABLE IF NOT EXISTS characters (
 
 	id BIGINT(20) NOT NULL AUTO_INCREMENT,
@@ -102,17 +113,6 @@ CREATE TABLE IF NOT EXISTS actions (
     
     PRIMARY KEY (id)
 );
-
-CREATE TABLE IF NOT EXISTS useraccountrecovery (
-	id BIGINT(20) NOT NULL AUTO_INCREMENT,
-	token BLOB NOT NULL, 
-    email VARCHAR(128),
-    active BOOL NOT NULL,
-    creationDate DATETIME NOT NULL,
-    
-    PRIMARY KEY (id)
-);
-
 CREATE TABLE IF NOT EXISTS serverstatus (
 	id BIGINT(20) NOT NULL AUTO_INCREMENT,
     pingDate DATETIME NOT NULL,
