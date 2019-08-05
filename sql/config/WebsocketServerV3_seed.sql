@@ -23,6 +23,9 @@ CREATE TABLE IF NOT EXISTS useraccounts (
     #lastLoginAttempt DATETIME NULL, # date of any login attempt, successful or not
     #failedLogins BIGINT(20) NULL, # reset on successful login
     #lastLoginAddress VARCHAR(64) NULL, # last known ip
+    sessionIP BLOB NULL, # 
+    sessionExpirationDate DATETIME NULL,
+    sessionToken BLOB NULL, # 
 	PRIMARY KEY (id)
 );
 CREATE TABLE IF NOT EXISTS useraccountrecovery (
@@ -47,3 +50,9 @@ CREATE TABLE IF NOT EXISTS activesessions (
     FOREIGN KEY (useraccountid) REFERENCES useraccounts(id)
 );
 
+
+# user access to our stored functions and procedures
+#GRANT EXECUTE ON FUNCTION wss_debug.WSService_MakeHash TO 'web'@'%';
+#REVOKE EXECUTE ON FUNCTION wss_debug.WSService_MakeHash FROM 'web'@'%';
+
+#REVOKE EXECUTE ON PROCEDURE wss_debug.WSProc_SelectUserAccountOnAuth FROM 'web'@'%';

@@ -1,4 +1,4 @@
-CREATE DEFINER=`root`@`localhost` PROCEDURE `WSProc_SelectUserAccountOnAuth`(IN myuser CHAR(18), IN myhash BLOB )
+CREATE DEFINER=`root`@`localhost` PROCEDURE `WSProc_SelectUserAccountOnAuth`(IN myuser CHAR(18), IN myhash BLOB ) DETERMINISTIC
 BEGIN
 # updates useraccount.lastLoginDate on successful auth and returns the useraccount
 # @param myuser: typically matches useraccounts.username
