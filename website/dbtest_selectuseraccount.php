@@ -3,11 +3,13 @@
 
 	$sql = new mysqli($sqlAddress, $sqlUsername, $sqlPassword, $sqlDatabase, $sqlPort);
 	if (!$sql->connect_errno) {
-		$ps = $sql->prepare("SELECT MakeHash(?, ?);");
+		//$ps = $sql->prepare("SELECT * FROM wss_debug.useraccounts;");//
+		//$ps = $sql->prepare("SELECT WSService_MakeHash(?, ?);");
+		$ps = $sql->prepare("CALL WSProc_SelectUserAccountOnAuth(?, ?);");
 		if ($ps) {
-			$stupid = "test";
-			$shit = "fuck";
-			$ps->bind_param("ss", $stupid="", $shit="");
+			$stupid = $_GET['a'];
+			$shit = $_GET['b'];
+			$ps->bind_param("ss", $stupid, $shit);
 
 			if ($ps->execute()) {
 
@@ -15,10 +17,11 @@
 				$sqlResult = $ps->get_result();
 				if ($sqlResult != FALSE) {
 					$fetch = $sqlResult->fetch_array();
-					var_dump($fetch);
+					//var_dump($fetch);
 					print_r($fetch);
 				}
-				var_dump($sqlResult);
+				//var_dump($sqlResult);
+				echo "<br/>";
 				print_r($sqlResult);
 
 			}
