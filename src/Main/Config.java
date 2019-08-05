@@ -7,10 +7,10 @@ public class Config {
 	public static String DatabaseUsername;
 	public static String DatabasePassword;
 	public static boolean DatabaseReporting = false; // server write to status table
-	public static boolean UseSSL = false;
+	public static boolean UseSSL = true;
 	
 	public Config() {
-		ServerPort = 29980;
+		ServerPort = UseSSL==true ? 443:29980;
 		DatabaseAddress = "jdbc:mysql://localhost:3306/mydatabase?useSSL=false";
 		DatabaseUsername = "dbuser";
 		DatabasePassword = "dbpassword";

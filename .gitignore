@@ -35,3 +35,4 @@ WebsocketServerV3_ref/simulator/NetObject.java
 *.jks
 website/test.php
 website/faviconxx.ico
+website/.htaccess

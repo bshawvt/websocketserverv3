@@ -33,7 +33,7 @@ public class Server extends WebSocketServer {
 		
 		if (Config.UseSSL)// untested with project and doesn't seem to work with self signed certificates
 			try {
-				KeyStore ks = KeyStore.getInstance("JKS");
+				/*KeyStore ks = KeyStore.getInstance("JKS");
 				File kf = new File("E:\\Development\\Projects\\Java\\workspaces\\WebsocketServerV3\\website\\keystore.jks");
 				ks.load(new FileInputStream(kf), (new String("apassword")).toCharArray());
 				
@@ -44,11 +44,13 @@ public class Server extends WebSocketServer {
 				tmf.init( ks );
 				
 				SSLContext sslContext = SSLContext.getInstance("TLS");
-				sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+				sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);*/
 				
-				this.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
+				//SSL m = new SSL();
+				System.out.println("using ssl!");
+				this.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(new SSL().getSSLContextFromLetsEncrypt()));
 			}
-			catch (CertificateException ce) {
+			/*catch (CertificateException ce) {
 				
 			} catch (KeyStoreException e) {
 				// TODO Auto-generated catch block
@@ -68,6 +70,9 @@ public class Server extends WebSocketServer {
 			} catch (KeyManagementException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}*/
+			finally {
+				
 			}
 		
 		
