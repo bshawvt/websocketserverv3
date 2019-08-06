@@ -29,6 +29,7 @@ public class SSL { // https://github.com/TooTallNate/Java-WebSocket/wiki/Getting
 	 * followed by 'certbot certonly'
 	 * complete short questionaire, select the "place files in webroot directory" option when asked because it worked and we're not using normal webserver
 	 * now set paths in websocketserverv3 and done! */
+	/* with my personal router, port 443(this servers SSL port) must be open or TLS handshake will fail */
 	/**
 	* Method which returns a SSLContext from a Let's encrypt or IllegalArgumentException on error
 	*
