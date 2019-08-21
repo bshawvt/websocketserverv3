@@ -2,13 +2,36 @@ create database if not exists wss_debug;
 use wss_debug;
 
 
-drop table if exists activesessions;
-drop table if exists useraccountrecovery;
-drop table if exists useraccounts;
+#drop table if exists activesessions;
+#drop table if exists useraccountrecovery;
+#drop table if exists useraccounts;
 #drop table if exists serverstatus;
 #drop table if exists characters;
 #drop table if exists items;
 #drop table if exists actions;
+
+CREATE TABLE IF NOT EXISTS forum (
+	id BIGINT(20) NOT NULL AUTO_INCREMENT,
+    name VARCHAR(64),
+    description VARCHAR(128),
+    
+    PRIMARY KEY (id)
+);
+CREATE TABLE IF NOT EXISTS thread (
+	id BIGINT(20) NOT NULL AUTO_INCREMENT,
+    userId BIGINT(20) NOT NULL, # useraccount id
+    PRIMARY KEY (id)
+);
+CREATE TABLE IF NOT EXISTS content (
+	id BIGINT(20) NOT NULL AUTO_INCREMENT,
+    threadId BIGINT(20) NOT NULL,
+    content BLOB NULL,
+    
+    PRIMARY KEY (id)
+);
+
+
+
 
 CREATE TABLE IF NOT EXISTS useraccounts (
 	id BIGINT(20) NOT NULL AUTO_INCREMENT, # primary key

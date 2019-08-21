@@ -11,6 +11,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Iterator;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -120,7 +121,13 @@ public class Server extends WebSocketServer {
 
 	@Override
 	public void onOpen(WebSocket connection, ClientHandshake handshake) {
-		System.out.println(connection + " has connected");
+		System.out.println(connection.getRemoteSocketAddress().getHostString() + " has connected");
+
+		String desc = handshake.getResourceDescriptor();
+		if (desc.length() > 0) {
+			
+		}
+		
 		Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Set, connection));
 	}
 }

@@ -3,11 +3,13 @@
 		this page is single operation only.
 	*/
 
-	require("../apnetwork/dbconfig.php");
+	require("dbconfig.php");
 	
-	$myuser = $_GET['username'];//$_POST["username"];
-	$myhash = $_GET['hash'];//$_POST["hash"]
-	$sessionip = $_SERVER["REMOTE_ADDR"];
+
+	$myuser = "testuser0";//$_GET['username'];//$_POST["username"];
+	$myhash = "password";//$_GET['hash'];//$_POST["hash"]
+	$sessionip = "127.0.0.1";//$_SERVER["REMOTE_ADDR"];
+	//echo "$_GET["username"] => " . $_GET["username"];
 
 	$token = NULL;
 	// login

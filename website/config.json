@@ -1,0 +1,22 @@
+{
+	"ssl":
+	{
+		"enabled": false,
+		"port": 4443,
+		"paths": {
+			"cert": "E:\\acme\\cert.pem",
+			"key": "E:\\acme\\privkey.pem"
+		}
+	},
+	"port": 8080,
+	"versioner": false,
+	"session": false,
+	"logging": false,
+	"fs": {
+		"root": "./",
+		"log": "./"
+	},
+	"php": {
+		"path": "E:\\Programs\\php\\"
+	}
+}
