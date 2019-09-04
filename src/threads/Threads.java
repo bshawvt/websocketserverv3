@@ -2,7 +2,9 @@ package threads;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
+import database.DatabaseThreadMessage;
 import server.ServerThreadMessage;
+import simulator.SimulatorThreadMessage;
 
 public class Threads {
 
@@ -13,15 +15,23 @@ public class Threads {
 	public static final int Main = 4;
 	
 	private static final LinkedBlockingQueue<ServerThreadMessage> serverQueue = new LinkedBlockingQueue<>();
-	//private static final LinkedBlockingQueue<SimulatorThreadMessage> SimulatorQueue;
-	//private static final LinkedBlockingQueue<DatabaseThreadMessage> DatabaseQueue;
+	private static final LinkedBlockingQueue<SimulatorThreadMessage> SimulatorQueue = new LinkedBlockingQueue<>();
+	private static final LinkedBlockingQueue<DatabaseThreadMessage> DatabaseQueue = new LinkedBlockingQueue<>();
+	
+	public Threads() {
+		
+	}
 	
 	public static LinkedBlockingQueue<ServerThreadMessage> getServerQueue() {
 		return serverQueue;
 	}
 	
-	public Threads() {
-		
+	public static LinkedBlockingQueue<SimulatorThreadMessage> getSimulatorQueue() {
+		return SimulatorQueue;
+	}
+
+	public static LinkedBlockingQueue<DatabaseThreadMessage> getDatabaseQueue() {
+		return DatabaseQueue;
 	}
 	
 }

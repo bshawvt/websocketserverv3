@@ -39,5 +39,6 @@ public class ServerThreadMessage {
 		this.from = from;
 		this.type = type;
 		this.command = null;
+		System.out.println("key: " + connection.getResourceDescriptor());
 	}
 }

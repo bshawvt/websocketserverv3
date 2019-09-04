@@ -22,10 +22,17 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
 
+import database.DatabaseThreadMessage;
 import main.Config;
 import threads.Threads;
 
 public class Server extends WebSocketServer {
+	
+	public static class Reason {
+		public static final int None = 4100;
+		public static final int Clean = 4101;
+		public static final int FailedAuthStep = 4102;
+	}
 
 	public Server() { //throws NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException, UnrecoverableKeyException, KeyManagementException {
 		super(new InetSocketAddress(Config.ServerPort));
@@ -34,49 +41,12 @@ public class Server extends WebSocketServer {
 		
 		if (Config.UseSSL)// untested with project and doesn't seem to work with self signed certificates
 			try {
-				/*KeyStore ks = KeyStore.getInstance("JKS");
-				File kf = new File("E:\\Development\\Projects\\Java\\workspaces\\WebsocketServerV3\\website\\keystore.jks");
-				ks.load(new FileInputStream(kf), (new String("apassword")).toCharArray());
-				
-				KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-				kmf.init(ks, (new String("bpassword")).toCharArray());
-				
-				TrustManagerFactory tmf = TrustManagerFactory.getInstance( "SunX509" );
-				tmf.init( ks );
-				
-				SSLContext sslContext = SSLContext.getInstance("TLS");
-				sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);*/
-				
-				//SSL m = new SSL();
 				System.out.println("using ssl!");
 				this.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(new SSL().getSSLContextFromLetsEncrypt()));
 			}
-			/*catch (CertificateException ce) {
-				
-			} catch (KeyStoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnrecoverableKeyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (KeyManagementException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
 			finally {
 				
 			}
-		
-		
 		System.out.println("Server: bound to port " + Config.ServerPort);
 	}
 	
@@ -123,11 +93,13 @@ public class Server extends WebSocketServer {
 	public void onOpen(WebSocket connection, ClientHandshake handshake) {
 		System.out.println(connection.getRemoteSocketAddress().getHostString() + " has connected");
 
-		String desc = handshake.getResourceDescriptor();
-		if (desc.length() > 0) {
-			
+		if (handshake.getResourceDescriptor().length() > 10) {
+			Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Server, DatabaseThreadMessage.Type.Auth, connection.getResourceDescriptor()));
+			Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Set, connection));
 		}
-		
-		Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Set, connection));
+		else {
+			//connection.close();//closeConnection(100, "u suck");
+			connection.close(Reason.FailedAuthStep, "Invalid auth token");
+		}
 	}
 }
