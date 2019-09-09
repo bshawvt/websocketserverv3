@@ -9,12 +9,12 @@ BEGIN
 		SET @mytoken = WSService_MakeHash(myuser, TO_BASE64(RANDOM_BYTES(32))); # this token should be unique because usernames are unique
         
         UPDATE wss_debug.useraccounts AS u1 
-        SET u1.sessionIP=myip, u1.lastLoginDate=NOW(), u1.sessionExpirationDate=TIMESTAMPADD(HOUR, 10, NOW()), sessionToken=@mytoken 
+        SET u1.sessionIP=myip, u1.lastLoginDate=NOW(), u1.sessionExpirationDate=TIMESTAMPADD(SECOND, 10, NOW()), sessionToken=@mytoken 
         WHERE u1.username=LOWER(myuser);
         
         SELECT @mytoken as sessionToken;
-	ELSE
-		SELECT NULL as sessionToken;
+	#ELSE
+		#SELECT NULL;
 	END IF;
 
 END

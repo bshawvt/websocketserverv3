@@ -1,14 +1,13 @@
 package server;
 
+import Dtos.AuthenticationDto;
+import database.DatabaseThreadMessage;
 import main.Config;
 import threads.Threads;
 
 public class ServerThread implements Runnable {
 	
-	//private final LinkedBlockingQueue<ServerThreadMessage> messageServerQueue;
 	public ServerThread() {
-		// TODO Auto-generated constructor stub
-		//this.messageServerQueue = serverMessageQueue;
 		System.out.println("ServerThread: Hello world!");
 	}
 
@@ -24,34 +23,86 @@ public class ServerThread implements Runnable {
 		server = new Server();
 		server.start();
 		
-		
-		//server.stop();
-		
-		while(true) {
-			try {
-				Thread.sleep(1);
+		// flush thread messages
+		ServerThreadMessage msg = null;
+		try {
+			while((msg = Threads.getServerQueue().take()) != null) {
+				server.flush(); // flush server connections before updating Server state
 				
-				ServerThreadMessage msg = null;
-				while ((msg = Threads.getServerQueue().poll()) != null) { // flush thread messages and do things here
-					if (msg.getFrom() == Threads.Main) {
-						if (msg.getCommand().equals("help")) {
-							System.out.println("todo");
+				int type = msg.getType();
+				int from = msg.getFrom();
+				
+				switch(type) {
+					case ServerThreadMessage.Type.None: {
+						System.out.println("ServerThread: ServerQueue: received no event");
+						if (from == Threads.Main) {
+							System.out.println("... from Main thread!");
+							//server.command(msg.getCommand());
 						}
+						break;
 					}
-					else if (msg.getFrom() == Threads.Simulator) {
-						// todo: 
+					case ServerThreadMessage.Type.Update: {
+						System.out.println("ServerThread: ServerQueue: received update event");
+						break;
 					}
-					else if (msg.getFrom() == Threads.Database) {
-						// todo:
+					case ServerThreadMessage.Type.Authenticate: {
+						System.out.println("ServerThread: ServerQueue: received authenticate event");
+						if (from == Threads.Database) {
+							System.out.println("... from Database thread!");
+							server.authenticateClient(msg.getAuthenticationDto());
+						}
+						break;
+					}
+					case ServerThreadMessage.Type.Flush: {
+						System.out.println("ServerThread: ServerQueue: received flush event");
+						server.flush();
+						break;
+					}
+					default: {
+						break;
+					}
+				}
+				
+			}
+				/*
+				int from = msg.getFrom();
+				if (from == Threads.Server) {
+					if (msg.getType() == ServerThreadMessage.Type.Add) {
+						//server.addClient(msg.getClient());
+					}
+					else if (msg.getType() == ServerThreadMessage.Type.Remove) {
+						//server.removeClient(msg.getClient());
+					}					
+				}
+				
+				
+				
+				
+				else if (from == Threads.Database) {
+					if (msg.getType() == DatabaseThreadMessage.Type.Auth) {
+						System.out.println("ServerThread: received database authentication message");
+						msg.getClient();
+						System.out.println("asd");
+						AuthenticationDto dto = msg.getAuthenticationDto();
+						//server.authenticateConnection();
 					}
 				}
 				
 				
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		
+				
+				
+				else if (from == Threads.Main) {
+					if (msg.getCommand().equals("help")) {
+						System.out.println("ServerThread: you have been helped!");
+					}
+					else {
+						System.out.println("ServerThread: unknown command");
+					}
+				}
+			}*/
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
-	
 }
