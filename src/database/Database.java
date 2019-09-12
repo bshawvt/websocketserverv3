@@ -21,7 +21,7 @@ public class Database {
 		}
 	}
 	public void consumeToken(AuthenticationDto dto) {
-		/*
+		/* 
 		 */
 		try {
 			//CALL WSProc_ConsumeToken('testuser0IESlZN+0m65yHj3Pd+uxAn3VRxqA2ecT5v5bsD+DNfs=', "127.0.0.1");
@@ -32,9 +32,10 @@ public class Database {
 			statement.setString(2, dto.getOwnerAddress());
 			ResultSet result = statement.executeQuery();
 			while (result.next()) {
-				//dto.getUserAccount().setSessionToken(dto.getToken()); // set the token for matching with client
 				dto.setUserAccount(new UserAccountModel(result));
-				Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Database, ServerThreadMessage.Type.Authenticate, dto));
+				Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Database, 
+						ServerThreadMessage.Type.Authenticate, 
+						dto));
 				return;// new UserAccountModel(result);
 			}
 			System.out.println("... consumeToken has failed!");
