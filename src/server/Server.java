@@ -112,7 +112,12 @@ public class Server extends WebSocketServer {
 			System.out.println("Server: todo: received message from authenticated user!");
 			return;
 		}
-		System.out.println("Server: todo: received message from unauthenticated user");
+		// all other messages are from unauthorized users and should probably be purged immediately
+		if (client != null) {
+			System.out.println("Server: todo: received message from unauthenticated user");
+			client.setRemoved(true);
+		}
+		return;
 	}
 
 	@Override
@@ -251,12 +256,21 @@ public class Server extends WebSocketServer {
 	public void authenticateClient(AuthenticationDto dto) {
 		
 		System.out.println("Server: authenticating connection:");
-		
+				
 		Client client = getClient(dto.getOwner());
 		if (client == null) { // this should never happen
 			System.out.println("... could not authenticate client because it was never tracked!");
 			return;
 		}
+		// if useraccount is null then the database thread did not consume the token
+		if (dto.getUserAccount() == null) {
+			if (client != null) {
+				System.out.println("... client " + dto.getOwner() + " did not provide a valid token!");
+				client.setRemoved(true);
+			}
+			return;
+		}
+				
 		// check if the account is in use by any of the clients before proceeding
 		if (getClient(dto.getUserAccount().getUsername()) != null) {
 			System.out.println("... " + dto.getUserAccount().getUsername() + " already in use!");
@@ -267,7 +281,7 @@ public class Server extends WebSocketServer {
 		System.out.println("... " + dto.getUserAccount().getUsername() + " has authenticated!");
 		client.setAuthenticationDto(dto);
 		client.setReady(true);
-		//client.getConnection().send(new NetworkMessage().toString());
+		// done, tell client to proceed to the next step
 		client.getConnection().send("Hello world!");
 	}
 }

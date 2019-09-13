@@ -26,9 +26,7 @@ public class ServerThread implements Runnable {
 		// flush thread messages
 		ServerThreadMessage msg = null;
 		try {
-			while((msg = Threads.getServerQueue().take()) != null) {
-				server.flush(); // flush server connections before updating Server state
-				
+			while((msg = Threads.getServerQueue().take()) != null) {				
 				int type = msg.getType();
 				int from = msg.getFrom();
 				
@@ -55,51 +53,15 @@ public class ServerThread implements Runnable {
 					}
 					case ServerThreadMessage.Type.Flush: {
 						System.out.println("ServerThread: ServerQueue: received flush event");
-						server.flush();
 						break;
 					}
 					default: {
 						break;
 					}
 				}
-				
+				// flush connections
+				server.flush();				
 			}
-				/*
-				int from = msg.getFrom();
-				if (from == Threads.Server) {
-					if (msg.getType() == ServerThreadMessage.Type.Add) {
-						//server.addClient(msg.getClient());
-					}
-					else if (msg.getType() == ServerThreadMessage.Type.Remove) {
-						//server.removeClient(msg.getClient());
-					}					
-				}
-				
-				
-				
-				
-				else if (from == Threads.Database) {
-					if (msg.getType() == DatabaseThreadMessage.Type.Auth) {
-						System.out.println("ServerThread: received database authentication message");
-						msg.getClient();
-						System.out.println("asd");
-						AuthenticationDto dto = msg.getAuthenticationDto();
-						//server.authenticateConnection();
-					}
-				}
-				
-				
-				
-				
-				else if (from == Threads.Main) {
-					if (msg.getCommand().equals("help")) {
-						System.out.println("ServerThread: you have been helped!");
-					}
-					else {
-						System.out.println("ServerThread: unknown command");
-					}
-				}
-			}*/
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

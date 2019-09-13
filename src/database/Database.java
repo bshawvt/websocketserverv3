@@ -21,24 +21,30 @@ public class Database {
 		}
 	}
 	public void consumeToken(AuthenticationDto dto) {
-		/* 
+		/* sets useraccount inside of dto on success
 		 */
 		try {
-			//CALL WSProc_ConsumeToken('testuser0IESlZN+0m65yHj3Pd+uxAn3VRxqA2ecT5v5bsD+DNfs=', "127.0.0.1");
 			System.out.println("Database: consumeToken:");
 			String query = "CALL WSProc_ConsumeToken(?, ?);";
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setString(1, dto.getToken());
 			statement.setString(2, dto.getOwnerAddress());
 			ResultSet result = statement.executeQuery();
+			
 			while (result.next()) {
+				// if a token can be used then construct a new useraccount object for the dto
+				System.out.println("... consumeToken has succeeded!");
 				dto.setUserAccount(new UserAccountModel(result));
 				Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Database, 
 						ServerThreadMessage.Type.Authenticate, 
 						dto));
-				return;// new UserAccountModel(result);
+				return;
 			}
+			// otherwise just send back the dto as it is
 			System.out.println("... consumeToken has failed!");
+			Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Database, 
+					ServerThreadMessage.Type.Authenticate, 
+					dto));
 			return;
 		}
 		catch (SQLException e) {

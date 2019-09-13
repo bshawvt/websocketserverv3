@@ -4,10 +4,13 @@ import Models.UserAccountModel;
 
 public class AuthenticationDto {
 	
+	// ONLY set by database thread!!
 	private UserAccountModel userAccount;
+	// ONLY set by server thread!!
 	private String token;
 	private long owner;
 	private String ownerAddress;
+	
 
 	public AuthenticationDto() {		
 	}

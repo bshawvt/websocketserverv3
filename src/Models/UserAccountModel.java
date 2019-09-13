@@ -71,8 +71,4 @@ public class UserAccountModel {
 	public String getSessionToken() {
 		return this.sessionToken;
 	}
-
-	public void setSessionToken(String token) {
-		this.sessionToken = token;
-	}
 }
