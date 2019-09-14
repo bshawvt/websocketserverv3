@@ -1,5 +1,4 @@
-CREATE DEFINER=`root`@`localhost` FUNCTION `WSService_MakeHash`(mysalt BLOB, myhash BLOB) RETURNS blob
-    DETERMINISTIC
+CREATE DEFINER=`root`@`localhost` FUNCTION `WSService_MakeHash`(mysalt BLOB, myhash BLOB) RETURNS BLOB DETERMINISTIC
 BEGIN 
 # @param mysalt: should be base64 encoded bytes, typically resulting from TO_BASE64(useraccounts.salt)
 # @param myhash: should be a raw sha256 hash

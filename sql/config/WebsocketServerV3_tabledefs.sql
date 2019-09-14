@@ -1,18 +1,23 @@
 create database if not exists wss_debug;
 use wss_debug;
 
-drop table if exists useraccountrecovery;
+SET FOREIGN_KEY_CHECKS = 0;
 drop table if exists useraccounts;
+drop table if exists characters;
+drop table if exists useraccountrecovery;
 
-#drop table if exists serverstatus;
-#drop table if exists characters;
-#drop table if exists items;
-#drop table if exists actions;
+drop table if exists serverstatus;
+drop table if exists characters;
+drop table if exists items;
+drop table if exists actions;
 
-drop table if exists forum;
-drop table if exists thread;
-drop table if exists content;
+SET FOREIGN_KEY_CHECKS = 1;
+/*
 
+drop table if exists forums;
+drop table if exists threads;
+drop table if exists contents;
+SET FOREIGN_KEY_CHECKS = 1;
 # 
 CREATE TABLE IF NOT EXISTS forum (
 	id BIGINT(20) NOT NULL AUTO_INCREMENT,
@@ -27,7 +32,6 @@ CREATE TABLE IF NOT EXISTS thread (
     userId BIGINT(20) NOT NULL, # useraccount id
     PRIMARY KEY (id)
 );
-
 CREATE TABLE IF NOT EXISTS content (
 	id BIGINT(20) NOT NULL AUTO_INCREMENT,
     threadId BIGINT(20) NOT NULL,
@@ -36,9 +40,11 @@ CREATE TABLE IF NOT EXISTS content (
     PRIMARY KEY (id)
 );
 
+*/
+
 # 
 CREATE TABLE IF NOT EXISTS useraccounts (
-	id BIGINT(20) NOT NULL AUTO_INCREMENT, # primary key
+	user_id BIGINT(20) NOT NULL AUTO_INCREMENT, # primary key
 	username VARCHAR(18) NOT NULL,
 	combinedHash BLOB NOT NULL, # result of user input and salt
 	salt BLOB NOT NULL, # a random series of bytes
@@ -47,20 +53,28 @@ CREATE TABLE IF NOT EXISTS useraccounts (
     locked BOOL DEFAULT FALSE, 
 	dateOfCreation DATETIME DEFAULT NOW(),
     lastLoginDate DATETIME NULL, # set on token generation and consumption
-    sessionIP BLOB NULL, # set on token generation and consumption
+    sessionIp BLOB NULL, # set on token generation and consumption
     sessionExpirationDate DATETIME NULL, # set on token generation and set to null on consumption
     sessionToken BLOB NULL, # set on token generation and set to null on consumption
-	PRIMARY KEY (id),
+	PRIMARY KEY (user_id),
     UNIQUE KEY (username),
     UNIQUE KEY (email)
 );
 
 CREATE TABLE IF NOT EXISTS useraccountrecovery (
-	id BIGINT(20) NOT NULL AUTO_INCREMENT,
+	recovery_id BIGINT(20) NOT NULL AUTO_INCREMENT,
 	token BLOB NOT NULL, 
     email VARCHAR(128),
     active BOOL DEFAULT TRUE,
     dateOfCreation DATETIME DEFAULT NOW(),
     
-    PRIMARY KEY (id)
+    PRIMARY KEY (recovery_id)
+);
+
+CREATE TABLE IF NOT EXISTS characters(
+	character_id BIGINT(20) NOT NULL AUTO_INCREMENT,
+    owner_id BIGINT(20) NOT NULL,
+    name VARCHAR(16) NULL,
+    FOREIGN KEY (owner_id) REFERENCES useraccounts(user_id),
+    PRIMARY KEY(character_id)
 );

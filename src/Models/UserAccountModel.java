@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class UserAccountModel {
 	
-	private long id = -1;
+	private long user_id = -1;
 	private String username = null;
 	private String combinedHash = null;
 	private String salt = null;
@@ -15,12 +15,12 @@ public class UserAccountModel {
 	private boolean locked = true;
 	private Date dateOfCreation = null;
 	private Date lastLoginDate = null;
-	private String sessionIP = null;
+	private String sessionIp = null;
 	private Date sessionExpirationDate = null;
 	private String sessionToken = null;
 		
 	public UserAccountModel(ResultSet set) throws SQLException {
-		this.id = set.getLong(1);
+		this.user_id = set.getLong(1);
 		this.username = set.getString(2);
 		this.combinedHash = set.getString(3);
 		this.salt = set.getString(4);
@@ -29,14 +29,14 @@ public class UserAccountModel {
 		this.locked = set.getBoolean(7);
 		this.dateOfCreation = set.getDate(8);
 		this.lastLoginDate = set.getDate(9);
-		this.sessionIP = set.getString(10);
+		this.sessionIp = set.getString(10);
 		this.sessionExpirationDate = set.getDate(11);
 		this.sessionToken = set.getString(12);
 
 	}
 	
-	public long getId() {
-		return this.id;
+	public long getUserId() {
+		return this.user_id;
 	}
 	public String getUsername() {
 		return this.username;
@@ -62,8 +62,8 @@ public class UserAccountModel {
 	public Date getLastLoginDate() {
 		return this.lastLoginDate;
 	}
-	public String getSessionIP() { 
-		return this.sessionIP;
+	public String getSessionIp() { 
+		return this.sessionIp;
 	}
 	public Date getSessionExpirationDate() {
 		return this.sessionExpirationDate;
