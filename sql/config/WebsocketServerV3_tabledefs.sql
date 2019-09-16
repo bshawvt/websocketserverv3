@@ -63,10 +63,13 @@ CREATE TABLE IF NOT EXISTS useraccounts (
 
 CREATE TABLE IF NOT EXISTS useraccountrecovery (
 	recovery_id BIGINT(20) NOT NULL AUTO_INCREMENT,
+    owner_id BIGINT(20) NOT NULL,
 	token BLOB NOT NULL, 
-    email VARCHAR(128),
     active BOOL DEFAULT TRUE,
+    
     dateOfCreation DATETIME DEFAULT NOW(),
+    
+    FOREIGN KEY (owner_id) REFERENCES useraccounts(user_id),
     
     PRIMARY KEY (recovery_id)
 );
