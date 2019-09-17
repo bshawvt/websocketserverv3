@@ -53,10 +53,12 @@ CREATE TABLE IF NOT EXISTS useraccounts (
     locked BOOL DEFAULT FALSE, 
 	dateOfCreation DATETIME DEFAULT NOW(),
     lastLoginDate DATETIME NULL, # set on token generation and consumption
+    
     sessionIp BLOB NULL, # set on token generation and consumption
     sessionExpirationDate DATETIME NULL, # set on token generation and set to null on consumption
     sessionToken BLOB NULL, # set on token generation and set to null on consumption
-	PRIMARY KEY (user_id),
+	
+    PRIMARY KEY (user_id),
     UNIQUE KEY (username),
     UNIQUE KEY (email)
 );
@@ -67,7 +69,7 @@ CREATE TABLE IF NOT EXISTS useraccountrecovery (
 	token BLOB NOT NULL, 
     active BOOL DEFAULT TRUE,
     
-    dateOfCreation DATETIME DEFAULT NOW(),
+    recoveryExpirationDate DATETIME NULL,
     
     FOREIGN KEY (owner_id) REFERENCES useraccounts(user_id),
     
@@ -78,6 +80,8 @@ CREATE TABLE IF NOT EXISTS characters(
 	character_id BIGINT(20) NOT NULL AUTO_INCREMENT,
     owner_id BIGINT(20) NOT NULL,
     name VARCHAR(16) NULL,
+    characterCreationDate DATETIME DEFAULT NOW(),
+    
     FOREIGN KEY (owner_id) REFERENCES useraccounts(user_id),
     PRIMARY KEY(character_id)
 );
