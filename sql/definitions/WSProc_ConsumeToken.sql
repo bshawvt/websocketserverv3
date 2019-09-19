@@ -3,7 +3,12 @@ BEGIN
 	# @param mytoken: the unique session token generated from WSProc_GenerateSessionOnAuth
 	# @param myip: an ip address, typically $_SERVER['REMOTE_ADDR'], the one which initiated the query
 	# @return: useraccount set
-    IF (SELECT @myid:=user_id FROM useraccounts AS t1 WHERE t1.sessionToken=mytoken AND t1.sessionExpirationDate > NOW()) THEN
+    UPDATE useraccounts AS t1
+    SET t1.sessionExpirationDate = NULL, t1.sessionToken = NULL, t1.sessionIp = myip
+    WHERE t1.sessionToken=mytoken AND t1.sessionExpirationDate > NOW() AND (SELECT @tmpId := t1.user_id);
+    
+    SELECT * FROM useraccounts AS t2 WHERE t2.user_id = @tmpId;
+    /*IF (SELECT @myid:=user_id FROM useraccounts AS t1 WHERE t1.sessionToken=mytoken AND t1.sessionExpirationDate > NOW()) THEN
 		#SELECT @myid AS result;
         UPDATE useraccounts AS u1
         SET u1.sessionExpirationDate=NULL, u1.sessionToken=NULL, u1.sessionIp=myip
@@ -13,7 +18,7 @@ BEGIN
 	ELSE
 		SELECT * FROM useraccounts LIMIT 0; # return an empty set for schema purposes 
 	END IF;
-
+	*/
     
 	
 END

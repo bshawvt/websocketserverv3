@@ -259,9 +259,10 @@ public class Server extends WebSocketServer {
 				
 		Client client = getClient(dto.getOwner());
 		if (client == null) { // this should never happen
-			System.out.println("... could not authenticate client because it was never tracked!");
+			System.out.println("... MAJOR ERROR! could not authenticate client because it was never tracked!");
 			return;
 		}
+		
 		// if useraccount is null then the database thread did not consume the token
 		if (dto.getUserAccount() == null) {
 			if (client != null) {
@@ -270,7 +271,7 @@ public class Server extends WebSocketServer {
 			}
 			return;
 		}
-				
+		
 		// check if the account is in use by any of the clients before proceeding
 		if (getClient(dto.getUserAccount().getUsername()) != null) {
 			System.out.println("... " + dto.getUserAccount().getUsername() + " already in use!");

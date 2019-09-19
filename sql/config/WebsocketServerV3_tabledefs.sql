@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS useraccounts (
 	username VARCHAR(18) NOT NULL,
 	combinedHash BLOB NOT NULL, # result of user input and salt
 	salt BLOB NOT NULL, # a random series of bytes
-    email VARCHAR(128) NOT NULL,
+    email VARCHAR(128) DEFAULT NULL, # 
     permission INT DEFAULT 0,
     locked BOOL DEFAULT FALSE, 
 	dateOfCreation DATETIME DEFAULT NOW(),
