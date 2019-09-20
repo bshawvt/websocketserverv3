@@ -170,6 +170,9 @@ public class Server extends WebSocketServer {
 			Client client = it.next();
 			if (client.isRemoved()) {
 				System.out.println("Server: flush: removed client with id " + client.getId());
+				if (client.isReady()) {
+					System.out.println("... " + client.getAuthenticationDto().getUserAccount().getUsername() + " has disconnected!");
+				}
 				if (!client.getConnection().isClosed()) {
 					client.getConnection().close(Reason.None, "You have logged out");
 				}

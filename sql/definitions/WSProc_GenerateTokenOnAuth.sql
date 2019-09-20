@@ -18,13 +18,17 @@ BEGIN
 	END IF;*/
     DECLARE randbytes BLOB DEFAULT TO_BASE64(RANDOM_BYTES(32));
     DECLARE token BLOB DEFAULT WSService_MakeHash(myhash, randbytes);
-    SET @isSet = NULL; # will only be set if the update WHERE criteria are met
+    #DECLARE tmpGenToken BLOB DEFAULT NULL; # will only be set if the update WHERE criteria are met
     
     UPDATE useraccounts AS t1
     SET t1.sessionToken = token, t1.sessionExpirationDate=TIMESTAMPADD(SECOND, 10, NOW()), t1.lastLoginDate = NOW(), t1.sessionIp = myip
-    WHERE t1.username = LOWER(myuser) AND t1.combinedHash = WSService_MakeHash(myhash, t1.salt) AND (SELECT @isSet := t1.sessionToken);
+    WHERE t1.username = LOWER(myuser) AND t1.combinedHash = WSService_MakeHash(myhash, t1.salt);
     
-    SELECT @tmpId AS sessionToken;
+	IF (ROW_COUNT() > 0) THEN
+		SELECT token AS sessionToken;
+	ELSE
+		SELECT NULL AS sessionToken;
+	END IF;
 	
     
     
