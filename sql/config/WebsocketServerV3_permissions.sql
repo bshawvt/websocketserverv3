@@ -7,8 +7,12 @@ use wss_debug;
 GRANT EXECUTE ON PROCEDURE WSProc_SelectUserAccountOnAuth TO 'wss_website'@'%';
 #REVOKE EXECUTE ON PROCEDURE WSProc_SelectUserAccountOnAuth FROM 'web'@'%';
 
+/* deprecated
 GRANT EXECUTE ON PROCEDURE WSProc_GenerateTokenOnAuth TO 'wss_website'@'%';
-#REVOKE EXECUTE ON PROCEDURE WSProc_GenerateTokenOnAuth FROM 'web'@'%';
+#REVOKE EXECUTE ON PROCEDURE WSProc_GenerateTokenOnAuth FROM 'web'@'%';*/
+
+GRANT EXECUTE ON PROCEDURE WSProc_GenerateSessionToken TO 'wss_website'@'%';
+#REVOKE EXECUTE ON PROCEDURE WSProc_GenerateSessionToken TO 'wss_website'@'%';
 
 GRANT EXECUTE ON PROCEDURE WSProc_InsertUserAccount TO 'wss_website'@'%';
 #REVOKE EXECUTE ON PROCEDURE WSProc_InsertUserAccount FROM 'web'@'%';
@@ -19,5 +23,5 @@ GRANT EXECUTE ON PROCEDURE WSProc_GenerateRecoveryToken TO 'wss_website'@'%';
 GRANT EXECUTE ON PROCEDURE WSProc_ConsumeRecoveryToken TO 'wss_website'@'%';
 #REVOKE EXECUTE ON PROCEDURE WSProc_InsertUserAccount FROM 'web'@'%';
 
-GRANT EXECUTE ON PROCEDURE WSProc_ConsumeToken TO 'server'@'%';
+#GRANT EXECUTE ON PROCEDURE WSProc_ConsumeToken TO 'server'@'%';
 #REVOKE EXECUTE ON PROCEDURE WSProc_ConsumeToken FROM 'server'@'%';

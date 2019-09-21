@@ -2,27 +2,23 @@ create database if not exists wss_debug;
 use wss_debug;
 
 SET FOREIGN_KEY_CHECKS = 0;
-/*drop table if exists useraccounts;
+drop table if exists useraccounts;
 drop table if exists characters;
 drop table if exists useraccountrecovery;
 
 drop table if exists serverstatus;
 drop table if exists characters;
 drop table if exists items;
-drop table if exists actions;*/
+drop table if exists actions;
 
 drop table if exists sessions;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
 
-CREATE TABLE IF NOT EXISTS sessions (
-	session_id BIGINT(20) NOT NULL AUTO_INCREMENT,
-    
-    
-    FOREIGN KEY (owner_id) REFERENCES useraccounts(user_id),
-    PRIMARY KEY(session_id)
-);
+
+
+
 
 
 /*
@@ -69,9 +65,10 @@ CREATE TABLE IF NOT EXISTS useraccounts (
 	dateOfCreation DATETIME DEFAULT NOW(),
     lastLoginDate DATETIME NULL, # set on token generation and consumption
     
-    sessionIp BLOB NULL, # set on token generation and consumption
-    sessionExpirationDate DATETIME NULL, # set on token generation and set to null on consumption
-    sessionToken BLOB NULL, # set on token generation and set to null on consumption
+    
+    #sessionIp BLOB NULL, # set on token generation and consumption
+    #sessionExpirationDate DATETIME NULL, # set on token generation and set to null on consumption
+    #sessionToken BLOB NULL, # set on token generation and set to null on consumption
 	
     PRIMARY KEY (user_id),
     UNIQUE KEY (username),
@@ -91,7 +88,7 @@ CREATE TABLE IF NOT EXISTS useraccountrecovery (
     PRIMARY KEY (recovery_id)
 );
 
-CREATE TABLE IF NOT EXISTS characters(
+/*CREATE TABLE IF NOT EXISTS characters(
 	character_id BIGINT(20) NOT NULL AUTO_INCREMENT,
     owner_id BIGINT(20) NOT NULL,
     name VARCHAR(16) NULL,
@@ -99,4 +96,21 @@ CREATE TABLE IF NOT EXISTS characters(
     
     FOREIGN KEY (owner_id) REFERENCES useraccounts(user_id),
     PRIMARY KEY(character_id)
+);*/
+
+CREATE TABLE IF NOT EXISTS sessions (
+	session_id BIGINT(20) NOT NULL AUTO_INCREMENT,
+	session_owner BIGINT(20) NOT NULL,
+    
+    session_token VARCHAR(128) DEFAULT NULL,
+    session_active BOOL DEFAULT TRUE,
+    session_expirationDate DATETIME NOT NULL,
+    
+    session_createdBy BLOB DEFAULT NULL, 
+    session_consumedBy BLOB DEFAULT NULL,
+    
+    FOREIGN KEY (session_owner) REFERENCES useraccounts(user_id),
+    
+    PRIMARY KEY(session_id),
+    UNIQUE KEY (session_token)
 );
