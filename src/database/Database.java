@@ -12,6 +12,13 @@ import threads.Threads;
 public class Database {
 	private Connection connection;
 	public Database() {
+		
+		/*
+		 *  todo: need to cache data for some records eventually to 
+		 *  prevent sending a lot of data to the dbms all the time
+		 *  
+		 */
+		
 		try {
 			this.connection = DriverManager.getConnection(Config.DatabaseAddress, Config.DatabaseUsername, Config.DatabasePassword);
 			System.out.println("Database: connected to the database server. using " + Config.DatabaseSchema + " schema");
