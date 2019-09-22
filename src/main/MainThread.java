@@ -13,6 +13,7 @@ public class MainThread {
 
 	public static void main(String[] args) {
 		if (args.length == 5) new Config(args);
+		else new Config();
 		new Threads(); // assign queues to the main thread cuz i dont know
 		
 		System.out.println("MainThread: Hello world!");
