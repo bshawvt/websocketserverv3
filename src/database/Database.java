@@ -27,12 +27,12 @@ public class Database {
 			e.printStackTrace();
 		}
 	}
-	public void consumeToken(AuthenticationDto dto) {
+	public void consumeSessionToken(AuthenticationDto dto) {
 		/* sets useraccount inside of dto on success
 		 */
 		try {
-			System.out.println("Database: consumeToken:");
-			String query = "CALL WSProc_ConsumeToken(?, ?);";
+			System.out.println("Database: consumeSessionToken:");
+			String query = "CALL WSProc_ConsumeSessionToken(?, ?);";
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setString(1, dto.getToken());
 			statement.setString(2, dto.getOwnerAddress());
@@ -40,7 +40,7 @@ public class Database {
 			
 			while (result.next()) {
 				// if a token can be used then construct a new useraccount object for the dto
-				System.out.println("... consumeToken has succeeded!");
+				System.out.println("... consumeSessionToken has succeeded!");
 				dto.setUserAccount(new UserAccountModel(result));
 				Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Database, 
 						ServerThreadMessage.Type.Authenticate, 
@@ -48,14 +48,18 @@ public class Database {
 				return;
 			}
 			// otherwise just send back the dto as it is
-			System.out.println("... consumeToken has failed!");
+			System.out.println("... consumeSessionToken has failed!");
 			Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Database, 
 					ServerThreadMessage.Type.Authenticate, 
 					dto));
 			return;
 		}
 		catch (SQLException e) {
-			e.printStackTrace();
+			// otherwise just send back the dto as it is
+			System.out.println("... consumeSessionToken has failed!");
+			Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Database, 
+					ServerThreadMessage.Type.Authenticate, 
+					dto));
 		}
 	}
 	

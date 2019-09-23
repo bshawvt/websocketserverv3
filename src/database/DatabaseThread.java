@@ -20,7 +20,7 @@ public class DatabaseThread implements Runnable {
 				if (from == Threads.Server) {
 					if (msg.getType() == DatabaseThreadMessage.Type.Authentication) {
 						System.out.println("DatabaseThread: received auth from server");
-						db.consumeToken(msg.getAuthenticationDto());
+						db.consumeSessionToken(msg.getAuthenticationDto());
 					}
 				}
 				else if (from == Threads.Simulator) {

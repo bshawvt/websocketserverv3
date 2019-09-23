@@ -129,13 +129,13 @@ public class Server extends WebSocketServer {
 
 			// prepare server for connection
 			Client client = addClient(connection);
-			// create dto with token and new clients id
+			// create dto with token and new clients id to identify later
 			AuthenticationDto dto = new AuthenticationDto();
 			dto.setToken(handshake.getResourceDescriptor());
 			dto.setOwner(client.getId());
 			dto.setOwnerAddress(connection.getRemoteSocketAddress().getHostString());
 			
-			// ask database to verify this token
+			// ask database to verify and consume token
 			Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Server, DatabaseThreadMessage.Type.Authentication, dto));
 			
 			

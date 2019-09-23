@@ -10,6 +10,7 @@ public class AuthenticationDto {
 	private String token;
 	private long owner;
 	private String ownerAddress;
+	private String error;
 	
 
 	public AuthenticationDto() {		
@@ -33,6 +34,12 @@ public class AuthenticationDto {
 	}
 	public long getOwner() {
 		return this.owner;
+	}
+	public void setError(String msg) {
+		this.error = msg;
+	}
+	public String getError() {
+		return this.error;
 	}
 	public String getOwnerAddress() {
 		return this.ownerAddress;

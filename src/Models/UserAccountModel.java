@@ -15,9 +15,9 @@ public class UserAccountModel {
 	private boolean locked = true;
 	private Date dateOfCreation = null;
 	private Date lastLoginDate = null;
-	private String sessionIp = null;
-	private Date sessionExpirationDate = null;
-	private String sessionToken = null;
+	//private String sessionIp = null;
+	//private Date sessionExpirationDate = null;
+	//private String sessionToken = null;
 		
 	public UserAccountModel(ResultSet set) throws SQLException {
 		this.user_id = set.getLong(1);
@@ -29,9 +29,9 @@ public class UserAccountModel {
 		this.locked = set.getBoolean(7);
 		this.dateOfCreation = set.getDate(8);
 		this.lastLoginDate = set.getDate(9);
-		this.sessionIp = set.getString(10);
-		this.sessionExpirationDate = set.getDate(11);
-		this.sessionToken = set.getString(12);
+		//this.sessionIp = set.getString(10);
+		//this.sessionExpirationDate = set.getDate(11);
+		//this.sessionToken = set.getString(12);
 
 	}
 	
@@ -62,7 +62,7 @@ public class UserAccountModel {
 	public Date getLastLoginDate() {
 		return this.lastLoginDate;
 	}
-	public String getSessionIp() { 
+	/*public String getSessionIp() { 
 		return this.sessionIp;
 	}
 	public Date getSessionExpirationDate() {
@@ -70,5 +70,5 @@ public class UserAccountModel {
 	}
 	public String getSessionToken() {
 		return this.sessionToken;
-	}
+	}*/
 }
