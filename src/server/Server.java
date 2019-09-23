@@ -122,34 +122,49 @@ public class Server extends WebSocketServer {
 
 	@Override
 	public void onOpen(WebSocket connection, ClientHandshake handshake) {
-		System.out.println(connection.getRemoteSocketAddress().getHostString() + " has connected");
-		
-		if (handshake.getResourceDescriptor().length() > 10) {
-			System.out.println("Server: todo: token is set");
 
-			// prepare server for connection
-			Client client = addClient(connection);
-			// create dto with token and new clients id to identify later
-			AuthenticationDto dto = new AuthenticationDto();
-			dto.setToken(handshake.getResourceDescriptor());
-			dto.setOwner(client.getId());
-			dto.setOwnerAddress(connection.getRemoteSocketAddress().getHostString());
+		System.out.println(connection.getRemoteSocketAddress().getHostString() + " has connected");
+		String[] uri = handshake.getResourceDescriptor().split("/");
+		
+		if (uri.length == 3) {
+			String token = uri[1];
+			String clientVersion = uri[2];
 			
-			// ask database to verify and consume token
-			Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Server, DatabaseThreadMessage.Type.Authentication, dto));
-			
-			
-			//Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Server, DatabaseThreadMessage.Type.Auth, connection.getResourceDescriptor(), connection.getRemoteSocketAddress().getHostString()));
-			// prepare the server for the new connection
-			//Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Add, connection));
-			
-			Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Flush));
-			
+			if (token.length() <= 10) {
+				// todo: guest mode should be handled some day
+				System.out.println("Server: received a bad token");
+				connection.close(Reason.FailedAuthStep, "Bad authentication token");
+			}
+			else if (clientVersion.compareTo(Config.ClientVersion) == 0) {
+				// prepare server for connection
+				Client client = addClient(connection);
+				// create dto with token and new clients id to identify later
+				AuthenticationDto dto = new AuthenticationDto();
+				dto.setToken(token);
+				dto.setOwner(client.getId());
+				dto.setOwnerAddress(connection.getRemoteSocketAddress().getHostString());
+				
+				// ask database to verify and consume token
+				Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Server, DatabaseThreadMessage.Type.Authentication, dto));
+				
+				
+				//Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Server, DatabaseThreadMessage.Type.Auth, connection.getResourceDescriptor(), connection.getRemoteSocketAddress().getHostString()));
+				// prepare the server for the new connection
+				//Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Add, connection));
+				
+				Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Flush));
+				
+			}
+			else {
+				// todo: guest mode should be handled some day
+				System.out.println("Server: received a bad client");
+				connection.close(Reason.FailedAuthStep, "Bad client version");
+			}
 		}
 		else {
 			// todo: guest mode should be handled some day
-			System.out.println("Server: received a connection without a token!");
-			connection.close(Reason.FailedAuthStep, "Invalid auth token");
+			System.out.println("Server: received a bad connection");
+			connection.close(Reason.FailedAuthStep, "Failed to authenticate");
 		}
 	}
 	
@@ -174,7 +189,7 @@ public class Server extends WebSocketServer {
 					System.out.println("... " + client.getAuthenticationDto().getUserAccount().getUsername() + " has disconnected!");
 				}
 				if (!client.getConnection().isClosed()) {
-					client.getConnection().close(Reason.None, "You have logged out");
+					client.getConnection().close(Reason.None, "Server dropped connection");
 				}
 				it.remove();
 				System.out.println("... clients list size: " + clients.size());
@@ -279,7 +294,7 @@ public class Server extends WebSocketServer {
 		if (getClient(dto.getUserAccount().getUsername()) != null) {
 			System.out.println("... " + dto.getUserAccount().getUsername() + " already in use!");
 			client.setRemoved(true);
-			client.getConnection().close(Reason.AccountInUse, "This account is already in use!");
+			client.getConnection().close(Reason.AccountInUse, "Account in use");
 			return;
 		}
 		System.out.println("... " + dto.getUserAccount().getUsername() + " has authenticated!");
