@@ -14,6 +14,7 @@ public class Client {
 	private boolean removed = false;
 	private long authStartTime = 0;
 	private AuthenticationDto authenticationDto = null;
+	private String reason = ""; // removed reason
 	
 	public Client() {
 		this.authStartTime = (new Date()).getTime();
@@ -33,6 +34,10 @@ public class Client {
 	public void setRemoved(boolean state) {
 		this.removed = state;
 	}
+	public void setRemoved(boolean state, String reason) {
+		this.removed = state;
+		this.reason = reason;
+	}
 	public boolean isRemoved() {
 		return this.removed;
 	}
@@ -50,5 +55,10 @@ public class Client {
 	}
 	public void setAuthenticationDto(AuthenticationDto dto) {
 		this.authenticationDto = dto;
+	}
+	public void disconnect() {
+		if (!this.connection.isClosed()) {  
+			this.connection.close(Server.Reason.None, this.reason);
+		}
 	}
 }

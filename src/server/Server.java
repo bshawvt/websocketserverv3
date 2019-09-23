@@ -131,8 +131,7 @@ public class Server extends WebSocketServer {
 			String clientVersion = uri[2];
 			
 			if (token.length() <= 10) {
-				// todo: guest mode should be handled some day
-				System.out.println("Server: received a bad token");
+				System.out.println("Server: onOpen: received a bad token");
 				connection.close(Reason.FailedAuthStep, "Bad authentication token");
 			}
 			else if (clientVersion.compareTo(Config.ClientVersion) == 0) {
@@ -146,24 +145,18 @@ public class Server extends WebSocketServer {
 				
 				// ask database to verify and consume token
 				Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Server, DatabaseThreadMessage.Type.Authentication, dto));
-				
-				
-				//Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Server, DatabaseThreadMessage.Type.Auth, connection.getResourceDescriptor(), connection.getRemoteSocketAddress().getHostString()));
-				// prepare the server for the new connection
-				//Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Add, connection));
-				
+							
+				// todo: flush
 				Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Flush));
 				
 			}
 			else {
-				// todo: guest mode should be handled some day
-				System.out.println("Server: received a bad client");
+				System.out.println("Server: onOpen: received a bad client version");
 				connection.close(Reason.FailedAuthStep, "Bad client version");
 			}
 		}
 		else {
-			// todo: guest mode should be handled some day
-			System.out.println("Server: received a bad connection");
+			System.out.println("Server: onOpen: received a bad connection");
 			connection.close(Reason.FailedAuthStep, "Failed to authenticate");
 		}
 	}
@@ -188,18 +181,20 @@ public class Server extends WebSocketServer {
 				if (client.isReady()) {
 					System.out.println("... " + client.getAuthenticationDto().getUserAccount().getUsername() + " has disconnected!");
 				}
-				if (!client.getConnection().isClosed()) {
+				client.disconnect();
+				/*if (!client.getConnection().isClosed()) {
 					client.getConnection().close(Reason.None, "Server dropped connection");
-				}
+				}*/
 				it.remove();
 				System.out.println("... clients list size: " + clients.size());
 			}
 			// clean up stray connections
 			else if ((now > client.getAuthStartTime() +  5000) && !client.isReady()) {
 				System.out.println("Server: flush: removed client: client did not authenticate in time");
-				if (!client.getConnection().isClosed()) {
+				client.disconnect();
+				/*if (!client.getConnection().isClosed()) {
 					client.getConnection().close(Reason.FailedAuthStep, "You did not authenticate");
-				}
+				}*/
 				it.remove();
 				System.out.println("... clients list size: " + clients.size());
 			}
@@ -285,7 +280,7 @@ public class Server extends WebSocketServer {
 		if (dto.getUserAccount() == null) {
 			if (client != null) {
 				System.out.println("... client " + dto.getOwner() + " did not provide a valid token!");
-				client.setRemoved(true);
+				client.setRemoved(true, "Failed to authenticate");
 			}
 			return;
 		}
@@ -293,8 +288,8 @@ public class Server extends WebSocketServer {
 		// check if the account is in use by any of the clients before proceeding
 		if (getClient(dto.getUserAccount().getUsername()) != null) {
 			System.out.println("... " + dto.getUserAccount().getUsername() + " already in use!");
-			client.setRemoved(true);
-			client.getConnection().close(Reason.AccountInUse, "Account in use");
+			client.setRemoved(true, "Account in use");
+			//client.getConnection().close(Reason.AccountInUse, "Account in use");
 			return;
 		}
 		System.out.println("... " + dto.getUserAccount().getUsername() + " has authenticated!");
