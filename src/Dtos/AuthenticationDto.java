@@ -12,7 +12,6 @@ public class AuthenticationDto {
 	private String ownerAddress;
 	private String error;
 	
-
 	public AuthenticationDto() {		
 	}
 	public UserAccountModel getUserAccount() {

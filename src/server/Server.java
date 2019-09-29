@@ -109,7 +109,8 @@ public class Server extends WebSocketServer {
 		Client client = getClient(connection);
 		// filter out messages from users who aren't authenticated
 		if (client != null && client.isReady()) {
-			System.out.println("Server: todo: received message from authenticated user!");
+			System.out.println("Server: todo: received message from authenticated user:");
+			System.out.println(message);
 			return;
 		}
 		// all other messages are from unauthorized users and should probably be purged immediately
@@ -123,7 +124,7 @@ public class Server extends WebSocketServer {
 	@Override
 	public void onOpen(WebSocket connection, ClientHandshake handshake) {
 
-		System.out.println(connection.getRemoteSocketAddress().getHostString() + " has connected");
+		System.out.println(connection.getRemoteSocketAddress().getHostString()/* + "/" + connection.getLocalSocketAddress().getHostString() */+ " has connected");
 		String[] uri = handshake.getResourceDescriptor().split("/");
 		
 		if (uri.length == 3) {
@@ -296,6 +297,6 @@ public class Server extends WebSocketServer {
 		client.setAuthenticationDto(dto);
 		client.setReady(true);
 		// done, tell client to proceed to the next step
-		client.getConnection().send("Hello world!");
+		client.getConnection().send("Hello " + client.getAuthenticationDto().getUserAccount().getUsername());
 	}
 }
