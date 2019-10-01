@@ -111,6 +111,7 @@ public class Server extends WebSocketServer {
 		if (client != null && client.isReady()) {
 			System.out.println("Server: todo: received message from authenticated user:");
 			System.out.println(message);
+			
 			return;
 		}
 		// all other messages are from unauthorized users and should probably be purged immediately
