@@ -236,7 +236,6 @@ public class Server extends WebSocketServer {
 	public Client getClient(long id) {
 		System.out.println("Server: getClient: getting client from id: ");
 		
-		
 		Iterator<Client> it = clients.iterator();
 		while(it.hasNext()) {
 			Client client = it.next();
@@ -245,9 +244,6 @@ public class Server extends WebSocketServer {
 				System.out.println("... found!");
 				return client;
 			}
-			/*if (connection.getResourceDescriptor().equals("/" + client.getSessionToken())) {
-				return client;
-			}*/
 		}
 		return null;
 	}
@@ -265,6 +261,7 @@ public class Server extends WebSocketServer {
 				return client;
 			}
 		}
+		System.out.println("... client by username " + username + " not found");
 		return null;
 	}
 	
@@ -284,6 +281,13 @@ public class Server extends WebSocketServer {
 				System.out.println("... client " + dto.getOwner() + " did not provide a valid token!");
 				client.setRemoved(true, "Failed to authenticate");
 			}
+			return;
+		}
+		
+		// check if the account has been locked
+		if (dto.getUserAccount().isLocked()) {
+			System.out.println("... " + dto.getUserAccount().getUsername() + " tried to access a locked account");
+			client.setRemoved(true, "Account is locked");
 			return;
 		}
 		
