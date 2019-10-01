@@ -64,11 +64,6 @@ CREATE TABLE IF NOT EXISTS useraccounts (
     locked BOOL DEFAULT FALSE, 
 	dateOfCreation DATETIME DEFAULT NOW(),
     lastLoginDate DATETIME NULL, # set on token generation and consumption
-    
-    
-    #sessionIp BLOB NULL, # set on token generation and consumption
-    #sessionExpirationDate DATETIME NULL, # set on token generation and set to null on consumption
-    #sessionToken BLOB NULL, # set on token generation and set to null on consumption
 	
     PRIMARY KEY (user_id),
     UNIQUE KEY (username),

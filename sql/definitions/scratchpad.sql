@@ -1,4 +1,5 @@
-CALL WSProc_GenerateSessionToken("testuser0", "2", "localhost");
+SELECT * FROM useraccounts;
+#CALL WSProc_GenerateSessionToken("testuser0", "2", "localhost");
 #CALL WSProc_InsertUserAccount("testuser3", "password", "n/a0");
 
 # create a new recovery token row but requires a valid user_id from useraccounts
