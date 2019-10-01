@@ -1,3 +1,4 @@
+CALL WSProc_GenerateSessionToken("testuser0", "2", "localhost");
 #CALL WSProc_InsertUserAccount("testuser3", "password", "n/a0");
 
 # create a new recovery token row but requires a valid user_id from useraccounts
@@ -7,13 +8,11 @@
 
 #(IN mytoken BLOB, IN myemail VARCHAR(128), IN myhash BLOB)
 #CALL WSProc_ConsumeRecoveryToken("ba66add5b2ee978dd178a48d85b21fc04a85031c63e267d6a7b998d49fccc555", "nituvious@gmail.com", "test2");
-#CALL WSProc_GenerateSessionToken("testuser0", "1", "192.168.1.10xsx");
+#CALL WSProc_GenerateSessionToken("testuser0", "2", "192.168.1.10xsx");
 #3bf839ec736d970869247aedc055b5e1382c5b4a1e2853af05e901568642f6f4
-CALL WSProc_ConsumeSessionToken("5a7a0cce8f5a58cd37ce4977fed3ed8145a689d1c725981908c6449d1c17267d", "remote addr");
+#CALL WSProc_ConsumeSessionToken("5a7a0cce8f5a58cd37ce4977fed3ed8145a689d1c725981908c6449d1c17267d", "remote addr");
 #SELECT * FROM useraccounts JOIN sessions WHERE user_id = session_owner AND session_active = TRUE;
-#SELECT * FROM useraccounts AS t1;
-	#	JOIN sessions AS t2 
-	#WHERE t1.user_id = t2.session_owner AND t2.session_token = "c7d688aeb0fea941a29835142aa7f526e2a37a478d98dcbae3fa30c4aa4c4265" AND t2.session_active = TRUE AND t2.session_expirationDate > NOW();
+
 #SELECT * FROM sessions;
 
 #SELECT * FROM sessions AS t1 JOIN useraccounts AS t2 WHERE t1.session_owner = t2.user_id AND t1.session_expirationDate > NOW();
