@@ -1,5 +1,4 @@
 CREATE DEFINER=`root`@`localhost` PROCEDURE `WSProc_InsertUserAccount`(IN myuser VARCHAR(18), IN myhash BLOB, IN myemail VARCHAR(128))
-    DETERMINISTIC
 BEGIN
 	# inserts a new user if @myuser and @myemail are not already in use
     # @param myuser: becomes useraccounts.username

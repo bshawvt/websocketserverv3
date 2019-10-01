@@ -1,4 +1,5 @@
 CREATE DEFINER=`root`@`localhost` PROCEDURE `WSProc_ConsumeRecoveryToken`(IN mytoken BLOB, IN myemail VARCHAR(128), IN myhash BLOB)
+    DETERMINISTIC
 BEGIN
 	
     
