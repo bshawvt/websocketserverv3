@@ -61,4 +61,7 @@ public class Client {
 			this.connection.close(Server.Reason.None, this.reason);
 		}
 	}
+	public void sendMessage(String msg) {
+		this.connection.send(msg);
+	}
 }

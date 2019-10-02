@@ -28,6 +28,7 @@ import org.java_websocket.server.WebSocketServer;
 import Dtos.AuthenticationDto;
 import database.DatabaseThreadMessage;
 import main.Config;
+import server.NetworkBlob.MessageBlob;
 import threads.Threads;
 
 public class Server extends WebSocketServer {
@@ -110,8 +111,16 @@ public class Server extends WebSocketServer {
 		// filter out messages from users who aren't authenticated
 		if (client != null && client.isReady()) {
 			System.out.println("Server: todo: received message from authenticated user:");
-			System.out.println(message);
-			
+			NetworkBlob blobs = new NetworkMessage().deserialize(message);
+			if (blobs.getSize() > 0) {
+				MessageBlob msg = blobs.getMessages().get(0);
+				int type = blobs.getMessages().get(0).getType();
+				if (type == 0) {
+					System.out.println("user says: " + msg.getMessage());
+				}
+				
+			}
+						
 			return;
 		}
 		// all other messages are from unauthorized users and should probably be purged immediately
@@ -301,7 +310,10 @@ public class Server extends WebSocketServer {
 		System.out.println("... " + dto.getUserAccount().getUsername() + " has authenticated!");
 		client.setAuthenticationDto(dto);
 		client.setReady(true);
+		
 		// done, tell client to proceed to the next step
 		client.getConnection().send("Hello " + client.getAuthenticationDto().getUserAccount().getUsername());
+		//client.sendMessage(new NetworkMessage().serialize(new NetworkBlob().s));	
+		
 	}
 }

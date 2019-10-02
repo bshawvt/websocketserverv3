@@ -1,4 +1,5 @@
 SELECT * FROM useraccounts;
+UPDATE useraccounts SET locked=0 WHERE username='testuser0';
 #CALL WSProc_GenerateSessionToken("testuser0", "2", "localhost");
 #CALL WSProc_InsertUserAccount("testuser3", "password", "n/a0");
 
