@@ -1,24 +1,11 @@
 package server;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.ListIterator;
-
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -27,8 +14,8 @@ import org.java_websocket.server.WebSocketServer;
 
 import Dtos.AuthenticationDto;
 import database.DatabaseThreadMessage;
+import json.NetworkBlob;
 import main.Config;
-import server.NetworkBlob.MessageBlob;
 import threads.Threads;
 
 public class Server extends WebSocketServer {
@@ -111,15 +98,21 @@ public class Server extends WebSocketServer {
 		// filter out messages from users who aren't authenticated
 		if (client != null && client.isReady()) {
 			System.out.println("Server: todo: received message from authenticated user:");
-			NetworkBlob blobs = new NetworkMessage().deserialize(message);
-			if (blobs.getSize() > 0) {
-				MessageBlob msg = blobs.getMessages().get(0);
-				int type = blobs.getMessages().get(0).getType();
-				if (type == 0) {
-					System.out.println("user says: " + msg.getMessage());
-				}
-				
-			}
+			
+			NetworkMessage netMessage = new NetworkMessage(client);//.deserialize(message);
+			NetworkBlob blob = netMessage.deserialize(message);
+			
+			//if (blobs.getSize() > 0) {
+				//MessageBlob blob = blobs.getMessages().get(0);
+				System.out.println("bp");
+				/*if (blob.getMessage() instanceof ChatBlob) {
+					ChatBlob msg = (ChatBlob) blob.getMessage();
+					System.out.println(client.getAuthenticationDto().getUserAccount().getUsername() + ": " + msg.getMessage());
+				}*/			
+			/*}
+			else {
+				System.out.println("Server: onMessage: received a network blob with message size 0");
+			}*/
 						
 			return;
 		}
