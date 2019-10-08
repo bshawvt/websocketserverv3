@@ -1,7 +1,7 @@
 package main;
 
 public class Config {
-	public static String ClientVersion = "923191400"; // used during client authentication 
+	public static String ClientVersion = "1008190300"; // used during client authentication 
 	public static int ServerPort;// game port clients connect through
 	public static String DatabaseAddress; // sql server address
 	public static String DatabaseUsername;

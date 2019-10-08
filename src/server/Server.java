@@ -28,17 +28,20 @@ public class Server extends WebSocketServer {
 		public static final int AccountInUse = 4104;
 	}
 	
-	private ArrayList<Client> clients;
-	private ArrayList<Client> clientQueue;
-	private long currentIndex = 0; // becomes client ID
+	private Clients clients;
+	//private ArrayList<Client> clients;
+	//private ArrayList<Client> clientQueue;
+	private long clientCounter = 0; // becomes client ID
 	
 	public Server() {
 		super(new InetSocketAddress(Config.ServerPort));
 		this.setReuseAddr(true);
 		this.setTcpNoDelay(true);
 		
-		clients = new ArrayList<Client>();
-		clientQueue = new ArrayList<Client>();
+		clients = new Clients();
+		
+		//clients = new ArrayList<Client>();
+		//clientQueue = new ArrayList<Client>();
 		
 		if (Config.UseSSL)
 			try {
@@ -81,7 +84,7 @@ public class Server extends WebSocketServer {
 	public void onClose(WebSocket connection, int code, String message, boolean remote) {
 		System.out.println(connection + " has closed their connection, code: " + code + ", message: " + message);
 		// remove connection from clients list
-		Client client = getClient(connection);
+		Client client = clients.getClient(connection);
 		if (client != null) { // clients are only prepared when they have valid auth tokens
 			if (client.isReady()) { // do something special if the user was authenticated
 				//Threads.getSimulatorQueue().offer();
@@ -94,13 +97,14 @@ public class Server extends WebSocketServer {
 	@Override
 	public void onMessage(WebSocket connection, String message) {
 		System.out.println(connection + " sent: " + message);
-		Client client = getClient(connection);
+		Client client = clients.getClient(connection);
 		// filter out messages from users who aren't authenticated
 		if (client != null && client.isReady()) {
 			System.out.println("Server: todo: received message from authenticated user:");
 			
 			NetworkMessage netMessage = new NetworkMessage(client);//.deserialize(message);
 			NetworkBlob blob = netMessage.deserialize(message);
+			//if (blobs.get
 			
 			//if (blobs.getSize() > 0) {
 				//MessageBlob blob = blobs.getMessages().get(0);
@@ -140,7 +144,7 @@ public class Server extends WebSocketServer {
 			}
 			else if (clientVersion.compareTo(Config.ClientVersion) == 0) {
 				// prepare server for connection
-				Client client = addClient(connection);
+				Client client = clients.addClient(connection);
 				// create dto with token and new clients id to identify later
 				AuthenticationDto dto = new AuthenticationDto();
 				dto.setToken(token);
@@ -165,113 +169,11 @@ public class Server extends WebSocketServer {
 		}
 	}
 	
-	public Client addClient(WebSocket connection) {
-		currentIndex++;
-		connection.setAttachment(currentIndex);
-		Client client = new Client(connection, currentIndex);
-		clientQueue.add(client);
-		return client;
-	}
-	public void flush() {
-		
-		long now = (new Date()).getTime();
-		
-		// remove clients from list
-		Iterator<Client> it = clients.iterator();
-		while(it.hasNext()) {
-			Client client = it.next();
-			if (client.isRemoved()) {
-				System.out.println("Server: flush: removed client with id " + client.getId());
-				if (client.isReady()) {
-					System.out.println("... " + client.getAuthenticationDto().getUserAccount().getUsername() + " has disconnected!");
-				}
-				client.disconnect();
-				/*if (!client.getConnection().isClosed()) {
-					client.getConnection().close(Reason.None, "Server dropped connection");
-				}*/
-				it.remove();
-				System.out.println("... clients list size: " + clients.size());
-			}
-			// clean up stray connections
-			else if ((now > client.getAuthStartTime() +  5000) && !client.isReady()) {
-				System.out.println("Server: flush: removed client: client did not authenticate in time");
-				client.disconnect();
-				/*if (!client.getConnection().isClosed()) {
-					client.getConnection().close(Reason.FailedAuthStep, "You did not authenticate");
-				}*/
-				it.remove();
-				System.out.println("... clients list size: " + clients.size());
-			}
-		}
-		
-		// merge new connections into client list
-		Iterator<Client> qit = clientQueue.iterator();
-		while(qit.hasNext()) {
-			Client client = qit.next();
-			System.out.println("Server: added new client with id " + client.getId());
-			clients.add(client);
-			System.out.println("... clients list size: " + clients.size());
-		}
-		clientQueue.clear();
-	}
-	
-	public Client getClient(WebSocket connection) {
-		System.out.println("Server: getClient: getting client from connection: ");
-		
-		// server never created a client for this connection
-		if (connection.<Integer>getAttachment() == null) return null;
-		
-		Iterator<Client> it = clients.iterator();
-		while(it.hasNext()) {
-			Client client = it.next();
-			System.out.println("... current: " + client.getId());
-			if (client.getId() == connection.<Long>getAttachment()) {
-				System.out.println("... found!");
-				return client;
-			}
-			/*if (connection.getResourceDescriptor().equals("/" + client.getSessionToken())) {
-				return client;
-			}*/
-		}
-		return null;
-	}
-	public Client getClient(long id) {
-		System.out.println("Server: getClient: getting client from id: ");
-		
-		Iterator<Client> it = clients.iterator();
-		while(it.hasNext()) {
-			Client client = it.next();
-			System.out.println("... current: " + client.getId());
-			if (client.getId() == id) {
-				System.out.println("... found!");
-				return client;
-			}
-		}
-		return null;
-	}
-	public Client getClient(String username) {
-		System.out.println("Server: getClient: getting client from username: ");
-		
-		Iterator<Client> it = clients.iterator();
-		while(it.hasNext()) {
-			Client client = it.next();
-			if (client.getAuthenticationDto() == null) continue; // some times the dto is not set, meaning the server has never received an authentication from the database
-			String currentName = client.getAuthenticationDto().getUserAccount().getUsername(); 
-			System.out.println("... current: " + currentName);
-			if (currentName.equals(username)) {
-				System.out.println("... found!");
-				return client;
-			}
-		}
-		System.out.println("... client by username " + username + " not found");
-		return null;
-	}
-	
 	public void authenticateClient(AuthenticationDto dto) {
 		
 		System.out.println("Server: authenticating connection:");
 				
-		Client client = getClient(dto.getOwner());
+		Client client = clients.getClient(dto.getOwner());
 		if (client == null) { // this should never happen
 			System.out.println("... MAJOR ERROR! could not authenticate client because it was never tracked!");
 			return;
@@ -294,7 +196,7 @@ public class Server extends WebSocketServer {
 		}
 		
 		// check if the account is in use by any of the clients before proceeding
-		if (getClient(dto.getUserAccount().getUsername()) != null) {
+		if (clients.getClient(dto.getUserAccount().getUsername()) != null) {
 			System.out.println("... " + dto.getUserAccount().getUsername() + " already in use!");
 			client.setRemoved(true, "Account in use");
 			//client.getConnection().close(Reason.AccountInUse, "Account in use");
@@ -304,9 +206,17 @@ public class Server extends WebSocketServer {
 		client.setAuthenticationDto(dto);
 		client.setReady(true);
 		
+		//
+		clients.authenticateClient(client);
+		
 		// done, tell client to proceed to the next step
-		client.getConnection().send("Hello " + client.getAuthenticationDto().getUserAccount().getUsername());
+		//client.getConnection().send("Hello " + client.getAuthenticationDto().getUserAccount().getUsername());
+		clients.getPlayer(client.getId()).sendMessage("Hello " + client.getAuthenticationDto().getUserAccount().getUsername());
 		//client.sendMessage(new NetworkMessage().serialize(new NetworkBlob().s));	
 		
+	}
+	
+	public void flush() {
+		clients.flush();
 	}
 }
