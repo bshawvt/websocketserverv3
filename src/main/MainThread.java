@@ -6,6 +6,7 @@ import database.DatabaseThread;
 import database.DatabaseThreadMessage;
 import server.ServerThread;
 import server.ServerThreadMessage;
+import simulator.SimulatorThread;
 import simulator.SimulatorThreadMessage;
 import threads.Threads;
 
@@ -27,9 +28,9 @@ public class MainThread {
 		database.setDaemon(false);
 		database.start();
 		
-		/*Thread simulator = new Thread(new SimulatorThread(), "Simulator-0");
+		Thread simulator = new Thread(new SimulatorThread(), "Simulator-0");
 		simulator.setDaemon(false);
-		simulator.start();*/
+		simulator.start();
 		
 		
 		Scanner in = new Scanner(System.in);
@@ -51,7 +52,7 @@ public class MainThread {
 				}
 				else if (split[0].equals("sim")) {
 					System.out.println("todo: sim command");
-					//Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Main, SimulatorThreadMessage.Type.None, split[1]));
+					Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Main, SimulatorThreadMessage.Type.None, split[1]));
 				}
 				else if (split[0].equals("db")) {
 					//System.out.println("todo: db command");
