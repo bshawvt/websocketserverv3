@@ -112,7 +112,7 @@ public class Server extends WebSocketServer {
 			AuthenticationDto authDto = client.getAuthenticationDto(); 
 			for(int i = 0; i < netBlob.getMessages().size(); i++) {
 				MessageBlob messageBlob = netBlob.getMessages().get(i);
-				
+				if (messageBlob == null) continue;
 				
 				int type = messageBlob.getType();
 				@SuppressWarnings({ "unchecked", "unused" })
