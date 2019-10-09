@@ -28,7 +28,7 @@ public class SimulatorThread implements Runnable {
 			try {
 				Thread.sleep(1);
 				
-				flushThreadMessages();
+				doThreadMessageFlush();
 				
 				dt = System.nanoTime()/1000000; // dt in milliseconds
 				while(stepTime < dt) {
@@ -48,54 +48,49 @@ public class SimulatorThread implements Runnable {
 		}
 	}
 	
-	private void flushThreadMessages() {
+	private void doThreadMessageFlush() {
 		SimulatorThreadMessage msg = null;
-		try {
-			while ((msg = Threads.getSimulatorQueue().take()) != null) {
-				int type = msg.getType();
-				int from = msg.getFrom();
-				
-				switch (type) {
-					case SimulatorThreadMessage.Type.None: {
-						if (from == Threads.Main) {
-							String command = msg.getCommand();
-							if (command != null) {
-								System.out.println("SimulatorThread: received command from server");
-								System.out.println("command: " + command);
-							}
+		while ((msg = Threads.getSimulatorQueue().poll()) != null) {
+			int type = msg.getType();
+			int from = msg.getFrom();
+			
+			switch (type) {
+				case SimulatorThreadMessage.Type.None: {
+					if (from == Threads.Main) {
+						String command = msg.getCommand();
+						if (command != null) {
+							System.out.println("SimulatorThread: received command from server");
+							System.out.println("command: " + command);
 						}
-						break;
 					}
-					case SimulatorThreadMessage.Type.Update: {
-						System.out.println("SimulatorThread: received an Update event");
-						if (from == Threads.Server) {
-							System.out.println("... from Server!");
-						}
-						break;
-					}
-					case SimulatorThreadMessage.Type.Add: {
-						System.out.println("SimulatorThread: received an Add event");
-						if (from == Threads.Server) {
-							System.out.println("... from Server!");
-						}
-						break;
-					}
-					case SimulatorThreadMessage.Type.Remove: {
-						System.out.println("SimulatorThread: received an Remove event");
-						if (from == Threads.Server) {
-							System.out.println("... from Server!");
-						}
-						break;
-					}
-					default: {
-						break;
-					}
-				
+					break;
 				}
+				case SimulatorThreadMessage.Type.Update: {
+					System.out.println("SimulatorThread: received an Update event");
+					if (from == Threads.Server) {
+						System.out.println("... from Server!");
+					}
+					break;
+				}
+				case SimulatorThreadMessage.Type.Add: {
+					System.out.println("SimulatorThread: received an Add event");
+					if (from == Threads.Server) {
+						System.out.println("... from Server!");
+					}
+					break;
+				}
+				case SimulatorThreadMessage.Type.Remove: {
+					System.out.println("SimulatorThread: received an Remove event");
+					if (from == Threads.Server) {
+						System.out.println("... from Server!");
+					}
+					break;
+				}
+				default: {
+					break;
+				}
+			
 			}
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 

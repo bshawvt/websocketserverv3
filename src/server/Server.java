@@ -12,8 +12,12 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
 
+import com.sun.corba.se.impl.orb.ParserTable.TestAcceptor1;
+
 import Dtos.AuthenticationDto;
 import database.DatabaseThreadMessage;
+import json.ChatBlob;
+import json.MessageBlob;
 import json.NetworkBlob;
 import main.Config;
 import threads.Threads;
@@ -103,21 +107,38 @@ public class Server extends WebSocketServer {
 			System.out.println("Server: todo: received message from authenticated user:");
 			
 			NetworkMessage netMessage = new NetworkMessage(client);//.deserialize(message);
-			NetworkBlob blob = netMessage.deserialize(message);
-			//if (blobs.get
+			NetworkBlob netBlob = netMessage.deserialize(message);
 			
-			//if (blobs.getSize() > 0) {
-				//MessageBlob blob = blobs.getMessages().get(0);
-				System.out.println("bp");
-				/*if (blob.getMessage() instanceof ChatBlob) {
-					ChatBlob msg = (ChatBlob) blob.getMessage();
-					System.out.println(client.getAuthenticationDto().getUserAccount().getUsername() + ": " + msg.getMessage());
-				}*/			
-			/*}
-			else {
-				System.out.println("Server: onMessage: received a network blob with message size 0");
-			}*/
-						
+			AuthenticationDto authDto = client.getAuthenticationDto(); 
+			for(int i = 0; i < netBlob.getMessages().size(); i++) {
+				MessageBlob messageBlob = netBlob.getMessages().get(i);
+				
+				
+				int type = messageBlob.getType();
+				@SuppressWarnings({ "unchecked", "unused" })
+				Class<? extends MessageBlob> blobType = MessageBlob.types[messageBlob.getType()];
+				if (type > 0 && type < MessageBlob.types.length) {
+					blobType = MessageBlob.types[type];
+					
+					
+					/*switch (messageBlob.getType()) {
+						case MessageBlob.Type.None: {
+							System.out.println("Server: onMessage: received a junk message!");
+							break;
+						}
+						case MessageBlob.Type.ChatBlob: {
+							//Class<? extends MessageBlob> chatBlob = (ChatBlob) messageBlob; 
+							System.out.println("Server: " + authDto.getUserAccount().getUsername() + ": " + "");
+							break;
+						}
+						default: {
+							break;
+						}
+					}*/
+				}
+				
+				
+			}
 			return;
 		}
 		// all other messages are from unauthorized users and should probably be purged immediately

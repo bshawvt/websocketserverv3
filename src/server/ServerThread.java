@@ -7,23 +7,30 @@ import threads.Threads;
 
 public class ServerThread implements Runnable {
 	
+	private Server server;
 	public ServerThread() {
 		System.out.println("ServerThread: Hello world!");
+		this.server = new Server();
 	}
 
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		Server server;
+		//Server server;
 
 		if (Config.UseSSL) {
 			System.out.println("ServerThread has set Config.ServerPort to 443");
 			Config.ServerPort = 443;
 		}
-		server = new Server();
+		//server = new Server();
 		server.start();
 		
 		// flush thread messages
+		doThreadMessageFlush();
+
+	}
+	
+	public void doThreadMessageFlush() {
 		ServerThreadMessage msg = null;
 		try {
 			while((msg = Threads.getServerQueue().take()) != null) {				
@@ -60,11 +67,12 @@ public class ServerThread implements Runnable {
 					}
 				}
 				// flush connections
+				// todo: this is sooo bad
 				server.flush();				
 			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
+		}
 	}
 }

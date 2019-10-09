@@ -13,12 +13,16 @@ public class MessageBlobDeserializer implements JsonDeserializer<MessageBlob> {
 	@Override
 	public MessageBlob deserialize(JsonElement json, Type arg1, JsonDeserializationContext ctx)
 			throws JsonParseException {
+		
+		if (!json.getAsJsonObject().has("type")) 
+			return null;//throw new IllegalArgumentException("MessageBlobDeserializer: blob contains no type");
 		int type = json.getAsJsonObject().get("type").getAsInt(); 
 		Class<? extends MessageBlob> blobType;
 		if (type > 0 && type < MessageBlob.types.length) {
 			blobType = MessageBlob.types[type];
 			return ctx.deserialize(json, blobType);// new MessageBlobs(arg0.getAsJsonPrimitive().getAsString());
 		}
+		
 		return null;//throw new IllegalArgumentException("MessageBlobDeserializer: unknown type " + type);
 	}
 }
