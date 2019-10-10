@@ -1,7 +1,6 @@
 package database;
 
 import database.DatabaseThreadMessage;
-import simulator.SimulatorThreadMessage;
 import threads.Threads;
 
 public class DatabaseThread implements Runnable {

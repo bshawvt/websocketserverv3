@@ -9,9 +9,9 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
-import json.MessageBlob;
-import json.MessageBlobDeserializer;
-import json.NetworkBlob;
+import server.blobs.MessageBlob;
+import server.blobs.MessageBlobDeserializer;
+import server.blobs.NetworkBlob;
 
 
 

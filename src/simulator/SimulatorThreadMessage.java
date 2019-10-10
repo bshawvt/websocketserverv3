@@ -1,6 +1,5 @@
 package simulator;
 
-import json.ChatBlob;
 import threads.Threads;
 
 public class SimulatorThreadMessage {

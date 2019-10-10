@@ -1,8 +1,5 @@
 package server;
 
-import Dtos.AuthenticationDto;
-import database.DatabaseThreadMessage;
-import main.Config;
 import threads.Threads;
 
 public class ServerThread implements Runnable {
@@ -18,10 +15,10 @@ public class ServerThread implements Runnable {
 		// TODO Auto-generated method stub
 		//Server server;
 
-		if (Config.UseSSL) {
+		/*if (Config.UseSSL) {
 			System.out.println("ServerThread has set Config.ServerPort to 443");
 			Config.ServerPort = 443;
-		}
+		}*/
 		//server = new Server();
 		server.start();
 		

@@ -1,4 +1,4 @@
-package json;
+package server.blobs;
 
 import com.google.gson.annotations.SerializedName;
 

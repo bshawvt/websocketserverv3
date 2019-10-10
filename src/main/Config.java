@@ -8,7 +8,8 @@ public class Config {
 	public static String DatabasePassword;
 	public static String DatabaseSchema;
 	public static boolean DatabaseReporting = false; // server write to status table
-	public static boolean UseSSL = false;
+	public static boolean UseSSL = true;
+	 
 	
 	public Config() {
 		ServerPort = UseSSL==true ? 443:29980;

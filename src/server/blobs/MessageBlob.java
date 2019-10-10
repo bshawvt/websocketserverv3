@@ -1,4 +1,4 @@
-package json;
+package server.blobs;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -8,8 +8,9 @@ public abstract class MessageBlob {
 		public static final int ChatBlob = 1;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	final static public Class[] types = {
-		Object.class, // type: 0 // should never be 0
+		DefaultBlob.class, // type: 0 // should never be 0
 		ChatBlob.class,  // type: 1
 	};
 	

@@ -1,13 +1,14 @@
 package simulator;
 
 import threads.Threads;
+import tools.Profiler;
 
 public class SimulatorThread implements Runnable {
 	
 	private boolean isRunning;
 	private double start;
-	private double stepTime;
 	private double dt;
+	private double stepTime;
 	
 	private final double Timestep = 1000/30;
 	
@@ -15,6 +16,9 @@ public class SimulatorThread implements Runnable {
 		this.isRunning = false;
 		System.out.println("SimulatorThread: Hello world!");
 		
+		this.start = System.nanoTime()/1000000;
+		this.dt = this.start;
+		this.stepTime = this.start;
 		
 	}
 	
@@ -30,16 +34,18 @@ public class SimulatorThread implements Runnable {
 				
 				doThreadMessageFlush();
 				
-				dt = System.nanoTime()/1000000; // dt in milliseconds
-				while(stepTime < dt) {
-					stepTime += Timestep;
-					
+				stepTime = System.nanoTime()/1000000; // dt in milliseconds
+				
+				//Profiler sim = new Profiler();
+				//sim.start();				
+				
+				while(dt < stepTime) {
+					dt += Timestep;
+					//System.out.println("blip");
 					// step simulation
 					
 					
-				}
-				
-				
+				}				
 				
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

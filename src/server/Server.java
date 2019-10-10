@@ -16,10 +16,10 @@ import com.sun.corba.se.impl.orb.ParserTable.TestAcceptor1;
 
 import Dtos.AuthenticationDto;
 import database.DatabaseThreadMessage;
-import json.ChatBlob;
-import json.MessageBlob;
-import json.NetworkBlob;
 import main.Config;
+import server.blobs.ChatBlob;
+import server.blobs.MessageBlob;
+import server.blobs.NetworkBlob;
 import threads.Threads;
 
 public class Server extends WebSocketServer {
@@ -35,7 +35,7 @@ public class Server extends WebSocketServer {
 	private Clients clients;
 	//private ArrayList<Client> clients;
 	//private ArrayList<Client> clientQueue;
-	private long clientCounter = 0; // becomes client ID
+	//private long clientCounter = 0; // becomes client ID
 	
 	public Server() {
 		super(new InetSocketAddress(Config.ServerPort));
@@ -53,9 +53,9 @@ public class Server extends WebSocketServer {
 				this.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(new SSL().getSSLContextFromLetsEncrypt()));
 			}
 			finally {
-				
+				System.out.println("Server: bound to port " + Config.ServerPort);
 			}
-		System.out.println("Server: bound to port " + Config.ServerPort);
+		
 	}
 	
 	@Override
@@ -98,6 +98,7 @@ public class Server extends WebSocketServer {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onMessage(WebSocket connection, String message) {
 		System.out.println(connection + " sent: " + message);
@@ -106,35 +107,33 @@ public class Server extends WebSocketServer {
 		if (client != null && client.isReady()) {
 			System.out.println("Server: todo: received message from authenticated user:");
 			
-			NetworkMessage netMessage = new NetworkMessage(client);//.deserialize(message);
+			NetworkMessage netMessage = new NetworkMessage(client);
 			NetworkBlob netBlob = netMessage.deserialize(message);
 			
 			AuthenticationDto authDto = client.getAuthenticationDto(); 
 			for(int i = 0; i < netBlob.getMessages().size(); i++) {
+
 				MessageBlob messageBlob = netBlob.getMessages().get(i);
-				if (messageBlob == null) continue;
+				if (messageBlob == null) continue; // this should never happen but just in case
 				
 				int type = messageBlob.getType();
-				@SuppressWarnings({ "unchecked", "unused" })
-				Class<? extends MessageBlob> blobType = MessageBlob.types[messageBlob.getType()];
 				if (type > 0 && type < MessageBlob.types.length) {
-					blobType = MessageBlob.types[type];
-					
-					
-					/*switch (messageBlob.getType()) {
-						case MessageBlob.Type.None: {
-							System.out.println("Server: onMessage: received a junk message!");
-							break;
-						}
+					Class<? extends MessageBlob> blobType = MessageBlob.types[messageBlob.getType()];
+
+					switch(type) {
 						case MessageBlob.Type.ChatBlob: {
-							//Class<? extends MessageBlob> chatBlob = (ChatBlob) messageBlob; 
-							System.out.println("Server: " + authDto.getUserAccount().getUsername() + ": " + "");
+							//new ChatMessage((ChatBlob) messageBlob);
+							ChatBlob chat = (ChatBlob) messageBlob;
+							if (chat.getChannelId() == 0) {
+								this.broadcast(authDto.getUserAccount().getUsername() + ": " + chat.getMessage());
+							}
 							break;
 						}
-						default: {
+						default: { // should never happen
+							System.out.println("junk message blob");
 							break;
 						}
-					}*/
+					}
 				}
 				
 				
