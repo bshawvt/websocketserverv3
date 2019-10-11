@@ -39,7 +39,7 @@ public class ServerThread implements Runnable {
 						System.out.println("ServerThread: ServerQueue: received no event");
 						if (from == Threads.Main) {
 							System.out.println("... from Main thread!");
-							//server.command(msg.getCommand());
+							processCommand(msg.getCommand());
 						}
 						break;
 					}
@@ -64,12 +64,25 @@ public class ServerThread implements Runnable {
 					}
 				}
 				// flush connections
-				// todo: this is sooo bad
+				// todo: this is sooo bad 
 				server.flush();				
 			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	private void processCommand(String command) {
+		if (command.equals("help")) {
+			System.out.println("flush <frames> - send network frames");
+		}
+		else if (command.equals("flush frames")) {
+			System.out.println("doing server.flush() ... ");
+			server.flush();
+		}
+		else {
+			System.out.println("ServerThread: processCommand: unknown command:\n... " + command);
 		}
 	}
 }

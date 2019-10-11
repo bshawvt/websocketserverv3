@@ -5,6 +5,8 @@ import java.util.Date;
 import org.java_websocket.WebSocket;
 
 import Dtos.AuthenticationDto;
+import server.blobs.MessageBlob;
+import server.blobs.NetworkBlob;
 
 public class Client {
 	
@@ -16,15 +18,20 @@ public class Client {
 	private AuthenticationDto authenticationDto = null;
 	private String reason = ""; // removed reason
 	
+	private NetworkBlob frame;
+	
 	public Client() {
 		this.authStartTime = (new Date()).getTime();
+		this.frame = new NetworkBlob();
 	}
 	public Client(WebSocket connection, long id) {
 		this.authStartTime = (new Date()).getTime();
 		this.connection = connection; 
 		this.ready = false;
 		this.id = id;
+		this.frame = new NetworkBlob();
 	}
+	
 	public long getAuthStartTime() {
 		return this.authStartTime;
 	}
@@ -61,7 +68,21 @@ public class Client {
 			this.connection.close(Server.Reason.None, this.reason);
 		}
 	}
-	public void sendMessage(String msg) {
-		this.connection.send(msg);
+	public void addFrame(MessageBlob message) {
+		this.frame.getMessages().add(message);
+		//this.connection.send(message);
 	}
+	
+	public void sendFrame() {
+		if (this.frame.getMessages().size() > 0) {
+			System.err.println("Client: sendFrame: send " + this.frame.getMessages().size());
+			this.connection.send(new NetworkMessage().serialize(this.frame));
+			clearFrame();
+		}
+	}
+	
+	public void clearFrame() {
+		this.frame = new NetworkBlob();
+	}
+	
 }

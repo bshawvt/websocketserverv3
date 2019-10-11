@@ -20,6 +20,7 @@ import main.Config;
 import server.blobs.ChatBlob;
 import server.blobs.MessageBlob;
 import server.blobs.NetworkBlob;
+import server.chat.ChatManager;
 import threads.Threads;
 
 public class Server extends WebSocketServer {
@@ -32,7 +33,8 @@ public class Server extends WebSocketServer {
 		public static final int AccountInUse = 4104;
 	}
 	
-	private Clients clients;
+	public Clients clients;
+	private ChatManager chatManager;
 	//private ArrayList<Client> clients;
 	//private ArrayList<Client> clientQueue;
 	//private long clientCounter = 0; // becomes client ID
@@ -42,7 +44,9 @@ public class Server extends WebSocketServer {
 		this.setReuseAddr(true);
 		this.setTcpNoDelay(true);
 		
-		clients = new Clients();
+		this.chatManager = new ChatManager(this);
+		this.clients = new Clients();
+		
 		
 		//clients = new ArrayList<Client>();
 		//clientQueue = new ArrayList<Client>();
@@ -122,11 +126,11 @@ public class Server extends WebSocketServer {
 
 					switch(type) {
 						case MessageBlob.Type.ChatBlob: {
-							//new ChatMessage((ChatBlob) messageBlob);
-							ChatBlob chat = (ChatBlob) messageBlob;
+							chatManager.sort((ChatBlob) messageBlob);
+							/*ChatBlob chat = (ChatBlob) messageBlob;
 							if (chat.getChannelId() == 0) {
 								this.broadcast(authDto.getUserAccount().getUsername() + ": " + chat.getMessage());
-							}
+							}*/
 							break;
 						}
 						default: { // should never happen
@@ -231,7 +235,9 @@ public class Server extends WebSocketServer {
 		
 		// done, tell client to proceed to the next step
 		//client.getConnection().send("Hello " + client.getAuthenticationDto().getUserAccount().getUsername());
-		clients.getPlayer(client.getId()).sendMessage("Hello " + client.getAuthenticationDto().getUserAccount().getUsername());
+		//clients.getPlayer(client.getId()).addFrame(new ChatBlob(0, "Hello " + client.getAuthenticationDto().getUserAccount().getUsername()));
+		client.addFrame(new ChatBlob(0, "Hello " + client.getAuthenticationDto().getUserAccount().getUsername()));
+		clients.flush();
 		//client.sendMessage(new NetworkMessage().serialize(new NetworkBlob().s));	
 		
 	}
@@ -239,4 +245,6 @@ public class Server extends WebSocketServer {
 	public void flush() {
 		clients.flush();
 	}
+
+
 }

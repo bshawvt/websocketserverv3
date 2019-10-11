@@ -21,8 +21,6 @@ public class NetworkMessage {
 	 */
 	private GsonBuilder builder = null;
 	private Gson gson = null;
-	private NetworkBlob blob = null;
-	private Client client = null;
 	public NetworkMessage() {
 		this.builder = new GsonBuilder();
 		this.gson = builder.create();
@@ -33,7 +31,6 @@ public class NetworkMessage {
 		this.builder = new GsonBuilder();
 		builder.registerTypeAdapter(MessageBlob.class, new MessageBlobDeserializer());
 		this.gson = builder.create();
-		this.client = client;
 	}
 	public NetworkBlob deserialize(String data) {
 		try {
@@ -51,8 +48,7 @@ public class NetworkMessage {
 	}
 	
 	public String serialize(NetworkBlob blob) {
-		//return gson.toJson(blob);
-		return "";
+		return gson.toJson(blob);
 	}
 	
 	

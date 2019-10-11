@@ -15,7 +15,7 @@ public abstract class MessageBlob {
 	};
 	
 	@SerializedName("type")
-	private int type;
+	protected int type;
 	public int getType() { return this.type; }
 	
 }

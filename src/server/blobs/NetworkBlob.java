@@ -14,4 +14,9 @@ public class NetworkBlob {
 	private ArrayList<MessageBlob> messages;
 	public ArrayList<MessageBlob> getMessages() { return this.messages; };
 	
+	public NetworkBlob() {
+		this.size = 0;
+		this.messages = new ArrayList<>();
+	}
+	
 }
