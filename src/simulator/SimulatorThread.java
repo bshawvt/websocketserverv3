@@ -32,7 +32,7 @@ public class SimulatorThread implements Runnable {
 			try {
 				Thread.sleep(1);
 				
-				doThreadMessageFlush();
+				flushThreadMessages();
 				
 				stepTime = System.nanoTime()/1000000; // dt in milliseconds
 				
@@ -54,7 +54,7 @@ public class SimulatorThread implements Runnable {
 		}
 	}
 	
-	private void doThreadMessageFlush() {
+	private void flushThreadMessages() {
 		SimulatorThreadMessage msg = null;
 		while ((msg = Threads.getSimulatorQueue().poll()) != null) {
 			int type = msg.getType();

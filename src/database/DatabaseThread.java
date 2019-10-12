@@ -13,36 +13,10 @@ public class DatabaseThread implements Runnable {
 	
 	@Override
 	public void run() {
-		doThreadMessageFlush();
-		/*DatabaseThreadMessage msg = null;
-		try {
-			while((msg = Threads.getDatabaseQueue().take()) != null) {
-				int from = msg.getFrom();
-				if (from == Threads.Server) {
-					if (msg.getType() == DatabaseThreadMessage.Type.Authentication) {
-						System.out.println("DatabaseThread: received auth from server");
-						db.consumeSessionToken(msg.getAuthenticationDto());
-					}
-				}
-				else if (from == Threads.Simulator) {
-					
-				}
-				else if (from == Threads.Main) {
-					if (msg.getCommand().equals("help")) {
-						System.out.println("DatabaseThread: you have been helped!");
-					}
-					else {
-						System.out.println("DatabaseThread: unknown command");
-					}
-				}
-			}
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+		doThreadMessageFlushLoop();
 	}
 	
-	public void doThreadMessageFlush() {
+	public void doThreadMessageFlushLoop() {
 		DatabaseThreadMessage msg = null;
 		try {
 			while ((msg = Threads.getDatabaseQueue().take()) != null) {

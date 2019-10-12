@@ -13,20 +13,19 @@ public class ChatManager {
 	public ChatManager(Server server) {
 		this.server = server;
 		this.channels = new HashMap<>();
-		this.channels.put( 0, new ChatChannel("global"));
+		this.channels.put( 0, new ChatChannel("global") );
 	}
+	
 	public void sort(ChatBlob blob) {
 		int channelId = blob.getChannelId();
 		ChatChannel channel = this.channels.get(channelId);
-		if (channelId == 0)
+		if (channelId == 0) // global messages
 			server.clients.playerTable.forEach((k, v) -> {
 				v.addFrame(blob);
 			});
-		else if (channel != null)
-			for (long id : channel.players()) {
+		else if (channel != null) // private channel messages
+			for (long id : channel.getActiveUsers()) {
 				server.clients.getPlayer(id).addFrame(blob);
 			}
-	
-		
 	}
 }

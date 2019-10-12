@@ -8,24 +8,44 @@ public class Config {
 	public static String DatabasePassword;
 	public static String DatabaseSchema;
 	public static boolean DatabaseReporting = false; // server write to status table
-	public static boolean UseSSL = true;
+	public static final boolean UseSSL = true;
 	 
 	
 	public Config() {
-		ServerPort = UseSSL==true ? 443:29980;
+		ServerPort = 29980;//UseSSL==true ? 443:29980;
 		DatabaseSchema = "myschema";
-		DatabaseAddress = "jdbc:mysql://localhost:3306/" + DatabaseSchema + "?useSSL=false";
+		DatabaseAddress = "localhost:3306";//"jdbc:mysql://localhost:3306/" + DatabaseSchema + "?useSSL=false";
 		DatabaseUsername = "dbuser";
 		DatabasePassword = "dbpassword";
 		
 	}
 	public Config(String[] args) {
-		ServerPort = Integer.parseInt(args[3]);
-		DatabaseSchema = args[4];
-		DatabaseAddress = "jdbc:mysql://" + args[2] + "/" + DatabaseSchema + "?useSSL=false";
-		DatabaseUsername = args[0];
-		DatabasePassword = args[1];
-		
+		this();
+		for(String arg : args) {
+			String[] split = arg.split("=");
+			String o = split[0];
+			String v = split[1];
+
+			if (o.equals("-port")) {
+				ServerPort = Integer.parseInt(v);
+			}
+			else if (o.equals("-user")) {
+				DatabaseUsername = v;
+			}
+			else if (o.equals("-password")) {
+				DatabasePassword = v;
+			}
+			else if (o.equals("-schema")) {
+				DatabaseSchema = v;
+			}
+			else if (o.equals("-address")) {
+				DatabaseAddress = v;//"jdbc:mysql://" + v + "/" + DatabaseSchema + "?useSSL=false";
+			}
+
+		}
+	}
+	public static String getConnectionString() {
+		return "jdbc:mysql://" + DatabaseAddress + "/" + DatabaseSchema + "?useSSL=false";
 	}
 
 }

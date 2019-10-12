@@ -20,7 +20,7 @@ public class Database {
 		 */
 		
 		try {
-			this.connection = DriverManager.getConnection(Config.DatabaseAddress, Config.DatabaseUsername, Config.DatabasePassword);
+			this.connection = DriverManager.getConnection(Config.getConnectionString(), Config.DatabaseUsername, Config.DatabasePassword);
 			System.out.println("Database: connected to the database server. using " + Config.DatabaseSchema + " schema");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

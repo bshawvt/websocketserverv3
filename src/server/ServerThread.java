@@ -23,11 +23,11 @@ public class ServerThread implements Runnable {
 		server.start();
 		
 		// flush thread messages
-		doThreadMessageFlush();
+		doThreadMessageFlushLoop();
 
 	}
 	
-	public void doThreadMessageFlush() {
+	public void doThreadMessageFlushLoop() {
 		ServerThreadMessage msg = null;
 		try {
 			while((msg = Threads.getServerQueue().take()) != null) {				

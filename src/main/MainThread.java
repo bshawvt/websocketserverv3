@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import database.DatabaseThread;
 import database.DatabaseThreadMessage;
+
 import server.ServerThread;
 import server.ServerThreadMessage;
 import simulator.SimulatorThread;
@@ -13,13 +14,11 @@ import threads.Threads;
 public class MainThread {
 
 	public static void main(String[] args) {
-		if (args.length == 5) new Config(args);
-		else new Config();
+		new Config(args);
 		new Threads(); // assign queues to the main thread cuz i dont know
 		
 		System.out.println("MainThread: Hello world!");
-	
-		
+
 		Thread server = new Thread(new ServerThread(), "Server-0");
 		server.setDaemon(false);
 		server.start();
@@ -32,30 +31,29 @@ public class MainThread {
 		simulator.setDaemon(false);
 		simulator.start();
 		
-		
 		Scanner in = new Scanner(System.in);
 		while(true) { // process user input
 			if (in.hasNext()) {
 				String input = in.nextLine();
 				String[] split = input.split("\\.");
 				if (input.equals("exit") || input.equals("end") || input.equals("stop") || input.equals("quit")) {
-					// todo: signal to the threads to cleanup before breaking
+					//simulator.end();
+					//server.end();
 					break;
 				}
 				else if (split[0].equals("help")) {
 					System.out.println("exit|end|stop|quit - safely shutdown the server\n" + 
-										"srv|sim|db.<command> - here be dragons\n");
+										"srv|sim|db.<command> - here be dragons\n" + 
+										"");
 				}
 				else if (split[0].equals("srv")) {
 					Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Main, ServerThreadMessage.Type.None, split[1]));
 					
 				}
 				else if (split[0].equals("sim")) {
-					System.out.println("todo: sim command");
 					Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Main, SimulatorThreadMessage.Type.None, split[1]));
 				}
 				else if (split[0].equals("db")) {
-					//System.out.println("todo: db command");
 					Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Main, DatabaseThreadMessage.Type.None, split[1]));
 				}
 				else {
@@ -70,7 +68,7 @@ public class MainThread {
 		// thread cleanup
 		server.interrupt();
 		database.interrupt();
-		//simulator.interrupt();
+		simulator.interrupt();
 		
 		
 		System.out.println("MainThread: Goodbye world!");
