@@ -8,7 +8,7 @@ public class AuthenticationDto {
 	private UserAccountModel userAccount;
 	// ONLY set by server thread!!
 	private String token;
-	private long owner;
+	private int owner;
 	private String ownerAddress;
 	private String error;
 	
@@ -28,10 +28,10 @@ public class AuthenticationDto {
 			token = token.substring(1);
 		this.token = token;
 	}
-	public void setOwner(long id) {
+	public void setOwner(int id) {
 		this.owner = id;
 	}
-	public long getOwner() {
+	public int getOwner() {
 		return this.owner;
 	}
 	public void setError(String msg) {

@@ -10,7 +10,7 @@ import server.blobs.NetworkBlob;
 
 public class Client {
 	
-	private long id = 0;
+	private int id = 0;
 	private boolean ready = false; // true if client has authenticated
 	private WebSocket connection = null;
 	private boolean removed = false;
@@ -24,7 +24,7 @@ public class Client {
 		this.authStartTime = (new Date()).getTime();
 		this.frame = new NetworkBlob();
 	}
-	public Client(WebSocket connection, long id) {
+	public Client(WebSocket connection, int id) {
 		this.authStartTime = (new Date()).getTime();
 		this.connection = connection; 
 		this.ready = false;
@@ -35,7 +35,7 @@ public class Client {
 	public long getAuthStartTime() {
 		return this.authStartTime;
 	}
-	public long getId() {
+	public int getId() {
 		return this.id;
 	}
 	public void setRemoved(boolean state) {

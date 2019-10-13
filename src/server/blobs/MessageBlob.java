@@ -6,12 +6,14 @@ public abstract class MessageBlob {
 	public static class Type {
 		public static final int None = 0;
 		public static final int ChatBlob = 1;
+		public static final int AuthBlob = 2;
 	}
 	
 	@SuppressWarnings("rawtypes")
 	final static public Class[] types = {
 		DefaultBlob.class, // type: 0 // should never be 0
 		ChatBlob.class,  // type: 1
+		AuthBlob.class // type: 2
 	};
 	
 	@SerializedName("type")

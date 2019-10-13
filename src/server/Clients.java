@@ -14,14 +14,14 @@ public class Clients {
 	public ArrayList<Client> clientList;
 	public ArrayList<Client> clientQueue;
 	
-	public HashMap<Long, Client> playerTable; // only added to when a client successfully authenticates with the server
-	private long clientCounter; // becomes uuid for each client
+	public HashMap<Integer, Client> playerTable; // only added to when a client successfully authenticates with the server
+	private int clientCounter; // becomes uuid for each client
 	
 	public Clients() {
 		this.clientList = new ArrayList<>();
 		this.clientQueue = new ArrayList<>();
-		this.playerTable = new HashMap<Long, Client>();
-		this.clientCounter = 0;
+		this.playerTable = new HashMap<Integer, Client>();
+		this.clientCounter = 1; // 0 is saved for server
 		
 		
 	}
@@ -88,7 +88,7 @@ public class Clients {
 		while(it.hasNext()) {
 			Client client = it.next();
 			System.out.println("... current: " + client.getId());
-			if (client.getId() == connection.<Long>getAttachment()) {
+			if (client.getId() == connection.<Integer>getAttachment()) {
 				System.out.println("... found!");
 				return client;
 			}
@@ -98,7 +98,7 @@ public class Clients {
 		}
 		return null;
 	}
-	public Client getClient(long id) {
+	public Client getClient(int id) {
 		System.out.println("Client: getClient: getting client from id: ");
 		
 		Iterator<Client> it = clientList.iterator();
@@ -129,7 +129,7 @@ public class Clients {
 		System.out.println("... client by username " + username + " not found");
 		return null;
 	}
-	public Client getPlayer(long id) {
+	public Client getPlayer(int id) {
 		return playerTable.get(id);
 	}
 	public Client addClient(WebSocket connection) {

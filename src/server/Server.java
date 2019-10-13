@@ -17,6 +17,7 @@ import com.sun.corba.se.impl.orb.ParserTable.TestAcceptor1;
 import Dtos.AuthenticationDto;
 import database.DatabaseThreadMessage;
 import main.Config;
+import server.blobs.AuthBlob;
 import server.blobs.ChatBlob;
 import server.blobs.MessageBlob;
 import server.blobs.NetworkBlob;
@@ -126,11 +127,9 @@ public class Server extends WebSocketServer {
 
 					switch(type) {
 						case MessageBlob.Type.ChatBlob: {
-							chatManager.sort((ChatBlob) messageBlob);
-							/*ChatBlob chat = (ChatBlob) messageBlob;
-							if (chat.getChannelId() == 0) {
-								this.broadcast(authDto.getUserAccount().getUsername() + ": " + chat.getMessage());
-							}*/
+							ChatBlob chatBlob = (ChatBlob) messageBlob;
+							chatBlob.setFrom(client.getId()); // 
+							chatManager.sort(chatBlob);
 							break;
 						}
 						default: { // should never happen
@@ -142,6 +141,7 @@ public class Server extends WebSocketServer {
 				
 				
 			}
+			Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Flush));
 			return;
 		}
 		// all other messages are from unauthorized users and should probably be purged immediately
@@ -236,7 +236,8 @@ public class Server extends WebSocketServer {
 		// done, tell client to proceed to the next step
 		//client.getConnection().send("Hello " + client.getAuthenticationDto().getUserAccount().getUsername());
 		//clients.getPlayer(client.getId()).addFrame(new ChatBlob(0, "Hello " + client.getAuthenticationDto().getUserAccount().getUsername()));
-		client.addFrame(new ChatBlob(0, "Hello " + client.getAuthenticationDto().getUserAccount().getUsername()));
+		//client.addFrame(new ChatBlob(0, "Hello " + client.getAuthenticationDto().getUserAccount().getUsername()));
+		client.addFrame(new AuthBlob(true));
 		clients.flush();
 		//client.sendMessage(new NetworkMessage().serialize(new NetworkBlob().s));	
 		

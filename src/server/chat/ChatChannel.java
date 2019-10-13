@@ -3,7 +3,7 @@ package server.chat;
 import java.util.ArrayList;
 
 public class ChatChannel {
-	private ArrayList<Long> activeUserIds;
+	private ArrayList<Integer> activeUserIds;
 	private String name;
 	
 	public ChatChannel() {
@@ -15,7 +15,7 @@ public class ChatChannel {
 		this.name = name;
 	}
 	
-	public ArrayList<Long> getActiveUsers() {
+	public ArrayList<Integer> getActiveUsers() {
 		return this.activeUserIds;
 	}
 }

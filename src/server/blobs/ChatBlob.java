@@ -15,13 +15,18 @@ public class ChatBlob extends MessageBlob {
 	private String message;
 	public String getMessage() { return this.message; };
 	
+	// to client only
+	@SerializedName("from")
+	private int from;
+	public int getFrom() { return this.from; };
+	public void setFrom(int v) { this.from = v; };
 	
 	public ChatBlob() {
 		
 	}
-	public ChatBlob(int id, String message) {
+	public ChatBlob(int channelId, String message) {
 		this.message = message;
-		this.channelId = id;
+		this.channelId = channelId;
 		this.type = MessageBlob.Type.ChatBlob;
 	}
 }
