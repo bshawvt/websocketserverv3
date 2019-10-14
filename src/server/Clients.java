@@ -25,7 +25,10 @@ public class Clients {
 		
 		
 	}
-	
+	/**
+	 * remove client connections and cleanup
+	 * also sends client frames
+	*/
 	public void flush() {
 			
 		long now = (new Date()).getTime();

@@ -1,18 +1,24 @@
 package Dtos;
 
+import java.util.ArrayList;
+
+import Models.CharacterModel;
 import Models.UserAccountModel;
 
 public class AuthenticationDto {
 	
-	// ONLY set by database thread!!
 	private UserAccountModel userAccount;
-	// ONLY set by server thread!!
-	private String token;
+	private ArrayList<CharacterModel> characters;
+	
 	private int owner;
+	
+	private String token;
 	private String ownerAddress;
 	private String error;
 	
-	public AuthenticationDto() {		
+	public AuthenticationDto() {
+		this.characters = new ArrayList<>();
+		this.userAccount = null;
 	}
 	public UserAccountModel getUserAccount() {
 		return userAccount;
@@ -46,4 +52,8 @@ public class AuthenticationDto {
 	public void setOwnerAddress(String address) {
 		this.ownerAddress = address;
 	}
+	public void addCharacter(CharacterModel model) {
+		this.characters.add(model);
+	}
+	public ArrayList<CharacterModel> getCharacters() { return this.characters; }
 }

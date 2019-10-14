@@ -1,8 +1,10 @@
 package database;
 
 import java.sql.*;
+import java.util.HashMap;
 
 import Dtos.AuthenticationDto;
+import Models.CharacterModel;
 import Models.UserAccountModel;
 import database.DatabaseThreadMessage.Type;
 import main.Config;
@@ -11,6 +13,10 @@ import threads.Threads;
 
 public class Database {
 	private Connection connection;
+	public HashMap<Integer, CharacterModel> charactersCache;
+	/*
+	 * cache [{characters}]
+	 */
 	public Database() {
 		
 		/*
@@ -35,9 +41,17 @@ public class Database {
 			statement.setString(1, dto.getToken());
 			statement.setString(2, dto.getOwnerAddress());
 			ResultSet result = statement.executeQuery();
-			if (result.next()) { // if a token can be used then construct a new useraccount  for the dto
-				System.out.println("... consumeSessionToken has succeeded!");
-				dto.setUserAccount(new UserAccountModel(result));
+			while (result.next()) {
+			//if (result.next()) { // if a token can be used then construct a new useraccount  for the dto
+				//System.out.println("... consumeSessionToken has succeeded!");
+				if (dto.getUserAccount() == null) {
+					dto.setUserAccount(new UserAccountModel(result));
+					System.out.println("... set  user account model!");
+				}
+				CharacterModel character = new CharacterModel(result);
+				charactersCache.put(dto.getOwner(), character);
+				dto.addCharacter(character);
+				System.out.println("... added character model!");
 			}
 		}
 		

@@ -238,7 +238,7 @@ public class Server extends WebSocketServer {
 		//clients.getPlayer(client.getId()).addFrame(new ChatBlob(0, "Hello " + client.getAuthenticationDto().getUserAccount().getUsername()));
 		//client.addFrame(new ChatBlob(0, "Hello " + client.getAuthenticationDto().getUserAccount().getUsername()));
 		client.addFrame(new AuthBlob(true));
-		clients.flush();
+		//clients.flush();
 		//client.sendMessage(new NetworkMessage().serialize(new NetworkBlob().s));	
 		
 	}

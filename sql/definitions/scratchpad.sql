@@ -1,7 +1,18 @@
-SELECT * FROM useraccounts;
-UPDATE useraccounts SET locked=0 WHERE username='testuser0';
+SELECT * FROM useraccounts AS t1 
+	JOIN characters AS t2 
+		WHERE t1.username = "testuser0" AND t2.character_owner = t1.user_id;
+
+
+#FROM useraccounts JOIN sessions AS t1 WHERE SELECT *;
+#INSERT INTO characters (character_name, character_description, character_owner)
+#SELECT "testuser1 1", "this is test character", (SELECT t2.user_id FROM useraccounts AS t2 WHERE t2.username = "testuser1");
+#SELECT * FROM characters;
+#UPDATE useraccounts SET locked=0 WHERE username='testuser0';
 #CALL WSProc_GenerateSessionToken("testuser0", "2", "localhost");
 #CALL WSProc_InsertUserAccount("testuser3", "password", "n/a0");
+
+#INSERT INTO useraccounts(username, combinedHash, salt, email) 
+#SELECT LOWER(myuser), newCombinedHash, randbytes, LOWER(myemail); # FROM DUAL 
 
 # create a new recovery token row but requires a valid user_id from useraccounts
 #INSERT INTO useraccountrecovery (token, owner_id)
