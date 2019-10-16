@@ -6,7 +6,6 @@ import java.util.HashMap;
 import Dtos.AuthenticationDto;
 import Models.CharacterModel;
 import Models.UserAccountModel;
-import database.DatabaseThreadMessage.Type;
 import main.Config;
 import server.ServerThreadMessage;
 import threads.Threads;
@@ -24,7 +23,7 @@ public class Database {
 		 *  prevent sending a lot of data to the dbms all the time
 		 *  
 		 */
-		
+		this.charactersCache = new HashMap<>();
 		try {
 			this.connection = DriverManager.getConnection(Config.getConnectionString(), Config.DatabaseUsername, Config.DatabasePassword);
 			System.out.println("Database: connected to the database server. using " + Config.DatabaseSchema + " schema");
@@ -65,7 +64,6 @@ public class Database {
 					ServerThreadMessage.Type.Authenticate, 
 					dto));
 		}
-	}
-	
+	}	
 
 }

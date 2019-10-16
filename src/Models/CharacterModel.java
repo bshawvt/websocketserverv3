@@ -27,6 +27,8 @@ public class CharacterModel {
 	private int stamina_max;
 	private int stamina_current;
 	
+	private int hunger_current;
+	
 	private Date characterCreationDate;
 	
 	
@@ -52,7 +54,9 @@ public class CharacterModel {
 
 		this.stamina_max = set.getInt("stamina_max");
 		this.stamina_current = set.getInt("stamina_current");
-
+		
+		this.hunger_current = set.getInt("hunger_current");
+		
 		this.characterCreationDate = set.getDate("characterCreationDate");
 	}
 	
@@ -78,6 +82,8 @@ public class CharacterModel {
 
 	public int getStaminaMax() { return this.stamina_max; }
 	public int getStaminaCurrent() { return this.stamina_current; }
+	
+	public int getHungerCurrent() { return this.hunger_current; }
 
 	public Date getCharacterCreationDate() { return this.characterCreationDate; }
 	

@@ -75,6 +75,8 @@ CREATE TABLE IF NOT EXISTS characters (
     stamina_max INT DEFAULT 10,
     stamina_current INT DEFAULT 10,
     
+    hunger_current INT DEFAULT 10,
+    
     characterCreationDate DATETIME DEFAULT NOW(),
     
     FOREIGN KEY (character_owner) REFERENCES useraccounts(user_id),
