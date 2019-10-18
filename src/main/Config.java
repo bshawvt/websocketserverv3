@@ -9,6 +9,7 @@ public class Config {
 	public static String DatabaseSchema;
 	public static boolean DatabaseReporting = false; // server write to status table
 	public static final boolean UseSSL = true;
+	public static final int CharacterLimit = 3;
 	 
 	
 	public Config() {

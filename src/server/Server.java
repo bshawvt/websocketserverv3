@@ -15,9 +15,11 @@ import org.java_websocket.server.WebSocketServer;
 import com.sun.corba.se.impl.orb.ParserTable.TestAcceptor1;
 
 import Dtos.AuthenticationDto;
+import Models.CharacterModel;
 import database.DatabaseThreadMessage;
 import main.Config;
 import server.blobs.AuthBlob;
+import server.blobs.CharacterBlob;
 import server.blobs.ChatBlob;
 import server.blobs.MessageBlob;
 import server.blobs.NetworkBlob;
@@ -115,7 +117,13 @@ public class Server extends WebSocketServer {
 			NetworkMessage netMessage = new NetworkMessage(client);
 			NetworkBlob netBlob = netMessage.deserialize(message);
 			
+			if (netBlob == null) {
+				System.out.println("Server: netblob was JUNK!");
+				return;
+			}
+			
 			AuthenticationDto authDto = client.getAuthenticationDto(); 
+
 			for(int i = 0; i < netBlob.getMessages().size(); i++) {
 
 				MessageBlob messageBlob = netBlob.getMessages().get(i);
@@ -130,6 +138,36 @@ public class Server extends WebSocketServer {
 							ChatBlob chatBlob = (ChatBlob) messageBlob;
 							chatBlob.setFrom(client.getId()); // 
 							chatManager.sort(chatBlob);
+							break;
+						}
+						case MessageBlob.Type.AuthBlob: {
+							AuthBlob authBlob = (AuthBlob) messageBlob;
+							
+							// user is joining the game as a new character
+							if (authBlob.id == -1) {
+								if (authDto.getCharacters().size() < Config.CharacterLimit) {
+									System.out.println("User has created a new character");
+									
+								}
+								else {
+									System.out.println("User has tried to create a new character but they have the maximum already");
+								}
+							}
+							
+							// user has chosen one of their already existing characters
+							else {
+								int size = authDto.getCharacters().size();
+								if (size > 0 && (authBlob.id >= 0 && authBlob.id < size) ) {
+									CharacterModel character = authDto.getCharacters().get(authBlob.id);
+									if (character != null) {
+										System.out.println("User has chosen their character named " + character.getCharacterName());
+										
+									}
+								}
+								else {
+									System.out.println("Junk auth blob");
+								}
+							}
 							break;
 						}
 						default: { // should never happen
@@ -193,13 +231,13 @@ public class Server extends WebSocketServer {
 		}
 	}
 	
-	public void authenticateClient(AuthenticationDto dto) {
+	public void prepareClient(AuthenticationDto dto) {
 		
 		System.out.println("Server: authenticating connection:");
 				
 		Client client = clients.getClient(dto.getOwner());
 		if (client == null) { // this should never happen
-			System.out.println("... MAJOR ERROR! could not authenticate client because it was never tracked!");
+			System.out.println("... ! could not authenticate client because it was never tracked! client probably closed socket");
 			return;
 		}
 		
@@ -240,6 +278,10 @@ public class Server extends WebSocketServer {
 		AuthBlob auth = new AuthBlob();
 		auth.ready = true;
 		//dto.getCharacters().get(index);
+		int c = 0;
+		for(CharacterModel model : dto.getCharacters()) { 
+			auth.characters.add(new CharacterBlob(model, c++));
+		}
 		client.addFrame(auth);
 		//clients.flush();
 		//client.sendMessage(new NetworkMessage().serialize(new NetworkBlob().s));	

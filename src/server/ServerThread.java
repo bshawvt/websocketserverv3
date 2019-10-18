@@ -51,7 +51,7 @@ public class ServerThread implements Runnable {
 						System.out.println("ServerThread: ServerQueue: received authenticate event");
 						if (from == Threads.Database) {
 							System.out.println("... from Database thread!");
-							server.authenticateClient(msg.getAuthenticationDto());
+							server.prepareClient(msg.getAuthenticationDto());
 						}
 						break;
 					}
