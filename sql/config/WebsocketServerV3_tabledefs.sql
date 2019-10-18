@@ -3,16 +3,16 @@ use wss_debug;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
-#drop table if exists useraccounts;
+drop table if exists useraccounts;
 drop table if exists characters;
-#drop table if exists useraccountrecovery;
+drop table if exists useraccountrecovery;
 
 #drop table if exists serverstatus;
 #drop table if exists characters;
 #drop table if exists items;
 #drop table if exists actions;
 
-#drop table if exists sessions;
+drop table if exists sessions;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -52,37 +52,7 @@ CREATE TABLE IF NOT EXISTS content (
 
 */
 
-CREATE TABLE IF NOT EXISTS characters (
-	character_id BIGINT(20) NOT NULL AUTO_INCREMENT,
-    character_owner BIGINT(20) NOT NULL,
-    
-    x DOUBLE DEFAULT 0.0,
-    y DOUBLE DEFAULT 0.0,
-    z DOUBLE DEFAULT 0.0,
-    
-    character_name VARCHAR(24) NULL,
-    character_description VARCHAR(128) NULL,
-    
-    level INT DEFAULT 0,
-    levelPoints INT DEFAULT 0,
-    
-    safeExperience BIGINT(20) DEFAULT 0,
-    unsafeExperience BIGINT(20) DEFAULT 0,
-	
-    health_max INT DEFAULT 10,
-    health_current INT DEFAULT 10,
-    
-    stamina_max INT DEFAULT 10,
-    stamina_current INT DEFAULT 10,
-    
-    hunger_current INT DEFAULT 10,
-    
-    characterCreationDate DATETIME DEFAULT NOW(),
-    
-    FOREIGN KEY (character_owner) REFERENCES useraccounts(user_id),
-    
-    PRIMARY KEY (character_id)
-);
+
 
 # 
 CREATE TABLE IF NOT EXISTS useraccounts (
@@ -139,4 +109,38 @@ CREATE TABLE IF NOT EXISTS sessions (
     
     PRIMARY KEY(session_id),
     UNIQUE KEY (session_token)
+);
+
+
+CREATE TABLE IF NOT EXISTS characters (
+	character_id BIGINT(20) NOT NULL AUTO_INCREMENT,
+    character_owner BIGINT(20) NOT NULL,
+    
+    x DOUBLE DEFAULT 0.0,
+    y DOUBLE DEFAULT 0.0,
+    z DOUBLE DEFAULT 0.0,
+    
+    character_name VARCHAR(24) NULL,
+    character_description VARCHAR(128) NULL,
+    
+    level INT DEFAULT 0,
+    levelPoints INT DEFAULT 0,
+    
+    safeExperience BIGINT(20) DEFAULT 0,
+    unsafeExperience BIGINT(20) DEFAULT 0,
+	
+    health_max INT DEFAULT 10,
+    health_current INT DEFAULT 10,
+    
+    stamina_max INT DEFAULT 10,
+    stamina_current INT DEFAULT 10,
+    
+    food_current INT DEFAULT 10,
+    drink_current INT DEFAULT 10,
+    
+    characterCreationDate DATETIME DEFAULT NOW(),
+    
+    FOREIGN KEY (character_owner) REFERENCES useraccounts(user_id),
+    
+    PRIMARY KEY (character_id)
 );

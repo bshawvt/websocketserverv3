@@ -1,11 +1,13 @@
-SELECT * FROM useraccounts AS t1 
-	JOIN characters AS t2 
-		WHERE t1.username = "testuser0" AND t2.character_owner = t1.user_id;
+#SELECT * FROM useraccounts AS t1 
+#	JOIN characters AS t2 
+#		WHERE t1.username = "testuser0" AND t2.character_owner = t1.user_id;
+
 
 
 #FROM useraccounts JOIN sessions AS t1 WHERE SELECT *;
 #INSERT INTO characters (character_name, character_description, character_owner)
-#SELECT "testuser1 1", "this is test character", (SELECT t2.user_id FROM useraccounts AS t2 WHERE t2.username = "testuser1");
+#SELECT "testuser1 1", "this is test character", 0;
+SELECT * FROM useraccounts;
 #SELECT * FROM characters;
 #UPDATE useraccounts SET locked=0 WHERE username='testuser0';
 #CALL WSProc_GenerateSessionToken("testuser0", "2", "localhost");
@@ -20,10 +22,9 @@ SELECT * FROM useraccounts AS t1
 #UPDATE useraccountrecovery AS t1 SET active = 0 WHERE token = "" AND recoveryExpirationDate  > NOW();
 
 #(IN mytoken BLOB, IN myemail VARCHAR(128), IN myhash BLOB)
-#CALL WSProc_ConsumeRecoveryToken("ba66add5b2ee978dd178a48d85b21fc04a85031c63e267d6a7b998d49fccc555", "nituvious@gmail.com", "test2");
-#CALL WSProc_GenerateSessionToken("testuser0", "2", "192.168.1.10xsx");
-#3bf839ec736d970869247aedc055b5e1382c5b4a1e2853af05e901568642f6f4
-#CALL WSProc_ConsumeSessionToken("5a7a0cce8f5a58cd37ce4977fed3ed8145a689d1c725981908c6449d1c17267d", "remote addr");
+#CALL WSProc_ConsumeRecoveryToken("1c7a296883975b6cf64d7da01c117f3b99e85b602941a3b64fd947fac2cfeb66", "nituvious@gmail.com", "test2");
+#CALL WSProc_GenerateSessionToken("testuser0", "2", "localhost");
+#CALL WSProc_ConsumeSessionToken("7cb1ff780267f50b10ab4cd5cb26e517c8fc3f7c86a4487f6efb205ef07e19be", "localhost");
 #SELECT * FROM useraccounts JOIN sessions WHERE user_id = session_owner AND session_active = TRUE;
 
 #SELECT * FROM sessions;

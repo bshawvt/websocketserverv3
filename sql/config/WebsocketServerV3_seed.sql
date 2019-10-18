@@ -1,6 +1,6 @@
 use wss_debug;
 
-#CALL WSProc_InsertUserAccount("testuser0", "password", "n/a0");
+#CALL WSProc_InsertUserAccount("server", "", "");
 #CALL WSProc_InsertUserAccount("testuser1", "password", "n/a1");
 #CALL WSProc_InsertUserAccount("testuser2", "password", "n/a2");
 
@@ -31,5 +31,6 @@ INSERT INTO characters(owner, name)
 #SELECT * FROM characters AS t1 JOIN useraccounts AS t2 WHERE t2.id = t1.owner;
 #SELECT * FROM characters;
 #SELECT * FROM characters AS t1 INNER JOIN useraccounts AS t2 WHERE t2.id = t1.owner;
-#INSERT INTO wss_debug.useraccounts(username, combinedHash, salt, email) 
-#		SELECT LOWER(myuser), newCombinedHash, randbytes, LOWER(myemail); # FROM DUAL 
+
+INSERT INTO useraccounts(username, combinedHash, salt, email, locked) 
+		SELECT "server", "1", "", "", true;

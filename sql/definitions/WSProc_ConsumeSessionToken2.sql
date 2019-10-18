@@ -8,9 +8,18 @@ BEGIN
     
     IF (ROW_COUNT() > 0) THEN
 		SELECT * FROM useraccounts AS b1
+		JOIN sessions AS b2 ON b2.session_owner = b1.user_id 
+			AND b2.session_token = mytoken
+            AND b2.session_expirationDate > NOW()
+            AND b2.session_active = FALSE
+		LEFT JOIN characters AS b3 ON b3.character_owner = b1.user_id;
+        /*
+        SELECT * FROM useraccounts AS b1
 			JOIN sessions AS b2
 				#JOIN characters AS b3
 		WHERE b1.user_id = b2.session_owner AND b2.session_token = mytoken AND b2.session_expirationDate > NOW() AND b2.session_active = FALSE;# AND b3.character_owner = b1.user_id;
+        
+        */
 	END IF;
     
 END

@@ -12,6 +12,5 @@ public class AuthBlob extends MessageBlob {
 	public AuthBlob(boolean ready) {
 		this();
 		this.ready = ready;
-		
 	}
 }
