@@ -18,7 +18,7 @@ public class ServerThreadMessage {
 	private final int type;
 	private final String command;
 	private final AuthenticationDto authenticationDto;
-	private final Client client;
+
 	
 	public String getCommand() {
 		return command;
@@ -32,17 +32,13 @@ public class ServerThreadMessage {
 	public AuthenticationDto getAuthenticationDto() {
 		return this.authenticationDto;
 	}
-	public Client getClient() {
-		return this.client;
-	}
-	
+
 	
 	public ServerThreadMessage() {
 		this.from = Threads.None;
 		this.type = Type.None;
 		this.command = null;
 		this.authenticationDto = null;
-		this.client = null;
 	}
 	public ServerThreadMessage(int from, int type) {
 		this.from = from;
@@ -50,7 +46,6 @@ public class ServerThreadMessage {
 		
 		this.command = null;		
 		this.authenticationDto = null;
-		this.client = null;
 	}
 	public ServerThreadMessage(int from, int type, String command) {
 		this.from = from;
@@ -58,7 +53,6 @@ public class ServerThreadMessage {
 		this.command = command.toLowerCase();
 		
 		this.authenticationDto = null;
-		this.client = null;
 	}
 	public ServerThreadMessage(int from, int type, AuthenticationDto dto) {
 		this.from = from;
@@ -66,14 +60,6 @@ public class ServerThreadMessage {
 		this.authenticationDto = dto;
 		
 		this.command = null;
-		this.client = null;
 	}
-	public ServerThreadMessage(int from, int type, Client client) {
-		this.from = from;
-		this.type = type;
-		this.client = client;
-		
-		this.authenticationDto = null;
-		this.command = null;
-	}
+
 }

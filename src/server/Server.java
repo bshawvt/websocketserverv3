@@ -24,6 +24,7 @@ import server.blobs.ChatBlob;
 import server.blobs.MessageBlob;
 import server.blobs.NetworkBlob;
 import server.chat.ChatManager;
+import simulator.SimulatorThreadMessage;
 import threads.Threads;
 
 public class Server extends WebSocketServer {
@@ -95,7 +96,7 @@ public class Server extends WebSocketServer {
 	public void onClose(WebSocket connection, int code, String message, boolean remote) {
 		System.out.println(connection + " has closed their connection, code: " + code + ", message: " + message);
 		// remove connection from clients list
-		Client client = clients.getClient(connection);
+		Client client = connection.getAttachment();//clients.getClient(connection);
 		if (client != null) { // clients are only prepared when they have valid auth tokens
 			if (client.isReady()) { // do something special if the user was authenticated
 				//Threads.getSimulatorQueue().offer();
@@ -109,7 +110,8 @@ public class Server extends WebSocketServer {
 	@Override
 	public void onMessage(WebSocket connection, String message) {
 		System.out.println(connection + " sent: " + message);
-		Client client = clients.getClient(connection);
+		Client client = connection.getAttachment();//clients.getClient(connection);
+		System.out.println("connection attachment: " + connection.getAttachment());
 		// filter out messages from users who aren't authenticated
 		if (client != null && client.isReady()) {
 			System.out.println("Server: todo: received message from authenticated user:");
@@ -161,7 +163,8 @@ public class Server extends WebSocketServer {
 									CharacterModel character = authDto.getCharacters().get(authBlob.id);
 									if (character != null) {
 										System.out.println("User has chosen their character named " + character.getCharacterName());
-										
+										Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Add, client.getId(), character));
+										clients.promoteClientToPlayer(client);
 									}
 								}
 								else {
@@ -207,13 +210,15 @@ public class Server extends WebSocketServer {
 			else if (clientVersion.compareTo(Config.ClientVersion) == 0) {
 				// prepare server for connection
 				Client client = clients.addClient(connection);
-				// create dto with token and new clients id to identify later
+				// create data transfer object with token and reference the client it belongs to
 				AuthenticationDto dto = new AuthenticationDto();
+				client.setAuthenticationDto(dto);
 				dto.setToken(token);
-				dto.setOwner(client.getId());
+				dto.setClient(client);
+				
 				dto.setOwnerAddress(connection.getRemoteSocketAddress().getHostString());
 				
-				// ask database to verify and consume token
+				// send dto with token to database to consume token
 				Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Server, DatabaseThreadMessage.Type.Authentication, dto));
 							
 				// todo: flush
@@ -226,7 +231,7 @@ public class Server extends WebSocketServer {
 			}
 		}
 		else {
-			System.out.println("Server: onOpen: received a bad connection");
+			System.out.println("Server: onOpen: received a bad connection string");
 			connection.close(Reason.FailedAuthStep, "Failed to authenticate");
 		}
 	}
@@ -235,7 +240,7 @@ public class Server extends WebSocketServer {
 		
 		System.out.println("Server: authenticating connection:");
 				
-		Client client = clients.getClient(dto.getOwner());
+		Client client = dto.getClient();//clients.getClient(dto.getOwner());
 		if (client == null) { // this should never happen
 			System.out.println("... ! could not authenticate client because it was never tracked! client probably closed socket");
 			return;
@@ -243,10 +248,8 @@ public class Server extends WebSocketServer {
 		
 		// if useraccount is null then the database thread did not consume the token
 		if (dto.getUserAccount() == null) {
-			if (client != null) {
-				System.out.println("... client " + dto.getOwner() + " did not provide a valid token!");
-				client.setRemoved(true, "Failed to authenticate");
-			}
+			System.out.println("... client " + dto.getClient().getId() + " did not provide a valid token!");
+			client.setRemoved(true, "Failed to authenticate");
 			return;
 		}
 		
@@ -258,31 +261,32 @@ public class Server extends WebSocketServer {
 		}
 		
 		// check if the account is in use by any of the clients before proceeding
-		if (clients.getClient(dto.getUserAccount().getUsername()) != null) {
+		//Client  = clients.isUsernameInUse(dto.getUserAccount().getUsername(), dto.getClient().getId()); // todo: need a new way of detecting if a client account is already in use
+		if (clients.isUsernameInUse(dto.getUserAccount().getUsername(), dto.getClient().getId()) == true) {
 			System.out.println("... " + dto.getUserAccount().getUsername() + " already in use!");
 			client.setRemoved(true, "Account in use");
 			//client.getConnection().close(Reason.AccountInUse, "Account in use");
 			return;
 		}
 		System.out.println("... " + dto.getUserAccount().getUsername() + " has authenticated!");
-		client.setAuthenticationDto(dto);
+		//client.setAuthenticationDto(dto);
 		client.setReady(true);
 		
 		//
-		clients.authenticateClient(client);
+		//clients.authenticateClient(client);
 		
-		// done, tell client to proceed to the next step
+		// done, tell client to proceed to the next step and choose character
 		//client.getConnection().send("Hello " + client.getAuthenticationDto().getUserAccount().getUsername());
 		//clients.getPlayer(client.getId()).addFrame(new ChatBlob(0, "Hello " + client.getAuthenticationDto().getUserAccount().getUsername()));
 		//client.addFrame(new ChatBlob(0, "Hello " + client.getAuthenticationDto().getUserAccount().getUsername()));
-		AuthBlob auth = new AuthBlob();
-		auth.ready = true;
-		//dto.getCharacters().get(index);
+		AuthBlob authBlob = new AuthBlob();
+		authBlob.ready = true;
+
 		int c = 0;
 		for(CharacterModel model : dto.getCharacters()) { 
-			auth.characters.add(new CharacterBlob(model, c++));
+			authBlob.characters.add(new CharacterBlob(model, c++));
 		}
-		client.addFrame(auth);
+		client.addFrame(authBlob);
 		//clients.flush();
 		//client.sendMessage(new NetworkMessage().serialize(new NetworkBlob().s));	
 		

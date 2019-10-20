@@ -80,7 +80,7 @@ public class Clients {
 		System.out.println("Client: playerTable size: " + playerTable.size());
 		
 	}
-	
+	/*
 	public Client getClient(WebSocket connection) {
 		System.out.println("Client: getClient: getting client from connection: ");
 		
@@ -97,11 +97,11 @@ public class Clients {
 			}
 			/*if (connection.getResourceDescriptor().equals("/" + client.getSessionToken())) {
 				return client;
-			}*/
+			}/
 		}
 		return null;
-	}
-	public Client getClient(int id) {
+	}*/
+	/*public Client getClient(int id) {
 		System.out.println("Client: getClient: getting client from id: ");
 		
 		Iterator<Client> it = clientList.iterator();
@@ -114,11 +114,20 @@ public class Clients {
 			}
 		}
 		return null;
-	}
-	public Client getClient(String username) {
-		System.out.println("Client: getClient: getting client from username: ");
-		
+	}*/
+	public boolean isUsernameInUse(String username, int caller) {
+		System.out.println("Client: isUsernameInUse: getting client from username: ");
 		Iterator<Client> it = clientList.iterator();
+		while(it.hasNext()) {
+			Client client = it.next();
+			
+			if (client.getAuthenticationDto().getUserAccount().getUsername().equals(username) && client.getId() != caller ) {
+				System.out.println("... found username with id matching caller: " + caller);
+				return true;
+			}
+		}
+		
+		/*Iterator<Client> it = clientList.iterator();
 		while(it.hasNext()) {
 			Client client = it.next();
 			if (client.getAuthenticationDto() == null) continue; // some times the dto is not set, meaning the server has never received an authentication from the database
@@ -128,22 +137,22 @@ public class Clients {
 				System.out.println("... found!");
 				return client;
 			}
-		}
+		}*/
 		System.out.println("... client by username " + username + " not found");
-		return null;
+		return false;
 	}
 	public Client getPlayer(int id) {
 		return playerTable.get(id);
 	}
 	public Client addClient(WebSocket connection) {
 		clientCounter++;
-		connection.setAttachment(clientCounter);
 		Client client = new Client(connection, clientCounter);
+		connection.setAttachment(client);
 		clientQueue.add(client);
 		return client;
 	}
 	
-	public void authenticateClient(Client client) {
+	public void promoteClientToPlayer(Client client) {
 		//playerTable.put(client.getId(), client);
 		System.out.println("Clients: " + client.getAuthenticationDto().getUserAccount().getUsername() + " has been added to the players table");
 		playerTable.put(client.getId(), client);

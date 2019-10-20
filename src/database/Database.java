@@ -55,11 +55,11 @@ public class Database {
 				CharacterModel character = new CharacterModel(result);
 				if (character.getCharacterId() > 0) {
 					// cache for simulator thread
-					ArrayList<CharacterModel> precache = cache.characters.get(dto.getOwner()); 
+					/*ArrayList<CharacterModel> precache = cache.characters.get(dto.getOwner()); 
 					if (precache == null) {
 						cache.characters.put(dto.getOwner(), new ArrayList<>());
 					}
-					cache.characters.get(dto.getOwner()).add(character);
+					cache.characters.get(dto.getOwner()).add(character);*/
 					//if (cache.characters.get(dto.getOwner()) == null) {
 					//	cache.characters.g
 						//cache.characters.get(dto.getOwner()) = new ArrayList<>();

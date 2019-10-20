@@ -10,7 +10,10 @@ public class SimulatorThread implements Runnable {
 	private double dt;
 	private double stepTime;
 	
+	private World world;
 	private final double Timestep = 1000/30;
+	
+	private Profiler profiler = new Profiler();
 	
 	public SimulatorThread() {
 		this.isRunning = false;
@@ -19,6 +22,7 @@ public class SimulatorThread implements Runnable {
 		this.start = System.nanoTime()/1000000;
 		this.dt = this.start;
 		this.stepTime = this.start;
+		this.world = new World();
 		
 	}
 	
@@ -36,17 +40,19 @@ public class SimulatorThread implements Runnable {
 				
 				stepTime = System.nanoTime()/1000000; // dt in milliseconds
 				
-				//Profiler sim = new Profiler();
-				//sim.start();				
+				
+				profiler.start("main");				
 				
 				while(dt < stepTime) {
 					dt += Timestep;
 					//System.out.println("blip");
 					// step simulation
+					world.step(stepTime);
 					
 					
 				}				
 				
+				profiler.stop("main");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -82,6 +88,12 @@ public class SimulatorThread implements Runnable {
 					System.out.println("SimulatorThread: received an Add event");
 					if (from == Threads.Server) {
 						System.out.println("... from Server!");
+						if (msg.getCharacter() == null) {
+							//Threads.getDatabaseQueue().offer(new DatabaseThreadMessage)
+						}
+						else {
+							new NetObject(world, msg.getCharacter());
+						}
 					}
 					break;
 				}

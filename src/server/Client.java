@@ -15,8 +15,10 @@ public class Client {
 	private WebSocket connection = null;
 	private boolean removed = false;
 	private long authStartTime = 0;
-	private AuthenticationDto authenticationDto = null;
+	//private AuthenticationDto authenticationDto = null;
 	private String reason = ""; // removed reason
+	
+	private AuthenticationDto authenticationDto;
 	
 	private NetworkBlob frame;
 	

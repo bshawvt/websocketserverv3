@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 import Models.CharacterModel;
 import Models.UserAccountModel;
+import server.Client;
 
 public class AuthenticationDto {
 	
 	private UserAccountModel userAccount;
 	private ArrayList<CharacterModel> characters;
-	
-	private int owner;
+	private Client client;
 	
 	private String token;
 	private String ownerAddress;
@@ -19,6 +19,7 @@ public class AuthenticationDto {
 	public AuthenticationDto() {
 		this.characters = new ArrayList<>();
 		this.userAccount = null;
+		this.client = null;
 	}
 	public UserAccountModel getUserAccount() {
 		return userAccount;
@@ -34,23 +35,18 @@ public class AuthenticationDto {
 			token = token.substring(1);
 		this.token = token;
 	}
-	public void setOwner(int id) {
-		this.owner = id;
-	}
-	public int getOwner() {
-		return this.owner;
-	}
-	public void setError(String msg) {
-		this.error = msg;
-	}
-	public String getError() {
-		return this.error;
-	}
+
 	public String getOwnerAddress() {
 		return this.ownerAddress;
 	}
 	public void setOwnerAddress(String address) {
 		this.ownerAddress = address;
+	}
+	public Client getClient() {
+		return this.client;
+	}
+	public void setClient(Client client) {
+		this.client = client;
 	}
 	public void addCharacter(CharacterModel model) {
 		this.characters.add(model);

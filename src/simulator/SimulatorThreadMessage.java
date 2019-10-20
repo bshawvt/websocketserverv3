@@ -1,5 +1,6 @@
 package simulator;
 
+import Models.CharacterModel;
 import threads.Threads;
 
 public class SimulatorThreadMessage {
@@ -11,22 +12,31 @@ public class SimulatorThreadMessage {
 		public static final int Add = 2;
 		public static final int Remove = 3;
 	}
-	private final int from;
-	private final int type;
-	private final String command;
+	private int from;
+	private int type;
+	private String command;
 	public int getFrom() { return this.from; }
 	public int getType() { return this.type; }
 	public String getCommand() { return this.command; }
+	
+	private int clientId;
+	public int getClientId() { return this.clientId; }
+	private CharacterModel character;
+	public CharacterModel getCharacter() { return this.character; }
+	
 	
 	public SimulatorThreadMessage() {
 		this.from = Threads.None;
 		this.type = Type.None;
 		this.command = null;
+		this.clientId = -1;
 	}
 	
 	public SimulatorThreadMessage(int from, int type) {
 		this.from = from;
 		this.type = type;
+
+		this.clientId = -1;
 		this.command = null;
 	}
 	
@@ -34,6 +44,13 @@ public class SimulatorThreadMessage {
 		this.from = from;
 		this.type = type;
 		this.command = command;
+		
+		this.clientId = -1;
+	}
+	public SimulatorThreadMessage(int from, int type, int clientId, CharacterModel character) {
+		this(from, type);
+		this.clientId = clientId;
+		this.character = character;
 	}
 	
 }

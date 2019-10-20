@@ -1,14 +1,42 @@
-#SELECT * FROM useraccounts AS t1 
-#	JOIN characters AS t2 
-#		WHERE t1.username = "testuser0" AND t2.character_owner = t1.user_id;
+/*
+SELECT * FROM useraccounts AS b1
+		JOIN sessions AS b2
+		JOIN characters AS b3 ON b3.character_owner = b1.user_id
+		WHERE b1.user_id = b2.session_owner AND b2.session_token = "07ca25ef3d0c15857b64b383a7c486af0b7bd8fb721dcdf7212a1a5b4edd2abc" 
+			AND b2.session_expirationDate > NOW() AND b2.session_active = FALSE;# AND b3.character_owner = b1.user_id;
+*/
 
+
+/*SELECT * FROM useraccounts AS b1
+		JOIN sessions AS b2 ON b2.session_owner = b1.user_id 
+			AND b2.session_token = "452ea2d524240a0b0c1bd849dd5fcf562cddded17fefd19cb0006ba94de83b95"
+            AND b2.session_expirationDate > NOW()
+            AND b2.session_active = TRUE
+		LEFT JOIN characters AS b3 ON b3.character_owner = b1.user_id*/
+        
+
+/*
+INSERT INTO characters (character_name, character_description, character_owner)
+	SELECT "agudnaem", "this is test character", 1;
+INSERT INTO characters (character_name, character_description, character_owner)
+	SELECT "testuser0 1", "this is test character", 2;
+INSERT INTO characters (character_name, character_description, character_owner)
+	SELECT "testuser0 2", "this is test character", 2;*/
+
+#SELECT * FROM characters;
+
+		#WHERE b1.user_id = b2.session_owner AND b2.session_token = "452ea2d524240a0b0c1bd849dd5fcf562cddded17fefd19cb0006ba94de83b95" 
+		#	AND b2.session_expirationDate > NOW() AND b2.session_active = FALSE;# AND b3.character_owner = b1.user_id;
 
 
 #FROM useraccounts JOIN sessions AS t1 WHERE SELECT *;
 #INSERT INTO characters (character_name, character_description, character_owner)
 #SELECT "testuser1 1", "this is test character", 0;
+
 SELECT * FROM useraccounts;
 #SELECT * FROM characters;
+#SELECT * FROM sessions;
+
 #UPDATE useraccounts SET locked=0 WHERE username='testuser0';
 #CALL WSProc_GenerateSessionToken("testuser0", "2", "localhost");
 #CALL WSProc_InsertUserAccount("testuser3", "password", "n/a0");
@@ -23,8 +51,11 @@ SELECT * FROM useraccounts;
 
 #(IN mytoken BLOB, IN myemail VARCHAR(128), IN myhash BLOB)
 #CALL WSProc_ConsumeRecoveryToken("1c7a296883975b6cf64d7da01c117f3b99e85b602941a3b64fd947fac2cfeb66", "nituvious@gmail.com", "test2");
+
+# 
 #CALL WSProc_GenerateSessionToken("testuser0", "2", "localhost");
-#CALL WSProc_ConsumeSessionToken("7cb1ff780267f50b10ab4cd5cb26e517c8fc3f7c86a4487f6efb205ef07e19be", "localhost");
+#CALL WSProc_ConsumeSessionToken("ab3a72e761c83ef182e5e2208835e59c09af853b29634fb203ee6c60babf0772", "localhost");
+
 #SELECT * FROM useraccounts JOIN sessions WHERE user_id = session_owner AND session_active = TRUE;
 
 #SELECT * FROM sessions;

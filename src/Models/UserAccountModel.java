@@ -12,7 +12,7 @@ public class UserAccountModel {
 	private String combinedHash = null;
 	private String salt = null;
 	private String email = null;
-	private int permission = 0;
+	private int permissions = 0;
 	private boolean locked = true;
 	private Date dateOfCreation = null;
 	private Date lastLoginDate = null;
@@ -26,7 +26,7 @@ public class UserAccountModel {
 		this.combinedHash = set.getString("combinedHash");
 		this.salt = set.getString("salt");
 		this.email = set.getString("email");
-		this.permission = set.getInt("permission");
+		this.permissions = set.getInt("permissions");
 		this.locked = set.getBoolean("locked");
 		this.dateOfCreation = set.getDate("dateOfCreation");
 		this.lastLoginDate = set.getDate("lastLoginDate");
@@ -60,8 +60,8 @@ public class UserAccountModel {
 	public String getEmail() {
 		return this.email;
 	}
-	public int getPermission() {
-		return this.permission;
+	public int getPermissions() {
+		return this.permissions;
 	}
 	public boolean isLocked() {
 		return this.locked;

@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS useraccounts (
 	combinedHash BLOB NOT NULL, # result of user input and salt
 	salt BLOB NOT NULL, # a random series of bytes
     email VARCHAR(128) DEFAULT NULL, # 
-    permission INT DEFAULT 0,
+    permissions INT DEFAULT 0,
     locked BOOL DEFAULT FALSE, 
 	dateOfCreation DATETIME DEFAULT NOW(),
     lastLoginDate DATETIME NULL, # set on token generation and consumption
