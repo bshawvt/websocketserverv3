@@ -10,6 +10,7 @@ public class Config {
 	public static boolean DatabaseReporting = false; // server write to status table
 	public static final boolean UseSSL = true;
 	public static final int CharacterLimit = 3;
+	public static final int NodeLimit = 2; // how many cpu cores simulator thread can use
 	 
 	
 	public Config() {

@@ -18,43 +18,74 @@ public class Profiler {
 		}
 		profile.start();
 	}
+	public void start(String name, int expires) {
+		Profile profile = profiles.get(name);
+		if (profile == null) {
+			profile = new Profile();
+			profiles.put(name, profile);
+		}
+		profile.start();
+		//profile.expires = profile.now() + expires;
+	}
 	public void stop(String name) {
 		Profile profile = profiles.get(name);
-		if (profile != null) {
-			profile.stop();
+		if (profile == null) {
+			profile = new Profile();
+			profiles.put(name, profile);
 		}
+		profile.stop();
 	}
+	public boolean hasElapsed(String name, long expires) {
+		Profile profile = profiles.get(name);
+		if (profile == null) {
+			profile = new Profile();
+			profiles.put(name, profile);
+			profile.start();
+			profile.expires = profile.now() + expires;
+			
+		}
+		if (profile.hasElapsed()) {
+			//profiles.remove(profile);
+			profile.expires = profile.now() + expires;
+			return true;
+		}
+		return false;
+	}
+	
 	
 	private class Profile {
 		private long startTime;
 		private long stopTime;
 		private long elapsed;
+		//private HashMap<String, Long> iterator;
+		private long iterations;
+		private long expires;
 		
 		private long average;
 		static private final int MaxSteps = 10;
 		private long[] averages = new long[MaxSteps]; // for average
-		private int step;
+		private long step;
 
 		
 		public void start() {
-			this.startTime = System.nanoTime()/1000000;
+			this.startTime = now();
 		}
 		public void stop() {
-			this.stopTime = System.nanoTime()/1000000;
-			averages[step%MaxSteps] = stopTime - startTime;
-					
-			step++;
-			
-			if (step%MaxSteps == 0) {
-				average = 0;
-				for(long a : averages) {
-					average += a;
-				}
-				average = average / MaxSteps;						
-			}
-			
+			this.stopTime = now();
 			this.elapsed = stopTime - startTime;
-			//System.out.println(this.elapsed);
 		}
+		
+		public boolean hasElapsed() {
+			if (now() > this.expires) {
+				return true;
+			}
+			return false;
+		}
+		
+		public long now() {
+			return System.nanoTime()/1000000;
+		}
+			
 	}
+	
 }

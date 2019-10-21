@@ -32,6 +32,7 @@ public class CharacterModel {
 	
 	private Date characterCreationDate;
 	
+
 	
 	public CharacterModel(ResultSet set) throws SQLException {
 		this.character_id = set.getLong("character_id");
@@ -63,6 +64,36 @@ public class CharacterModel {
 	}
 	
 	
+	public CharacterModel(CharacterModel model) {
+		this.character_id = model.getCharacterId();
+		this.character_owner = model.getCharacterOwner();
+
+		this.x = model.getX();
+		this.y = model.getY();
+		this.z = model.getZ();
+
+		this.character_name = model.getCharacterName();
+		this.character_description = model.getCharacterDescription();
+
+		this.level = model.getLevel();
+		this.levelPoints = model.getLevelPoints();
+
+		this.safeExperience = model.getSafeExperience();
+		this.unsafeExperience = model.getUnsafeExperience();
+
+		this.health_max = model.getHealthMax();
+		this.health_current = model.getHealthCurrent();
+
+		this.stamina_max = model.getStaminaMax();
+		this.stamina_current = model.getStaminaCurrent();
+
+		this.food_current = model.getFoodCurrent();
+		this.drink_current = model.getDrinkCurrent();
+
+		this.characterCreationDate = model.getCharacterCreationDate();
+	}
+
+
 	public long getCharacterId() { return this.character_id; }
 	public long getCharacterOwner() { return this.character_owner; }
 

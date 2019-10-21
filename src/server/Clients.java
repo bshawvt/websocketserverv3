@@ -138,6 +138,7 @@ public class Clients {
 				return client;
 			}
 		}*/
+		
 		System.out.println("... client by username " + username + " not found");
 		return false;
 	}
@@ -155,7 +156,9 @@ public class Clients {
 	public void promoteClientToPlayer(Client client) {
 		//playerTable.put(client.getId(), client);
 		System.out.println("Clients: " + client.getAuthenticationDto().getUserAccount().getUsername() + " has been added to the players table");
+		
 		playerTable.put(client.getId(), client);
+		
 	}
 	
 	

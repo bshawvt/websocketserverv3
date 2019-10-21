@@ -17,6 +17,7 @@ public class Client {
 	private long authStartTime = 0;
 	//private AuthenticationDto authenticationDto = null;
 	private String reason = ""; // removed reason
+	private boolean active = false;
 	
 	private AuthenticationDto authenticationDto;
 	
@@ -39,6 +40,16 @@ public class Client {
 	}
 	public int getId() {
 		return this.id;
+	}
+	public void setActive(boolean v) {
+		this.active = v;
+	}
+	/**
+	 * set when player is part of an active simulation node
+	 * @return  
+	 */
+	public boolean isActive() {
+		return this.active;
 	}
 	public void setRemoved(boolean state) {
 		this.removed = state;

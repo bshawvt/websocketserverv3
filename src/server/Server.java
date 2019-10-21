@@ -149,7 +149,7 @@ public class Server extends WebSocketServer {
 							if (authBlob.id == -1) {
 								if (authDto.getCharacters().size() < Config.CharacterLimit) {
 									System.out.println("User has created a new character");
-									
+									Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Add, client.getId(), null));
 								}
 								else {
 									System.out.println("User has tried to create a new character but they have the maximum already");
@@ -164,7 +164,7 @@ public class Server extends WebSocketServer {
 									if (character != null) {
 										System.out.println("User has chosen their character named " + character.getCharacterName());
 										Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Add, client.getId(), character));
-										clients.promoteClientToPlayer(client);
+										//clients.promoteClientToPlayer(client);
 									}
 								}
 								else {
