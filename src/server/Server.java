@@ -12,7 +12,6 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
 
-import com.sun.corba.se.impl.orb.ParserTable.TestAcceptor1;
 
 import Dtos.AuthenticationDto;
 import Models.CharacterModel;
