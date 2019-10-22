@@ -24,6 +24,8 @@ public class DatabaseThread implements Runnable {
 				int from = msg.getFrom();
 				
 				switch (type) {
+				
+					// received a command from main thread or misc message
 					case DatabaseThreadMessage.Type.None: {
 						if (from == Threads.Main) {
 							String command = msg.getCommand();
@@ -34,6 +36,8 @@ public class DatabaseThread implements Runnable {
 						}
 						break;
 					}
+					
+					// authentication messages get useraccounts
 					case DatabaseThreadMessage.Type.Authentication: {
 						System.out.println("DatabaseThread: received an Update event");
 						if (from == Threads.Server) {
@@ -44,6 +48,8 @@ public class DatabaseThread implements Runnable {
 						}
 						break;
 					}
+					
+					// ???
 					default: {
 						break;
 					}

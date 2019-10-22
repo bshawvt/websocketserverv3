@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.google.gson.annotations.SerializedName;
 
-public class AuthBlob extends MessageBlob {
+public class JoinBlob extends MessageBlob {
 	
 	@SerializedName("ready")
 	public boolean ready;
@@ -18,11 +18,11 @@ public class AuthBlob extends MessageBlob {
 	@SerializedName("id")
 	public int id;
 	
-	public AuthBlob() {
-		this.type = MessageBlob.Type.AuthBlob;
+	public JoinBlob() {
+		this.type = MessageBlob.Type.JoinBlob;
 		this.characters = new ArrayList<>();
 	}
-	public AuthBlob(boolean ready) {
+	public JoinBlob(boolean ready) {
 		this();
 		this.ready = ready;
 	}

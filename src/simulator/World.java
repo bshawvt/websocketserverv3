@@ -6,20 +6,23 @@ import java.util.Iterator;
 
 import Models.CharacterModel;
 import server.Client;
+import tools.Metrics;
 
 public class World {
 	
-	private ArrayList<NetObject> netObjects;
-	private ArrayList<NetObject> netObjectsQueue;
-	private HashMap<Integer, NetObject> clientNetObjects;
+	public ArrayList<NetObject> netObjects = new ArrayList<>();
+	public ArrayList<NetObject> netObjectsQueue = new ArrayList<>();
+	
+	//public Metrics metrics = new Metrics();
+	//private HashMap<Integer, NetObject> clientNetObjects;
+	
+	
+	
 	public World() {
 		
-		this.clientNetObjects = new HashMap<>();
-		this.netObjects = new ArrayList<>();
-		this.netObjectsQueue = new ArrayList<>();
 	}
 	
-	public void step(double dt) {
+	public void step(double dt, int s) {
 		flush();
 		
 		Iterator<NetObject> it = netObjects.iterator();
@@ -29,14 +32,17 @@ public class World {
 				it.remove();
 			}
 			else {
-				netObject.step(dt);
+				netObject.step(this, dt, s);
 			}
 		}
 		
-		//System.out.println( "id:" + id + ", dt: " + dt);
-		
 	}
 	
+	/**
+	 * adds a clients character to the simulation
+	 * @param clientId
+	 * @param model
+	 */
 	public void addNetObject(int clientId, CharacterModel model) {
 		
 		if (model == null) return;
@@ -45,7 +51,21 @@ public class World {
 		this.netObjectsQueue.add(new NetObject(model));
 			
 	}
+	/**
+	 * removes the clients character from the simulation
+	 * @param clientId
+	 */
 	public void removeNetObject(int clientId) {
+		
+	}
+	
+	/**
+	 * add a server owned character to the simulation
+	 */
+	public void addNetObject() {
+		this.netObjectsQueue.add(new NetObject());
+	}
+	public void removeNetObject() {
 		
 	}
 	
@@ -55,6 +75,7 @@ public class World {
 		while (it.hasNext()) {
 			NetObject netObject = it.next();
 			netObjects.add(netObject);
+			
 		}
 		netObjectsQueue.clear();
 	}

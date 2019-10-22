@@ -34,6 +34,36 @@ public class CharacterModel {
 	
 
 	
+	// debug
+	public CharacterModel() {
+		this.character_id = 0;
+		this.character_owner = 0;
+
+		this.x = 0;
+		this.y = 0;
+		this.z = 0;
+
+		this.character_name = null;
+		this.character_description = null;
+
+		this.level = 0;
+		this.levelPoints = 0;
+
+		this.safeExperience = 0;
+		this.unsafeExperience = 0;
+
+		this.health_max = 10;
+		this.health_current = 10;
+
+		this.stamina_max = 10;
+		this.stamina_current = 10;
+
+		this.food_current = 10;
+		this.drink_current = 10;
+
+		this.characterCreationDate = null;
+	}
+	
 	public CharacterModel(ResultSet set) throws SQLException {
 		this.character_id = set.getLong("character_id");
 		this.character_owner = set.getLong("character_owner");
@@ -62,7 +92,6 @@ public class CharacterModel {
 		
 		this.characterCreationDate = set.getDate("characterCreationDate");
 	}
-	
 	
 	public CharacterModel(CharacterModel model) {
 		this.character_id = model.getCharacterId();

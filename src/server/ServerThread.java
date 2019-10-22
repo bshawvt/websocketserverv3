@@ -35,6 +35,8 @@ public class ServerThread implements Runnable {
 				int from = msg.getFrom();
 				
 				switch(type) {
+				
+					// received input to process or a misc message
 					case ServerThreadMessage.Type.None: {
 						System.out.println("ServerThread: ServerQueue: received no event");
 						if (from == Threads.Main) {
@@ -43,18 +45,26 @@ public class ServerThread implements Runnable {
 						}
 						break;
 					}
+					
+					// state propagation between simulation thread and client
 					case ServerThreadMessage.Type.Update: {
 						System.out.println("ServerThread: ServerQueue: received update event");
 						break;
 					}
+					
+					// authentication messages are generated from onOpen 
 					case ServerThreadMessage.Type.Authenticate: {
 						System.out.println("ServerThread: ServerQueue: received authenticate event");
 						if (from == Threads.Database) {
 							System.out.println("... from Database thread!");
+							
+							// prepare client 
 							server.prepareClient(msg.getAuthenticationDto());
 						}
 						break;
 					}
+					
+					// todo: 
 					case ServerThreadMessage.Type.Flush: {
 						System.out.println("ServerThread: ServerQueue: received flush event");
 						break;
@@ -75,10 +85,10 @@ public class ServerThread implements Runnable {
 
 	private void processCommand(String command) {
 		if (command.equals("help")) {
-			System.out.println("flush <frames> - send network frames");
+			System.out.println("you have been helped");
 		}
-		else if (command.equals("flush frames")) {
-			System.out.println("doing server.flush() ... ");
+		else if (command.equals("f")) {
+			System.out.println("server flushed");
 			server.flush();
 		}
 		else {

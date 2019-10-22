@@ -55,10 +55,11 @@ public class SimulatorThread implements Runnable {
 		
 	}
 	/**
-	 * todo
+	 * todo: choose the best node to place a client. 
+	 * this is used when a new client has been added to the simulation
 	 * @return 0
 	 */
-	public int getBestNode() {
+	private int getBestNode() {
 		int lowest = 0xffffff;
 		int current = 0xffffff;
 		int best = 0;
@@ -67,7 +68,11 @@ public class SimulatorThread implements Runnable {
 		});
 		return best;
 	}
-	
+	/**
+	 * gets a players location in a simulator node and chooses the best node if the client is new 
+	 * @param clientId
+	 * @return a node client id belongs to
+	 */
 	private Node getNodeByClientLocation(int clientId) {
 		Integer clientNodeLocation = clientLocation.get(clientId);
 		// if client is a new connection then add it to clientLocations 

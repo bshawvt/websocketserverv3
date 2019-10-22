@@ -6,7 +6,7 @@ public abstract class MessageBlob {
 	public static class Type {
 		public static final int None = 0;
 		public static final int ChatBlob = 1;
-		public static final int AuthBlob = 2;
+		public static final int JoinBlob = 2;
 		public static final int StateBlob = 3;
 	}
 	
@@ -14,7 +14,7 @@ public abstract class MessageBlob {
 	final static public Class[] types = {
 		DefaultBlob.class, // 0 // should never be 0
 		ChatBlob.class,  // 1
-		AuthBlob.class, // 2
+		JoinBlob.class, // 2
 		StateBlob.class // 3
 	};
 	

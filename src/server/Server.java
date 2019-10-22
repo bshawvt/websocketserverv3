@@ -18,7 +18,7 @@ import Dtos.AuthenticationDto;
 import Models.CharacterModel;
 import database.DatabaseThreadMessage;
 import main.Config;
-import server.blobs.AuthBlob;
+import server.blobs.JoinBlob;
 import server.blobs.CharacterBlob;
 import server.blobs.ChatBlob;
 import server.blobs.MessageBlob;
@@ -87,9 +87,18 @@ public class Server extends WebSocketServer {
 	}
 	@Override
 	public void onError(WebSocket connection, Exception exception) {
-		// TODO Auto-generated method stub
+		
 		System.out.println(connection + " has an error");
 		System.out.println(exception);
+		Client client = connection.getAttachment();
+		if (client != null) {
+			if (client.isReady()) {
+			}
+			
+			System.out.println(" !!! " + client.getAuthenticationDto().getUserAccount().getUsername() + 
+					"experienced a connection error");
+			client.setRemoved(true);
+		}
 	}
 
 	@Override
@@ -109,9 +118,11 @@ public class Server extends WebSocketServer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onMessage(WebSocket connection, String message) {
+		
 		System.out.println(connection + " sent: " + message);
 		Client client = connection.getAttachment();//clients.getClient(connection);
 		System.out.println("connection attachment: " + connection.getAttachment());
+		
 		// filter out messages from users who aren't authenticated
 		if (client != null && client.isReady()) {
 			System.out.println("Server: todo: received message from authenticated user:");
@@ -119,6 +130,7 @@ public class Server extends WebSocketServer {
 			NetworkMessage netMessage = new NetworkMessage(client);
 			NetworkBlob netBlob = netMessage.deserialize(message);
 			
+			// user sent junk that wasn't a NetworkMessage
 			if (netBlob == null) {
 				System.out.println("Server: netblob was JUNK!");
 				return;
@@ -129,110 +141,139 @@ public class Server extends WebSocketServer {
 			for(int i = 0; i < netBlob.getMessages().size(); i++) {
 
 				MessageBlob messageBlob = netBlob.getMessages().get(i);
-				if (messageBlob == null) continue; // this should never happen but just in case
 				
-				int type = messageBlob.getType();
-				if (type > 0 && type < MessageBlob.types.length) {
-					Class<? extends MessageBlob> blobType = MessageBlob.types[messageBlob.getType()];
-
-					switch(type) {
-						case MessageBlob.Type.ChatBlob: {
-							ChatBlob chatBlob = (ChatBlob) messageBlob;
-							chatBlob.setFrom(client.getId()); // 
-							chatManager.sort(chatBlob);
-							break;
-						}
-						case MessageBlob.Type.AuthBlob: {
-							AuthBlob authBlob = (AuthBlob) messageBlob;
-							
-							// user is joining the game as a new character
-							if (authBlob.id == -1) {
-								if (authDto.getCharacters().size() < Config.CharacterLimit) {
-									System.out.println("User has created a new character");
-									Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Add, client.getId(), null));
-								}
-								else {
-									System.out.println("User has tried to create a new character but they have the maximum already");
-								}
-							}
-							
-							// user has chosen one of their already existing characters
-							else {
-								int size = authDto.getCharacters().size();
-								if (size > 0 && (authBlob.id >= 0 && authBlob.id < size) ) {
-									CharacterModel character = authDto.getCharacters().get(authBlob.id);
-									if (character != null) {
-										System.out.println("User has chosen their character named " + character.getCharacterName());
-										Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Add, client.getId(), character));
-										//clients.promoteClientToPlayer(client);
-									}
-								}
-								else {
-									System.out.println("Junk auth blob");
-								}
-							}
-							break;
-						}
-						default: { // should never happen
-							System.out.println("junk message blob");
-							break;
-						}
-					}
-				}
+				// should never happen but in case user sends junk
+				if (messageBlob == null) continue;
 				
+				propagateNetworkMessage(client, messageBlob);				
 				
 			}
+			
 			Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Flush));
 			return;
 		}
-		// all other messages are from unauthorized users and should probably be purged immediately
+		
+		// a connection is sending stuff without authenticating first
 		if (client != null) {
 			System.out.println("Server: todo: received message from unauthenticated user");
-			client.setRemoved(true);
+			client.setRemoved(true); /* the server should kick the player before this could ever happen, 
+									 but just in case kick the client to prevent more messages we're not ready for*/
 		}
 		return;
+	}
+	
+	private void propagateNetworkMessage(Client client, MessageBlob message) {
+		int type = message.getType();
+		if (type > 0 && type < MessageBlob.types.length) {
+			Class<? extends MessageBlob> blobType = MessageBlob.types[message.getType()];
+
+			switch(type) {
+			
+				// client has sent a chat message
+				case MessageBlob.Type.ChatBlob: {
+					ChatBlob chatBlob = (ChatBlob) message;
+					chatBlob.setFrom(client.getId()); // 
+					chatManager.sort(chatBlob);
+					break;
+				}
+				
+				// client is selecting one of their characters to join simulation with
+				case MessageBlob.Type.JoinBlob: {
+					JoinBlob authBlob = (JoinBlob) message;
+					
+					// user is joining the game as a new character
+					if (authBlob.id == -1) {
+						if (client.getAuthenticationDto().getCharacters().size() < Config.CharacterLimit) {
+							System.out.println("User has created a new character");
+							Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Add, client.getId(), null));
+						}
+						else {
+							System.out.println("User has tried to create a new character but they have the maximum already");
+						}
+					}
+					
+					// user has chosen one of their already existing characters
+					else {
+						int size = client.getAuthenticationDto().getCharacters().size();
+						if (size > 0 && (authBlob.id >= 0 && authBlob.id < size) ) {
+							CharacterModel character = client.getAuthenticationDto().getCharacters().get(authBlob.id);
+							if (character != null) {
+								System.out.println("User has chosen their character named " + character.getCharacterName());
+								Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Add, client.getId(), character));
+								//clients.promoteClientToPlayer(client);
+							}
+						}
+						else {
+							System.out.println("Junk auth blob");
+						}
+					}
+					break;
+				}
+				
+				// should never happen
+				default: { 
+					System.out.println("junk message blob");
+					break;
+				}
+			}
+		}
 	}
 
 	@Override
 	public void onOpen(WebSocket connection, ClientHandshake handshake) {
 
 		System.out.println(connection.getRemoteSocketAddress().getHostString()/* + "/" + connection.getLocalSocketAddress().getHostString() */+ " has connected");
-		String[] uri = handshake.getResourceDescriptor().split("/");
+		String[] connectionString = handshake.getResourceDescriptor().split("/");
 		
-		if (uri.length == 3) {
-			String token = uri[1];
-			String clientVersion = uri[2];
+		// connection string must be exact or treat this connection as junk
+		if (connectionString.length == 3) {
+			String token = connectionString[1];
+			String clientVersion = connectionString[2];
 			
-			if (token.length() <= 10) {
+			// the token length is for a sha256 hash
+			if (token.length() < 60) {
 				System.out.println("Server: onOpen: received a bad token");
 				connection.close(Reason.FailedAuthStep, "Bad authentication token");
+				return;
 			}
-			else if (clientVersion.compareTo(Config.ClientVersion) == 0) {
-				// prepare server for connection
-				Client client = clients.addClient(connection);
-				// create data transfer object with token and reference the client it belongs to
-				AuthenticationDto dto = new AuthenticationDto();
-				client.setAuthenticationDto(dto);
-				dto.setToken(token);
-				dto.setClient(client);
+			
+			// client version checking
+			if (clientVersion.compareTo(Config.ClientVersion) == 0) {
 				
+				// preparing the client for server
+				Client client = clients.addClient(connection);
+				// the dto is shared among most of the threads and should be treated as immutable 
+				AuthenticationDto dto = new AuthenticationDto();
+				client.setAuthenticationDto(dto); // 
+				
+				// set now for database consumeSessionToken
+				dto.setToken(token);
 				dto.setOwnerAddress(connection.getRemoteSocketAddress().getHostString());
+
+				// 
+				dto.setClient(client);
 				
 				// send dto with token to database to consume token
 				Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Server, DatabaseThreadMessage.Type.Authentication, dto));
 							
 				// todo: flush
 				Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Flush));
-				
+				return;
 			}
+			
+			// disconnect the user
 			else {
 				System.out.println("Server: onOpen: received a bad client version");
 				connection.close(Reason.FailedAuthStep, "Bad client version");
+				return;
 			}
 		}
+		
+		// the junk message!
 		else {
 			System.out.println("Server: onOpen: received a bad connection string");
 			connection.close(Reason.FailedAuthStep, "Failed to authenticate");
+			return;
 		}
 	}
 	
@@ -261,35 +302,26 @@ public class Server extends WebSocketServer {
 		}
 		
 		// check if the account is in use by any of the clients before proceeding
-		//Client  = clients.isUsernameInUse(dto.getUserAccount().getUsername(), dto.getClient().getId()); // todo: need a new way of detecting if a client account is already in use
 		if (clients.isUsernameInUse(dto.getUserAccount().getUsername(), dto.getClient().getId()) == true) {
 			System.out.println("... " + dto.getUserAccount().getUsername() + " already in use!");
 			client.setRemoved(true, "Account in use");
-			//client.getConnection().close(Reason.AccountInUse, "Account in use");
 			return;
 		}
+		
 		System.out.println("... " + dto.getUserAccount().getUsername() + " has authenticated!");
-		//client.setAuthenticationDto(dto);
+		// the client is ready to send and receive messages 
 		client.setReady(true);
 		
-		//
-		//clients.authenticateClient(client);
-		
-		// done, tell client to proceed to the next step and choose character
-		//client.getConnection().send("Hello " + client.getAuthenticationDto().getUserAccount().getUsername());
-		//clients.getPlayer(client.getId()).addFrame(new ChatBlob(0, "Hello " + client.getAuthenticationDto().getUserAccount().getUsername()));
-		//client.addFrame(new ChatBlob(0, "Hello " + client.getAuthenticationDto().getUserAccount().getUsername()));
-		AuthBlob authBlob = new AuthBlob();
-		authBlob.ready = true;
+		// provide player with a selection of their characters
+		JoinBlob joinBlob = new JoinBlob();
+		joinBlob.ready = true;
 
 		int c = 0;
 		for(CharacterModel model : dto.getCharacters()) { 
-			authBlob.characters.add(new CharacterBlob(model, c++));
+			joinBlob.characters.add(new CharacterBlob(model, c++));
 		}
-		client.addFrame(authBlob);
-		//clients.flush();
-		//client.sendMessage(new NetworkMessage().serialize(new NetworkBlob().s));	
-		
+		// push blob to client
+		client.addFrame(joinBlob);		
 	}
 	
 	public void flush() {

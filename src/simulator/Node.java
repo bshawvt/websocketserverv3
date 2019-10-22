@@ -3,9 +3,7 @@ package simulator;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import Models.CharacterModel;
-import server.Clients;
-import threads.Threads;
+
 import tools.Profiler;
 
 public class Node implements Runnable {
@@ -36,6 +34,12 @@ public class Node implements Runnable {
 		
 		this.id = id;
 		System.out.println("Node-" + id + ": Hello world!");
+	
+		// debug to stress node
+		for(int i = 0; i < 4000; i++)
+			world.addNetObject();
+	
+		
 	}
 	
 	public boolean hasClient(int id) {
@@ -50,7 +54,11 @@ public class Node implements Runnable {
 		}
 	}
 	
-	int sps = 0; 
+	int sps = 0;
+	int spsCount = 0;
+	
+	int stepSize = 250;
+	
 	public void update() {
 		flushThreadMessages();
 		
@@ -58,15 +66,31 @@ public class Node implements Runnable {
 		
 		if (profiler.hasElapsed("sps", 1000)) {
 			//System.out.println("has elapsed in " + id + " current sps: " + sps);
-			sps = 0;
+			sps = spsCount;
+			spsCount = 0;
+			
+			System.out.println("=====================================" +
+				"\n node-" + id + " metrics:" +
+				"\ntime taken between frames ms: " + profiler.elapse("test1") +
+				"\nsteps per second: " + sps +
+				"\nnetobject count: " + world.netObjects.size()// +
+				//"\nnetobject steps per frame: " + (stepSize * 4) // 4 inner loops for some reason
+			);
+			
 		}
 		
+		if (now > (dt + (TimeStep*5))) {
+			System.err.println("SKiPPeD frAme");
+			dt = now;
+		}
+		
+		profiler.start("test1");
 		while (dt < now) {
 			dt += TimeStep;
-			world.step(dt);
-			sps++;
-			//System.out.println((long)dt);
+			world.step(dt, stepSize);
+			spsCount++;
 		}
+		profiler.stop("test1");
 	}
 	
 	private void flushThreadMessages() {
@@ -82,7 +106,7 @@ public class Node implements Runnable {
 					break;
 				}
 				
-				// integrate client state with this simulation
+				// integrate client state to the simulation
 				case SimulatorThreadMessage.Type.Update:{
 					break;
 				}
@@ -106,54 +130,6 @@ public class Node implements Runnable {
 					break;
 				}
 			}
-			
-			//int node = getNode(msg.getClientId());
-			/*
-			switch (type) {
-				case SimulatorThreadMessage.Type.None: {
-					if (from == Threads.Main) {
-						String command = msg.getCommand();
-						if (command != null) {
-							System.out.println("Node: received command from server");
-							System.out.println("command: " + command);
-						}
-					}
-					break;
-				}
-				case SimulatorThreadMessage.Type.Update: {
-					System.out.println("SimulatorThread: received an Update event");
-					if (from == Threads.Server) {
-						System.out.println("... from Server!");
-						System.out.println("... update sent to node: ???");
-					}
-					break;
-				}
-				case SimulatorThreadMessage.Type.Add: {
-					System.out.println("SimulatorThread: received an Add event");
-					if (from == Threads.Server) {
-						System.out.println("... from Server!");
-						if (msg.getCharacter() == null) {
-							//Threads.getDatabaseQueue().offer(new DatabaseThreadMessage)
-						}
-						else {
-							//new NetObject(world[0], msg.getCharacter());
-							System.out.println("... added character to node: ???");
-						}
-					}
-					break;
-				}
-				case SimulatorThreadMessage.Type.Remove: {
-					System.out.println("SimulatorThread: received an Remove event");
-					if (from == Threads.Server) {
-						System.out.println("... from Server!");
-					}
-					break;
-				}
-				default: {
-					break;
-				}
-			
-			}*/
 		}
 	}
 }

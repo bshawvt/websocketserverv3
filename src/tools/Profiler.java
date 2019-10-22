@@ -35,6 +35,14 @@ public class Profiler {
 		}
 		profile.stop();
 	}
+	public long elapse(String name) {
+		Profile profile = profiles.get(name);
+		if (profile == null) {
+			profile = new Profile();
+			profiles.put(name, profile);
+		}
+		return profile.elapsed;
+	}
 	public boolean hasElapsed(String name, long expires) {
 		Profile profile = profiles.get(name);
 		if (profile == null) {

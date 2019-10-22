@@ -11,12 +11,12 @@ import server.blobs.NetworkBlob;
 public class Client {
 	
 	private int id = 0;
-	private boolean ready = false; // true if client has authenticated
+	private boolean ready = false; 
 	private WebSocket connection = null;
 	private boolean removed = false;
-	private long authStartTime = 0;
-	//private AuthenticationDto authenticationDto = null;
-	private String reason = ""; // removed reason
+	private long startTime = 0;
+
+	private String reason = ""; // reason for being kicked from server
 	private boolean active = false;
 	
 	private AuthenticationDto authenticationDto;
@@ -24,11 +24,11 @@ public class Client {
 	private NetworkBlob frame;
 	
 	public Client() {
-		this.authStartTime = (new Date()).getTime();
+		this.startTime = (new Date()).getTime();
 		this.frame = new NetworkBlob();
 	}
 	public Client(WebSocket connection, int id) {
-		this.authStartTime = (new Date()).getTime();
+		this.startTime = (new Date()).getTime();
 		this.connection = connection; 
 		this.ready = false;
 		this.id = id;
@@ -36,7 +36,7 @@ public class Client {
 	}
 	
 	public long getAuthStartTime() {
-		return this.authStartTime;
+		return this.startTime;
 	}
 	public int getId() {
 		return this.id;
@@ -45,8 +45,8 @@ public class Client {
 		this.active = v;
 	}
 	/**
-	 * set when player is part of an active simulation node
-	 * @return  
+	 * 
+	 * @return  true when player is part of an active simulation node
 	 */
 	public boolean isActive() {
 		return this.active;
@@ -67,6 +67,10 @@ public class Client {
 	public void setReady(boolean state) { 
 		this.ready = state; 
 	}
+	/**
+	 * 
+	 * @return true when client can send and receive network messages with the server  
+	 */
 	public boolean isReady() {
 		return this.ready;
 	}
