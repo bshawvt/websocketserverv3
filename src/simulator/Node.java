@@ -69,13 +69,13 @@ public class Node implements Runnable {
 			sps = spsCount;
 			spsCount = 0;
 			
-			System.out.println("=====================================" +
+			/*System.out.println("=====================================" +
 				"\n node-" + id + " metrics:" +
 				"\ntime taken between frames ms: " + profiler.elapse("test1") +
 				"\nsteps per second: " + sps +
 				"\nnetobject count: " + world.netObjects.size()// +
 				//"\nnetobject steps per frame: " + (stepSize * 4) // 4 inner loops for some reason
-			);
+			);*/
 			
 		}
 		
