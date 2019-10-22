@@ -11,19 +11,20 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
-
+import org.java_websocket.ssl.PEMTokenJava11;
+import org.java_websocket.ssl.SSL;
 
 import Dtos.AuthenticationDto;
 import Models.CharacterModel;
 import database.DatabaseThreadMessage;
 import main.Config;
+
 import server.blobs.JoinBlob;
 import server.blobs.CharacterBlob;
 import server.blobs.ChatBlob;
 import server.blobs.MessageBlob;
 import server.blobs.NetworkBlob;
 import server.chat.ChatManager;
-import server.ssl.SSL;
 import simulator.SimulatorThreadMessage;
 import threads.Threads;
 
@@ -58,10 +59,14 @@ public class Server extends WebSocketServer {
 		if (Config.UseSSL)
 			try {
 				System.out.println("Server: using ssl!");
-				this.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(new SSL().getSSLContextFromLetsEncrypt()));
+				this.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(new SSL()
+						.getSSLContextFromLetsEncrypt(Config.SSLCertPath, Config.SSLKeyPassword, new PEMTokenJava11())
+						));
+				
+				System.out.println("Server: bound to port " + Config.ServerPort);
 			}
 			finally {
-				System.out.println("Server: bound to port " + Config.ServerPort);
+				
 			}
 		
 	}
