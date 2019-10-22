@@ -23,6 +23,7 @@ import server.blobs.ChatBlob;
 import server.blobs.MessageBlob;
 import server.blobs.NetworkBlob;
 import server.chat.ChatManager;
+import server.ssl.SSL;
 import simulator.SimulatorThreadMessage;
 import threads.Threads;
 

@@ -1,4 +1,4 @@
-package server;
+package server.ssl;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -22,6 +22,7 @@ import java.util.Base64;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+//import javax.xml.bind.DatatypeConverter;
 
 public class SSL { // https://github.com/TooTallNate/Java-WebSocket/wiki/Getting-a-SSLContext-from-different-sources#getting-a-sslcontext-using-a-lets-encrypt-certificate
 	/* steps for future reference because this was a major pain in my fat ass
@@ -65,52 +66,20 @@ public class SSL { // https://github.com/TooTallNate/Java-WebSocket/wiki/Getting
 	    }        
 	    return context;
 	}
-
+	
 	protected byte[] parseDERFromPEM(byte[] pem, String beginDelimiter, String endDelimiter) {
+
 	    String data = new String(pem);
 	    String[] tokens = data.split(beginDelimiter);
 	    tokens = tokens[1].split(endDelimiter);
 	    
-	    tokens[0] = tokens[0].trim();
+	   // tokens[0] = tokens[0].trim();
+	    byte[] r = (new PEMTokenJava11()).get(tokens[0]);
+	    //System.out.println(r);
+	    return r;//(new PEMTokenJava8()).get(tokens[0]);
 	    
-	    byte[] in = Base64.getEncoder().encode(tokens[0].getBytes());//DatatypeConverter.parseBase64Binary(tokens[0]);
-	    byte[] base = Base64.getDecoder().decode(in);
-	    //System.out.println("tokenAsRaw: " + tokens[0]);
-	   // System.out.println("tokenAsBytes: " + tokens[0].getBytes());
-	    //System.out.println("tokenAsString: " + (new String(tokens[0])));
-	   // System.out.println("tokenAsBase64AsString: " + (new String(base)));
-	    //System.out.println("tokenAsBase64AsBytes: " + base);
-	    //System.out.println(new String(base));
-	   // System.out.println(new String(Base64.getMimeDecoder().decode(tokens[0])));
-	    //System.out.println("tokenAsBase64AsBytes: " + base.getBytes());
-	   	//System.out.println("bp");
-	   	return Base64.getMimeDecoder().decode(tokens[0]);
-	   	
-	   /* try {
-	    	
-	    	//byte[] z = DatatypeConverter.parseBase64Binary("hello world");
-	    	//System.out.println("datatypeconverter: " + z + "\nraw: " + tokens[0].getBytes());
-	    	//byte[] = 
-	    	for(byte b : tokens[0].getBytes()) {
-	    		
-	    	}
-	    	//byte[] t = Base64.getDecoder().decode(tokens[0].getBytes());
-		    //System.out.println("base64: " + t + "\nraw: " + (new String(t)));
-		    
-		   // String nt = new String(t);
-		   // System.out.println(nt);
-		    //System.out.println("\nbase64 decode for aa" + new String(Base64.getDecoder().decode("aa").toString()));
-		    System.out.println("bp");
-	    
-	    }
-	    catch(IllegalArgumentException e) {
-	    	System.err.println(e + " - " + tokens[0]);
-	    	
-	    }*/
-	    
-	    //return new byte[1];
+
 	    //return DatatypeConverter.parseBase64Binary(tokens[0]);
-	   //return tokens[0].getBytes();
 	}
 
 	protected RSAPrivateKey generatePrivateKeyFromDER(byte[] keyBytes) throws InvalidKeySpecException, NoSuchAlgorithmException {
