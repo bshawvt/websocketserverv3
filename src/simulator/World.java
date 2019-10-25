@@ -16,7 +16,7 @@ public class World {
 	//public Metrics metrics = new Metrics();
 	//private HashMap<Integer, NetObject> clientNetObjects;
 	
-	
+	public Tree nodeTree = new Tree<NetObject>();
 	
 	public World() {
 		
@@ -33,6 +33,7 @@ public class World {
 			}
 			else {
 				netObject.step(this, dt, s);
+				
 			}
 		}
 		
@@ -64,6 +65,7 @@ public class World {
 	 */
 	public void addNetObject() {
 		this.netObjectsQueue.add(new NetObject());
+		
 	}
 	public void removeNetObject() {
 		

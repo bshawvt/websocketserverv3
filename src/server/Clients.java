@@ -39,7 +39,7 @@ public class Clients {
 			Client client = it.next();
 			if (client.isRemoved()) {
 				System.out.println("Client: flush: removed client with id " + client.getId());
-				if (client.isReady()) {
+				if (client.isActive()) {
 					System.out.println("... " + client.getAuthenticationDto().getUserAccount().getUsername() + " has disconnected!");
 				}
 				System.out.println("before: " + playerTable.get(client.getId()));
@@ -49,7 +49,9 @@ public class Clients {
 				it.remove();
 				System.out.println("... clients list size: " + clientList.size());
 			}
-			// clean up stray connections
+			
+			// todo: this is probably useless, the client connection should be terminated long before this can happen
+			// but just in case clean up and remove stray connections
 			else if ((now > client.getAuthStartTime() +  5000) && !client.isReady()) {
 				System.out.println("Client: flush: removed client: client did not authenticate in time");
 				System.out.println(playerTable.get(client.getId()));

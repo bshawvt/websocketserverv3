@@ -36,7 +36,7 @@ public class Node implements Runnable {
 		System.out.println("Node-" + id + ": Hello world!");
 	
 		// debug to stress node
-		for(int i = 0; i < 4000; i++)
+		for(int i = 0; i < 2000; i++)
 			world.addNetObject();
 	
 		
@@ -57,7 +57,7 @@ public class Node implements Runnable {
 	int sps = 0;
 	int spsCount = 0;
 	
-	int stepSize = 250;
+	int stepSize = 500;
 	
 	public void update() {
 		flushThreadMessages();
@@ -69,19 +69,21 @@ public class Node implements Runnable {
 			sps = spsCount;
 			spsCount = 0;
 			
-			/*System.out.println("=====================================" +
+			System.out.println("=====================================" +
 				"\n node-" + id + " metrics:" +
 				"\ntime taken between frames ms: " + profiler.elapse("test1") +
 				"\nsteps per second: " + sps +
-				"\nnetobject count: " + world.netObjects.size()// +
-				//"\nnetobject steps per frame: " + (stepSize * 4) // 4 inner loops for some reason
-			);*/
+				"\nnetobject count: " + world.netObjects.size() +
+				"\nnetobjects per tree: " + stepSize
+			);
 			
 		}
 		
-		if (now > (dt + (TimeStep*5))) {
+		if (now > (dt + (TimeStep))) {
 			System.err.println("SKiPPeD frAme");
 			dt = now;
+			
+			// todo: 
 		}
 		
 		profiler.start("test1");
