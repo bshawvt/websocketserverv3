@@ -10,7 +10,7 @@ public class Config {
 	public static boolean DatabaseReporting = false; // server write to status table
 	public static final boolean UseSSL = true;
 	public static final int CharacterLimit = 3;
-	public static final int NodeLimit = 1; // how many cpu cores simulator thread can use
+	public static final int NodeLimit = 1; // TODO: how many cpu cores simulator thread can use
 	public static final String SSLCertPath = "E:\\acme";
 	public static final String SSLKeyPassword = "";
 	 
