@@ -13,6 +13,7 @@ public class NetworkBlob {
 	@SerializedName("messages")
 	private ArrayList<MessageBlob> messages;
 	public ArrayList<MessageBlob> getMessages() { return this.messages; };
+	public void add(MessageBlob message) { this.messages.add(message); this.size++; };
 	
 	public NetworkBlob() {
 		this.size = 0;

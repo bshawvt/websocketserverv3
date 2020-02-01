@@ -86,8 +86,7 @@ public class Client {
 		}
 	}
 	public void addFrame(MessageBlob message) {
-		this.frame.getMessages().add(message);
-		//this.connection.send(message);
+		this.frame.add(message);
 	}
 	
 	public void sendFrame() {

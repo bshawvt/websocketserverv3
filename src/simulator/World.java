@@ -6,6 +6,8 @@ import java.util.Iterator;
 
 import Models.CharacterModel;
 import server.Client;
+import simulator.netobjects.NetObject;
+import simulator.netobjects.Player;
 import tools.Metrics;
 
 public class World {
@@ -22,7 +24,7 @@ public class World {
 		
 	}
 	
-	public void step(double dt, int s) {
+	public void step(double dt) {
 		flush();
 		
 		Iterator<NetObject> it = netObjects.iterator();
@@ -32,7 +34,7 @@ public class World {
 				it.remove();
 			}
 			else {
-				netObject.step(this, dt, s);
+				netObject.step(this, dt);
 				
 			}
 		}
@@ -47,9 +49,9 @@ public class World {
 	public void addNetObject(int clientId, CharacterModel model) {
 		
 		if (model == null) return;
-		NetObject obj = new NetObject(model);
+		Player obj = new Player(model);
 		obj.clientId = clientId;
-		this.netObjectsQueue.add(new NetObject(model));
+		this.netObjectsQueue.add(new Player(model));
 			
 	}
 	/**
@@ -64,7 +66,7 @@ public class World {
 	 * add a server owned character to the simulation
 	 */
 	public void addNetObject() {
-		this.netObjectsQueue.add(new NetObject());
+		this.netObjectsQueue.add(new Player());
 		
 	}
 	public void removeNetObject() {
@@ -75,7 +77,7 @@ public class World {
 		// merge new objects into main list
 		Iterator<NetObject> it = netObjectsQueue.iterator();
 		while (it.hasNext()) {
-			NetObject netObject = it.next();
+			Player netObject = it.next();
 			netObjects.add(netObject);
 			
 		}

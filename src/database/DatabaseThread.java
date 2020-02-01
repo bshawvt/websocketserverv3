@@ -1,5 +1,7 @@
 package database;
 
+import Dtos.AuthenticationDto;
+import Dtos.CharacterDto;
 import database.DatabaseThreadMessage;
 import threads.Threads;
 
@@ -43,7 +45,20 @@ public class DatabaseThread implements Runnable {
 						if (from == Threads.Server) {
 							System.out.println("... from Server!");
 							System.out.println("DatabaseThread: received auth from server");
-							db.consumeSessionToken(msg.getAuthenticationDto());
+							AuthenticationDto dto = (AuthenticationDto) msg.getDto();
+							db.consumeSessionToken(dto);
+							break;
+						}
+						break;
+					}
+					
+					// sim
+					case DatabaseThreadMessage.Type.AddCharacter: {
+						System.out.println("DatabaseThread: received an AddCharacter event");
+						if (from == Threads.Server) {
+							System.out.println("... from Simulator!");
+							
+							db.addCharacter((CharacterDto) msg.getDto());
 							break;
 						}
 						break;

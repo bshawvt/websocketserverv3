@@ -3,6 +3,8 @@ package simulator;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import Dtos.CharacterDto;
+import database.DatabaseThreadMessage;
 import main.Config;
 import threads.Threads;
 import tools.Profiler;
@@ -24,12 +26,12 @@ public class SimulatorThread implements Runnable {
 		
 		this.clientLocation = new HashMap<>();
 		
-		for(int i = 0; i < Config.NodeLimit; i++) {
-			this.nodes[i] = new Node(i+1);
-			Thread nodeThread = new Thread(this.nodes[i], "Node-" + this.nodes[i].id);
+		//for(int i = 0; i < Config.NodeLimit; i++) {
+			this.nodes[0] = new Node(1);
+			Thread nodeThread = new Thread(this.nodes[0], "Node-" + this.nodes[0].id);
 			nodeThread.setDaemon(false);
 			nodeThread.start();
-		}
+		//}
 			
 		/*this.start = System.nanoTime()/1000000;
 		this.dt = this.start;
@@ -98,7 +100,7 @@ public class SimulatorThread implements Runnable {
 				int type = msg.getType();
 				int from = msg.getFrom();
 				
-				Node node = getNodeByClientLocation(msg.getClientId());
+				Node node = this.nodes[0];//getNodeByClientLocation(msg.getClientId());
 				
 				switch (type) {
 					// input processing
@@ -133,9 +135,15 @@ public class SimulatorThread implements Runnable {
 							if (node == null) continue; // should never happen but just in case, skip 
 							
 							System.out.println("... from Server!");
-							if (msg.getCharacter() == null) {
+							if (msg.getCharacter() != null) {
+								System.out.println("... added character to node: " + node.id);
+							}
+							/*if (msg.getCharacter() == null) {
 								System.out.println("... added a new character to node: " + node.id);
 								node.nodeThreadMessage.offer(msg);
+								//CharacterDto dto = new CharacterDto();
+								//dto.setClientId(msg.get))
+								//Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Simulator, DatabaseThreadMessage.Type.AddCharacter, dto));
 								//System.out.println(t);
 								
 								//Threads.getDatabaseQueue().offer(new DatabaseThreadMessage)
@@ -145,7 +153,7 @@ public class SimulatorThread implements Runnable {
 								//new NetObject(world[0], msg.getCharacter());
 								System.out.println("... added character to node: " + node.id);
 								node.nodeThreadMessage.offer(msg);
-							}
+							}*/
 						}
 						break;
 					}

@@ -82,41 +82,6 @@ public class Clients {
 		System.out.println("Client: playerTable size: " + playerTable.size());
 		
 	}
-	/*
-	public Client getClient(WebSocket connection) {
-		System.out.println("Client: getClient: getting client from connection: ");
-		
-		// server never created a client for this connection
-		if (connection.<Integer>getAttachment() == null) return null;
-		
-		Iterator<Client> it = clientList.iterator();
-		while(it.hasNext()) {
-			Client client = it.next();
-			System.out.println("... current: " + client.getId());
-			if (client.getId() == connection.<Integer>getAttachment()) {
-				System.out.println("... found!");
-				return client;
-			}
-			/*if (connection.getResourceDescriptor().equals("/" + client.getSessionToken())) {
-				return client;
-			}/
-		}
-		return null;
-	}*/
-	/*public Client getClient(int id) {
-		System.out.println("Client: getClient: getting client from id: ");
-		
-		Iterator<Client> it = clientList.iterator();
-		while(it.hasNext()) {
-			Client client = it.next();
-			System.out.println("... current: " + client.getId());
-			if (client.getId() == id) {
-				System.out.println("... found!");
-				return client;
-			}
-		}
-		return null;
-	}*/
 	public boolean isUsernameInUse(String username, int caller) {
 		System.out.println("Client: isUsernameInUse: getting client from username: ");
 		Iterator<Client> it = clientList.iterator();
@@ -128,19 +93,7 @@ public class Clients {
 				return true;
 			}
 		}
-		
-		/*Iterator<Client> it = clientList.iterator();
-		while(it.hasNext()) {
-			Client client = it.next();
-			if (client.getAuthenticationDto() == null) continue; // some times the dto is not set, meaning the server has never received an authentication from the database
-			String currentName = client.getAuthenticationDto().getUserAccount().getUsername(); 
-			System.out.println("... current: " + currentName);
-			if (currentName.equals(username)) {
-				System.out.println("... found!");
-				return client;
-			}
-		}*/
-		
+
 		System.out.println("... client by username " + username + " not found");
 		return false;
 	}

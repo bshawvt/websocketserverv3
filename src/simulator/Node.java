@@ -36,8 +36,8 @@ public class Node implements Runnable {
 		System.out.println("Node-" + id + ": Hello world!");
 	
 		// debug to stress node
-		for(int i = 0; i < 2000; i++)
-			world.addNetObject();
+		//for(int i = 0; i < 2000; i++)
+		//	world.addNetObject();
 	
 		
 	}
@@ -64,7 +64,7 @@ public class Node implements Runnable {
 		
 		double now = System.nanoTime()/1000000;
 		
-		if (profiler.hasElapsed("sps", 1000)) {
+		/*if (profiler.hasElapsed("sps", 1000)) {
 			//System.out.println("has elapsed in " + id + " current sps: " + sps);
 			sps = spsCount;
 			spsCount = 0;
@@ -77,7 +77,7 @@ public class Node implements Runnable {
 				"\nnetobjects per tree: " + stepSize
 			);
 			
-		}
+		}*/
 		
 		if (now > (dt + (TimeStep))) {
 			System.err.println("SKiPPeD frAme");
@@ -87,11 +87,15 @@ public class Node implements Runnable {
 		}
 		
 		profiler.start("test1");
+		
+		
 		while (dt < now) {
 			dt += TimeStep;
-			world.step(dt, stepSize);
+			world.step(dt);
 			spsCount++;
 		}
+		
+		
 		profiler.stop("test1");
 	}
 	
@@ -103,10 +107,6 @@ public class Node implements Runnable {
 			System.out.println("Node: Node-" + id + ": received a thread message");
 			
 			switch (type) {
-				// Nodes do not use None, this should never happen
-				case SimulatorThreadMessage.Type.None:{
-					break;
-				}
 				
 				// integrate client state to the simulation
 				case SimulatorThreadMessage.Type.Update:{
@@ -117,13 +117,19 @@ public class Node implements Runnable {
 				case SimulatorThreadMessage.Type.Add:{
 					//msg.get
 					world.addNetObject(msg.getClientId(), msg.getCharacter());
-					System.out.println("Node: Node-" + id + ": added net object to simulation" );
+					System.out.println("TODO: Node: Node-" + id + ": added net object to simulation" );
 					break;
 				}
 				
 				// remove client from this simulation
 				case SimulatorThreadMessage.Type.Remove:{ 
 					world.removeNetObject(msg.getClientId());
+					System.out.println("TODO: Node: Node-" + id + ": removed net object to simulation" );
+					break;
+				}
+				
+				// Nodes do not use None, this should never happen
+				case SimulatorThreadMessage.Type.None:{
 					break;
 				}
 				

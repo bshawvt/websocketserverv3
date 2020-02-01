@@ -15,6 +15,8 @@ import org.java_websocket.ssl.PEMTokenJava11;
 import org.java_websocket.ssl.SSL;
 
 import Dtos.AuthenticationDto;
+import Dtos.CharacterDto;
+import Dtos.NetObjectDto;
 import Models.CharacterModel;
 import database.DatabaseThreadMessage;
 import main.Config;
@@ -64,6 +66,10 @@ public class Server extends WebSocketServer {
 						));
 				
 				System.out.println("Server: bound to port " + Config.ServerPort);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				System.exit(-1);
 			}
 			finally {
 				
@@ -186,14 +192,26 @@ public class Server extends WebSocketServer {
 				case MessageBlob.Type.JoinBlob: {
 					JoinBlob authBlob = (JoinBlob) message;
 					
+					// prevent pesky curious user problems
+					if (client.isActive()) {
+						System.err.println("User has tried to send a join blob while being part of an active simulation!");
+						return;
+					}
+					
 					// user is joining the game as a new character
 					if (authBlob.id == -1) {
 						if (client.getAuthenticationDto().getCharacters().size() < Config.CharacterLimit) {
 							System.out.println("User has created a new character");
-							Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Add, client.getId(), null));
+							CharacterDto dto = new CharacterDto(client);
+							// have the database save this new character immediately
+							Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Server, DatabaseThreadMessage.Type.AddCharacter, dto));
+							// insert the user into the simulator with this new character
+							// server will await a message from the simulator confirming the user is ready to receive game states
+							//Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Add, dto));
+							insertClientIntoSim(dto);
 						}
 						else {
-							System.out.println("User has tried to create a new character but they have the maximum already");
+							System.err.println("User has tried to create a new character but they have the maximum already");
 						}
 					}
 					
@@ -204,12 +222,19 @@ public class Server extends WebSocketServer {
 							CharacterModel character = client.getAuthenticationDto().getCharacters().get(authBlob.id);
 							if (character != null) {
 								System.out.println("User has chosen their character named " + character.getCharacterName());
-								Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Add, client.getId(), character));
+								CharacterDto dto = new CharacterDto(client, character);
+								// insert the user into the simulator
+								//Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Add, dto));
+								
 								//clients.promoteClientToPlayer(client);
+								insertClientIntoSim(dto);
+							}
+							else {
+								System.err.println("User has chosen a null character some how!!");
 							}
 						}
 						else {
-							System.out.println("Junk auth blob");
+							System.err.println("User has tried to select a character index that is out of bounds!!");
 						}
 					}
 					break;
@@ -222,6 +247,16 @@ public class Server extends WebSocketServer {
 				}
 			}
 		}
+	}
+	
+	public void update(NetObjectDto dto) {
+		
+	}
+
+	private void insertClientIntoSim(CharacterDto dto) {
+		// server will await a message from the simulator confirming the user is ready to receive game states
+		Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Add, dto));
+		
 	}
 
 	@Override
@@ -262,6 +297,7 @@ public class Server extends WebSocketServer {
 				Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Server, DatabaseThreadMessage.Type.Authentication, dto));
 							
 				// todo: flush
+				// todotodo: the server doesn't update clients until a flush event
 				Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Flush));
 				return;
 			}

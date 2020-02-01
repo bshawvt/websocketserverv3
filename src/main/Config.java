@@ -1,7 +1,7 @@
 package main;
 
 public class Config {
-	public static String ClientVersion = "1008190300"; // used during client authentication 
+	public static String ClientVersion = "1302020"; // used during client authentication 
 	public static int ServerPort;// game port clients connect through
 	public static String DatabaseAddress; // sql server address
 	public static String DatabaseUsername;
@@ -12,6 +12,7 @@ public class Config {
 	public static final int CharacterLimit = 3;
 	public static final int NodeLimit = 1; // TODO: how many cpu cores simulator thread can use
 	public static final String SSLCertPath = "E:\\acme";
+	//public static final String SSLCertPath = "./certs/";
 	public static final String SSLKeyPassword = "";
 	 
 	

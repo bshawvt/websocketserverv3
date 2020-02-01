@@ -5,10 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import Dtos.AuthenticationDto;
+import Dtos.CharacterDto;
 import Models.CharacterModel;
 import Models.UserAccountModel;
 import main.Config;
+import server.Client;
 import server.ServerThreadMessage;
+import simulator.SimulatorThreadMessage;
 import threads.Threads;
 
 public class Database {
@@ -35,6 +38,26 @@ public class Database {
 	}
 	public void initCache() {
 		this.cache = new Cache();
+	}
+	
+	public void addCharacter(CharacterDto dto) {
+		System.out.println("Database: addCharacter:");
+		try {
+			UserAccountModel user = dto.getClient().getAuthenticationDto().getUserAccount();
+			System.out.println(user);
+			String query = "CALL WSProc_AddCharacter(?);";
+			PreparedStatement statement = connection.prepareStatement(query);
+			statement.setLong(1, user.getUserId());
+			ResultSet result = statement.executeQuery();
+			while (result.next()) {
+				System.out.println("... addCharacter has succeeded!");
+			}
+		
+		}
+		catch (SQLException e) {
+			System.err.println("... addCharacter has failed!");
+		}
+		
 	}
 	public void consumeSessionToken(AuthenticationDto dto) {
 		try {

@@ -23,5 +23,8 @@ GRANT EXECUTE ON PROCEDURE WSProc_GenerateRecoveryToken TO 'wss_website'@'%';
 GRANT EXECUTE ON PROCEDURE WSProc_ConsumeRecoveryToken TO 'wss_website'@'%';
 #REVOKE EXECUTE ON PROCEDURE WSProc_InsertUserAccount FROM 'web'@'%';
 
+GRANT EXECUTE ON PROCEDURE WSProc_AddCharacter TO 'wss_website'@'%';
+#REVOKE EXECUTE ON PROCEDURE WSProc_AddCharacter FROM 'web'@'%';
+
 #GRANT EXECUTE ON PROCEDURE WSProc_ConsumeToken TO 'server'@'%';
 #REVOKE EXECUTE ON PROCEDURE WSProc_ConsumeToken FROM 'server'@'%';

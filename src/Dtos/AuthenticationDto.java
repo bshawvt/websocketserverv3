@@ -48,6 +48,7 @@ public class AuthenticationDto {
 	public void setClient(Client client) {
 		this.client = client;
 	}
+	/* contains character select data only */
 	public void addCharacter(CharacterModel model) {
 		this.characters.add(model);
 	}

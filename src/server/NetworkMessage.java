@@ -34,12 +34,7 @@ public class NetworkMessage {
 	}
 	public NetworkBlob deserialize(String data) {
 		try {
-			//if (client == null) return null;
-			//return gson.fromJson(data, NetworkBlob.class);
-			
-			return gson.fromJson(data, NetworkBlob.class);
-			//return null;
-			
+			return gson.fromJson(data, NetworkBlob.class);			
 		}
 		catch (JsonParseException e) {
 			System.out.println("NetworkMessage: deserialize jsonparse exception: " + e.getMessage());
