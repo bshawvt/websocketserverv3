@@ -9,7 +9,6 @@ public class Player extends NetObject {
 	
 	public CharacterModel model;
 	public int clientId;
-	
 	public boolean removed = false; 
 	
 	
@@ -18,10 +17,6 @@ public class Player extends NetObject {
 	}
 	public Player(CharacterModel model) {
 		this.model = new CharacterModel(model);
-	}
-	
-	void step(float dt) {
-		//super.step(dt);
 	}
 	
 	@Override
