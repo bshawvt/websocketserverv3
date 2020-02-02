@@ -125,6 +125,7 @@ public class CharacterModel {
 
 	public long getCharacterId() { return this.character_id; }
 	public long getCharacterOwner() { return this.character_owner; }
+	public void setCharacterOwner(long owner) { this.character_owner = owner; }
 
 	public double getX() { return this.x; }
 	public double getY() { return this.y; }

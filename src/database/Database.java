@@ -51,6 +51,7 @@ public class Database {
 			ResultSet result = statement.executeQuery();
 			while (result.next()) {
 				System.out.println("... addCharacter has succeeded!");
+				//Threads.getSimulatorQueue().offer(new SimulatorThreadMessage());
 			}
 		
 		}

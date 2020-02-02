@@ -23,9 +23,7 @@ public class SimulatorThreadMessage {
 	
 	private int clientId;
 	public int getClientId() { return this.clientId; }
-	private CharacterModel character;
-	public CharacterModel getCharacter() { return this.character; }
-	
+
 	
 	public SimulatorThreadMessage() {
 		this.from = Threads.None;

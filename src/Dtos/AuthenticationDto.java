@@ -9,7 +9,7 @@ import server.Client;
 public class AuthenticationDto {
 	
 	private UserAccountModel userAccount;
-	private ArrayList<CharacterModel> characters;
+	private ArrayList<CharacterModel> characters; // 
 	private Client client;
 	
 	private String token;

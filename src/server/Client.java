@@ -69,7 +69,7 @@ public class Client {
 	}
 	/**
 	 * 
-	 * @return true when client can send and receive network messages with the server  
+	 * @return true when client has authenticated and can send and receive network messages with the server  
 	 */
 	public boolean isReady() {
 		return this.ready;

@@ -61,14 +61,6 @@ public class World {
 	public void removeNetObject(int clientId) {
 		
 	}
-	
-	/**
-	 * add a server owned character to the simulation
-	 */
-	public void addNetObject() {
-		this.netObjectsQueue.add(new Player());
-		
-	}
 	public void removeNetObject() {
 		
 	}
@@ -77,7 +69,7 @@ public class World {
 		// merge new objects into main list
 		Iterator<NetObject> it = netObjectsQueue.iterator();
 		while (it.hasNext()) {
-			Player netObject = it.next();
+			NetObject netObject = it.next();
 			netObjects.add(netObject);
 			
 		}

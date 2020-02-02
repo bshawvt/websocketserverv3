@@ -135,9 +135,20 @@ public class SimulatorThread implements Runnable {
 							if (node == null) continue; // should never happen but just in case, skip 
 							
 							System.out.println("... from Server!");
-							if (msg.getCharacter() != null) {
+							CharacterDto dto = (CharacterDto) msg.getDto();
+							if (dto.getCharacterModel() != null) {
 								System.out.println("... added character to node: " + node.id);
+								System.out.println("... character added:\n\tid - " + dto.getCharacterModel().getCharacterId() + 
+										"\n\townerid - " + dto.getCharacterModel().getCharacterOwner());
 							}
+							else {
+								System.out.println("... adding a brand new character to node: " + node.id);
+								Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Simulator, DatabaseThreadMessage.Type.AddCharacter, msg.getDto()));
+							}
+							
+							// stage the message to the node the client belongs to
+							node.nodeThreadMessage.offer(msg);
+							
 							/*if (msg.getCharacter() == null) {
 								System.out.println("... added a new character to node: " + node.id);
 								node.nodeThreadMessage.offer(msg);

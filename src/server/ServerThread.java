@@ -50,7 +50,7 @@ public class ServerThread implements Runnable {
 					// state propagation between simulation thread and client
 					case ServerThreadMessage.Type.Update: {
 						System.out.println("ServerThread: ServerQueue: received update event");
-						server.update(msg.getDto());
+						//server.update(msg.getDto());
 						break;
 					}
 					

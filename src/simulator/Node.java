@@ -3,7 +3,8 @@ package simulator;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
-
+import server.ServerThreadMessage;
+import threads.Threads;
 import tools.Profiler;
 
 public class Node implements Runnable {
@@ -116,8 +117,9 @@ public class Node implements Runnable {
 				// add client to this simulation
 				case SimulatorThreadMessage.Type.Add:{
 					//msg.get
-					world.addNetObject(msg.getClientId(), msg.getCharacter());
+					//world.addNetObject(msg.getClientId(), msg.getCharacter());
 					System.out.println("TODO: Node: Node-" + id + ": added net object to simulation" );
+					Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Simulator, ServerThreadMessage.Type.Update, dto));
 					break;
 				}
 				

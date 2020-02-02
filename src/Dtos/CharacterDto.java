@@ -12,7 +12,7 @@ public class CharacterDto {
 	}
 	public CharacterDto(Client client) {
 		this.client = client;
-		this.model = new CharacterModel();
+		this.model = null;//new CharacterModel();
 	}
 	public CharacterDto(Client client, CharacterModel model) {
 		this.client = client;
