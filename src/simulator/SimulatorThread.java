@@ -178,6 +178,7 @@ public class SimulatorThread implements Runnable {
 							
 							System.out.println("... from Server!");
 							System.out.println("... removed character from node: " + node.id);
+							node.nodeThreadMessage.offer(msg);
 						}
 						break;
 					}

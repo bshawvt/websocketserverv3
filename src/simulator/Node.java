@@ -3,6 +3,7 @@ package simulator;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import Dtos.CharacterDto;
 import server.ServerThreadMessage;
 import threads.Threads;
 import tools.Profiler;
@@ -118,15 +119,18 @@ public class Node implements Runnable {
 				case SimulatorThreadMessage.Type.Add:{
 					//msg.get
 					//world.addNetObject(msg.getClientId(), msg.getCharacter());
-					System.out.println("TODO: Node: Node-" + id + ": added net object to simulation" );
-					Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Simulator, ServerThreadMessage.Type.Update, dto));
+					CharacterDto dto = (CharacterDto) msg.getDto();//).getClient().getId()
+					System.out.println("TODO: Node: Node-" + id + ": added net object to simulation for client " + dto.getClient().getId());
+					world.addNetObject(dto.getClient().getId(), dto.getCharacterModel());
+					//Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Simulator, ServerThreadMessage.Type.Update, dto));
 					break;
 				}
 				
 				// remove client from this simulation
-				case SimulatorThreadMessage.Type.Remove:{ 
-					world.removeNetObject(msg.getClientId());
-					System.out.println("TODO: Node: Node-" + id + ": removed net object to simulation" );
+				case SimulatorThreadMessage.Type.Remove:{
+					CharacterDto dto = (CharacterDto) msg.getDto();//).getClient().getId()
+					System.out.println("TODO: Node: Node-" + id + ": removed net object for client " + dto.getClient().getId());
+					world.removeNetObject(dto.getClient().getId());
 					break;
 				}
 				
