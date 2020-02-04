@@ -43,7 +43,7 @@ public class Database {
 	public void addCharacter(CharacterDto dto) {
 		System.out.println("Database: addCharacter:");
 		try {
-			UserAccountModel user = dto.getClient().getAuthenticationDto().getUserAccount();
+			UserAccountModel user = dto.getClient().getUserAccount();
 			System.out.println(user);
 			String query = "CALL WSProc_AddCharacter(?);";
 			PreparedStatement statement = connection.prepareStatement(query);
@@ -61,6 +61,10 @@ public class Database {
 		
 	}
 	public void consumeSessionToken(AuthenticationDto dto) {
+		
+		AuthenticationDto ndto = new AuthenticationDto(dto);
+		//ndto.setClient(dto.getClient());
+		
 		try {
 			System.out.println("Database: consumeSessionToken: " + dto.getToken());
 			String query = "CALL WSProc_ConsumeSessionToken(?, ?);";
@@ -68,11 +72,13 @@ public class Database {
 			statement.setString(1, dto.getToken());
 			statement.setString(2, dto.getOwnerAddress());
 			ResultSet result = statement.executeQuery();
+			
+			
 			while (result.next()) {
 			//if (result.next()) { // if a token can be used then construct a new useraccount  for the dto
 				//System.out.println("... consumeSessionToken has succeeded!");
 				if (dto.getUserAccount() == null) {
-					dto.setUserAccount(new UserAccountModel(result));
+					ndto.setUserAccount(new UserAccountModel(result));
 					System.out.println("... set  user account model!");
 				}
 				
@@ -91,7 +97,7 @@ public class Database {
 					//cache.characters.put(dto.getOwner(), );
 					
 					// prepare dto with list of characters if user has any
-					dto.addCharacter(character);
+					ndto.addCharacter(character);
 					System.out.println("... added character model!");
 				}
 			}
@@ -105,7 +111,7 @@ public class Database {
 		finally {
 			Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Database, 
 					ServerThreadMessage.Type.Authenticate, 
-					dto));
+					ndto));
 		}
 	}	
 

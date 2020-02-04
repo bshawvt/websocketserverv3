@@ -5,6 +5,7 @@ import java.util.Date;
 import org.java_websocket.WebSocket;
 
 import Dtos.AuthenticationDto;
+import Models.UserAccountModel;
 import server.blobs.MessageBlob;
 import server.blobs.NetworkBlob;
 
@@ -20,6 +21,7 @@ public class Client {
 	private boolean active = false;
 	
 	private AuthenticationDto authenticationDto;
+	private UserAccountModel userAccount;
 	
 	private NetworkBlob frame;
 	
@@ -100,5 +102,9 @@ public class Client {
 	public void clearFrame() {
 		this.frame = new NetworkBlob();
 	}
+	public void setUserAccount(UserAccountModel userAccount) {
+		this.userAccount = userAccount;	
+	}
+	public UserAccountModel getUserAccount() { return this.userAccount; }
 	
 }

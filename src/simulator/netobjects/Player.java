@@ -8,13 +8,9 @@ import simulator.World;
 public class Player extends NetObject {
 	
 	public CharacterModel model;
-	public int clientId;
 	public boolean removed = false; 
 	
 	
-	public Player() {
-		this.model = new CharacterModel();
-	}
 	public Player(CharacterModel model) {
 		this.model = new CharacterModel(model);
 	}

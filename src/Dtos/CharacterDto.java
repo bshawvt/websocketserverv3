@@ -18,6 +18,10 @@ public class CharacterDto {
 		this.client = client;
 		this.model = new CharacterModel(model);
 	}
+	public CharacterDto(Client client, long ownerId) {
+		this.client = client;
+		this.model = new CharacterModel(ownerId);
+	}
 	
 	public CharacterModel getCharacterModel() {
 		return this.model;

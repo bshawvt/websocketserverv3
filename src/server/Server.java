@@ -105,7 +105,7 @@ public class Server extends WebSocketServer {
 			if (client.isReady()) {
 			}
 			
-			System.out.println(" !!! " + client.getAuthenticationDto().getUserAccount().getUsername() + 
+			System.out.println(" !!! " + client.getUserAccount().getUsername() + 
 					" experienced a connection error");
 			client.setRemoved(true);
 		}
@@ -121,7 +121,12 @@ public class Server extends WebSocketServer {
 			if (client.isReady()) { // do something special if the user was authenticated
 				//Threads.getSimulatorQueue().offer();
 			}
+			if (client.isActive()) {
+				CharacterDto dto = new CharacterDto(client);
+				Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Remove, dto));
+			}
 			client.setRemoved(true);
+			
 			Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Flush));
 		}
 	}
@@ -146,8 +151,6 @@ public class Server extends WebSocketServer {
 				System.out.println("Server: netblob was JUNK!");
 				return;
 			}
-			
-			AuthenticationDto authDto = client.getAuthenticationDto(); 
 
 			for(int i = 0; i < netBlob.getMessages().size(); i++) {
 
@@ -202,12 +205,7 @@ public class Server extends WebSocketServer {
 					if (authBlob.id == -1) {
 						if (client.getAuthenticationDto().getCharacters().size() < Config.CharacterLimit) {
 							System.out.println("User has created a new character");
-							//CharacterDto dto = new CharacterDto(client);
-							// have the database save this new character immediately
-							//Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Server, DatabaseThreadMessage.Type.AddCharacter, dto));
-							// insert the user into the simulator with this new character
-							// server will await a message from the simulator confirming the user is ready to receive game states
-							//Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Add, dto));
+							
 							insertClientIntoSim(client, null);
 							
 							/* the users number of characters is only set at login so 
@@ -263,7 +261,7 @@ public class Server extends WebSocketServer {
 		if (character != null)
 			dto = new CharacterDto(client, character);
 		else { 
-			dto = new CharacterDto(client);
+			dto = new CharacterDto(client, client.getUserAccount().getUserId());
 			// the owner id needs to be filled in for the simulator otherwise owner id will be 0
 			//dto.getCharacterModel().setCharacterOwner(client.getAuthenticationDto().getUserAccount().getUserId());
 		}
@@ -271,8 +269,10 @@ public class Server extends WebSocketServer {
 		// server will await a message from the simulator confirming the user is ready to receive game states
 		Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Add, dto));
 		
-		// clean up
-
+		
+		//client.setActive(true);
+		clients.promoteClientToPlayer(client);
+		
 		
 	}
 
@@ -338,12 +338,14 @@ public class Server extends WebSocketServer {
 	public void prepareClient(AuthenticationDto dto) {
 		
 		System.out.println("Server: authenticating connection:");
+		
 				
 		Client client = dto.getClient();//clients.getClient(dto.getOwner());
 		if (client == null) { // this should never happen
 			System.out.println("... ! could not authenticate client because it was never tracked! client probably closed socket");
 			return;
 		}
+		client.setUserAccount(dto.getUserAccount());
 		
 		// if useraccount is null then the database thread did not consume the token
 		if (dto.getUserAccount() == null) {

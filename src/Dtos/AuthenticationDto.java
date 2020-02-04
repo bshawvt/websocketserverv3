@@ -21,6 +21,12 @@ public class AuthenticationDto {
 		this.userAccount = null;
 		this.client = null;
 	}
+	public AuthenticationDto(AuthenticationDto dto) {
+		this.characters = dto.getCharacters();
+		this.userAccount = dto.getUserAccount();
+		this.client = dto.getClient();
+	}
+
 	public UserAccountModel getUserAccount() {
 		return userAccount;
 	}

@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import org.java_websocket.WebSocket;
 
+import Models.UserAccountModel;
 import server.blobs.NetworkBlob;
 
 public class Clients {
@@ -40,7 +41,7 @@ public class Clients {
 			if (client.isRemoved()) {
 				System.out.println("Client: flush: removed client with id " + client.getId());
 				if (client.isActive()) {
-					System.out.println("... " + client.getAuthenticationDto().getUserAccount().getUsername() + " has disconnected!");
+					System.out.println("... " + client.getUserAccount().getUsername() + " has disconnected!");
 				}
 				System.out.println("before: " + playerTable.get(client.getId()));
 				playerTable.remove(client.getId()); //
@@ -87,8 +88,8 @@ public class Clients {
 		Iterator<Client> it = clientList.iterator();
 		while(it.hasNext()) {
 			Client client = it.next();
-			
-			if (client.getAuthenticationDto().getUserAccount().getUsername().equals(username) && client.getId() != caller ) {
+			UserAccountModel m = client.getUserAccount();
+			if (client.getUserAccount().getUsername().equals(username) && client.getId() != caller ) {
 				System.out.println("... found username with id matching caller: " + caller);
 				return true;
 			}
@@ -110,8 +111,8 @@ public class Clients {
 	
 	public void promoteClientToPlayer(Client client) {
 		//playerTable.put(client.getId(), client);
-		System.out.println("Clients: " + client.getAuthenticationDto().getUserAccount().getUsername() + " has been added to the players table");
-		
+		System.out.println("Clients: " + client.getUserAccount().getUsername() + " has been added to the players table");
+		client.setActive(true);
 		playerTable.put(client.getId(), client);
 		
 	}

@@ -142,29 +142,11 @@ public class SimulatorThread implements Runnable {
 										"\n\townerid - " + dto.getCharacterModel().getCharacterOwner());
 							}
 							else {
-								System.out.println("... adding a brand new character to node: " + node.id);
-								Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Simulator, DatabaseThreadMessage.Type.AddCharacter, msg.getDto()));
+								System.err.println("... something went wrong!!");
+								break;
 							}
-							
-							// stage the message to the node the client belongs to
 							node.nodeThreadMessage.offer(msg);
-							
-							/*if (msg.getCharacter() == null) {
-								System.out.println("... added a new character to node: " + node.id);
-								node.nodeThreadMessage.offer(msg);
-								//CharacterDto dto = new CharacterDto();
-								//dto.setClientId(msg.get))
-								//Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Simulator, DatabaseThreadMessage.Type.AddCharacter, dto));
-								//System.out.println(t);
-								
-								//Threads.getDatabaseQueue().offer(new DatabaseThreadMessage)
-								
-							}
-							else {
-								//new NetObject(world[0], msg.getCharacter());
-								System.out.println("... added character to node: " + node.id);
-								node.nodeThreadMessage.offer(msg);
-							}*/
+
 						}
 						break;
 					}

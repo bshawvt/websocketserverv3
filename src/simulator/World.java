@@ -17,7 +17,7 @@ public class World {
 	public long uuidCounter = 0;
 	
 	//public Metrics metrics = new Metrics();
-	private HashMap<Integer, NetObject> clientNetObjects;
+	private HashMap<Integer, NetObject> clientNetObjects = new HashMap<>();
 	
 	//public Tree nodeTree = new Tree<NetObject>();
 	
@@ -51,9 +51,10 @@ public class World {
 		
 		if (model == null) return;
 		Player obj = new Player(model);
-		obj.clientId = clientId;
+		obj.setClientId(clientId);
 		obj.setId(uuidCounter++);
-		this.netObjectsQueue.add(new Player(model));
+		clientNetObjects.put(clientId, obj);
+		netObjectsQueue.add(obj);
 			
 	}
 	/**
@@ -61,8 +62,13 @@ public class World {
 	 * @param clientId
 	 */
 	public void removeNetObject(int clientId) {
-		clientNetObjects.get(clientId).setRemoved(true);
-		clientNetObjects.remove(clientId);
+		NetObject obj = clientNetObjects.get(clientId);//.setRemoved(true);
+		if (obj != null) {
+			obj.setRemoved(true);
+			clientNetObjects.remove(clientId);
+		}
+		else
+			System.out.println("ruh roh");
 	}
 	
 	private void flush() {		
@@ -71,6 +77,8 @@ public class World {
 		while (it1.hasNext()) {
 			NetObject netObject = it1.next();
 			netObjects.add(netObject);
+			System.out.println("... added new netobject:\n\tid " + netObject.getId() + 
+					"\n\tclientId " + netObject.getClientId() );
 			
 		}
 		netObjectsQueue.clear();
@@ -79,9 +87,13 @@ public class World {
 		while (it2.hasNext()) {
 			NetObject netObject = it2.next();
 			if (netObject.isRemoved()) {
-				System.out.println("... found and removed a net object with id " + netObject.getId());
+				System.out.println("... found and removed a net object:\n\tid " + netObject.getId() + 
+						"\n\tclientId " + netObject.getClientId() );
 				it2.remove();
 			}			
 		}
+		
+		//System.out.println("... cleanups:\n\tnetobject size: " + netObjects.size() + 
+		//		"\n\tclient netobjects size: " + clientNetObjects.size());
 	}
 }

@@ -34,10 +34,9 @@ public class CharacterModel {
 	
 
 	
-	// debug
-	public CharacterModel() {
+	public CharacterModel(long ownerId) {
 		this.character_id = 0;
-		this.character_owner = 0;
+		this.character_owner = ownerId;
 
 		this.x = 0;
 		this.y = 0;
