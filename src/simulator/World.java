@@ -33,6 +33,11 @@ public class World {
 			NetObject netObject = it.next();
 			if (netObject.removed == true) {
 				it.remove();
+				if (netObject.isRemoved()) {
+					System.out.println("... found and removed a net object:\n\tid " + netObject.getId() + 
+							"\n\tclientId " + netObject.getClientId() );
+					it.remove();
+				}	
 			}
 			else {
 				netObject.step(this, dt);
@@ -83,7 +88,7 @@ public class World {
 		}
 		netObjectsQueue.clear();
 		
-		Iterator<NetObject> it2 = netObjects.iterator();
+		/*Iterator<NetObject> it2 = netObjects.iterator();
 		while (it2.hasNext()) {
 			NetObject netObject = it2.next();
 			if (netObject.isRemoved()) {
@@ -91,7 +96,7 @@ public class World {
 						"\n\tclientId " + netObject.getClientId() );
 				it2.remove();
 			}			
-		}
+		}*/
 		
 		//System.out.println("... cleanups:\n\tnetobject size: " + netObjects.size() + 
 		//		"\n\tclient netobjects size: " + clientNetObjects.size());

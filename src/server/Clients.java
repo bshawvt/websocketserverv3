@@ -83,7 +83,7 @@ public class Clients {
 		System.out.println("Client: playerTable size: " + playerTable.size());
 		
 	}
-	public boolean isUsernameInUse(String username, int caller) {
+	public boolean isUsernameInUse(String username, long caller) {
 		System.out.println("Client: isUsernameInUse: getting client from username: ");
 		Iterator<Client> it = clientList.iterator();
 		while(it.hasNext()) {
