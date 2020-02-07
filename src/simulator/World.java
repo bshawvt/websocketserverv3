@@ -31,14 +31,13 @@ public class World {
 		Iterator<NetObject> it = netObjects.iterator();
 		while(it.hasNext()) {
 			NetObject netObject = it.next();
-			if (netObject.removed == true) {
+			//if (netObject.removed == true) {
+				//it.remove();
+			if (netObject.isRemoved()) {
+				System.out.println("... found and removed a net object:\n\tid " + netObject.getId() + 
+						"\n\tclientId " + netObject.getClientId() );
 				it.remove();
-				if (netObject.isRemoved()) {
-					System.out.println("... found and removed a net object:\n\tid " + netObject.getId() + 
-							"\n\tclientId " + netObject.getClientId() );
-					it.remove();
-				}	
-			}
+			}			
 			else {
 				netObject.step(this, dt);
 				
