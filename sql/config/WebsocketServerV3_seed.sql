@@ -32,7 +32,10 @@ INSERT INTO characters(owner, name)
 #SELECT * FROM characters;
 #SELECT * FROM characters AS t1 INNER JOIN useraccounts AS t2 WHERE t2.id = t1.owner;
 
-INSERT INTO useraccounts(username, combinedHash, salt, email, locked) 
-		SELECT "server", "10", "1", "", true;
-        
+# create a user for npc's and set it's user id to 0 and lock it
+INSERT INTO useraccounts(username, combinedHash, salt) 
+		SELECT "world", "", "";
+UPDATE useraccounts as u 
+	SET u.user_id=0, u.locked=true
+	WHERE username="world";
         

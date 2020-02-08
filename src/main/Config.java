@@ -50,7 +50,7 @@ public class Config {
 		}
 	}
 	public static String getConnectionString() {
-		return "jdbc:mysql://" + DatabaseAddress + "/" + DatabaseSchema + "?useSSL=false";
+		return "jdbc:mysql://" + DatabaseAddress + "/" + DatabaseSchema + "?useSSL=true";
 	}
 
 }
