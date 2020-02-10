@@ -14,11 +14,9 @@ public class SimulatorThread implements Runnable {
 	private boolean isRunning;
 
 	private Node[] nodes = new Node[Config.NodeLimit];
-	private Node mainNode;
-	
+	private int nodeCount = 0; // current number of active nodes	
 
-	private HashMap<Integer, Integer> clientLocation; // which node each server client belongs to 
-
+	private HashMap<Long, Node> clientLocation; // which node each server client belongs to
 	
 	public SimulatorThread() {
 		this.isRunning = false;
@@ -26,72 +24,18 @@ public class SimulatorThread implements Runnable {
 		
 		this.clientLocation = new HashMap<>();
 		
-		//for(int i = 0; i < Config.NodeLimit; i++) {
-			this.nodes[0] = new Node(1);
-			Thread nodeThread = new Thread(this.nodes[0], "Node-" + this.nodes[0].id);
-			nodeThread.setDaemon(false);
-			nodeThread.start();
-		//}
-			
-		/*this.start = System.nanoTime()/1000000;
-		this.dt = this.start;
-		this.stepTime = this.start;
-		this.world[0] = new World();*/
+		// create the default node
+		spawnNode();
 		
 	}
 	
 	@Override
 	public void run() {
-
+		// TODO: 
 		propagateSimulatorThreadMessages();
-		/*while(true) {
-			
-			// distribute messages to the correct nodes
-			//propagateSimulatorThreadMessages();
-			//if (nodes[0] != null && !nodes[0].isRunnable) { // the first element should be the simulator thread node, if it exists
-			//	nodes[0].update();
-			//}
-			//mainNode.flushThreadMessages();
-			//mainNode.update();
-		}*/
 		
 	}
-	/**
-	 * todo: choose the best node to place a client. 
-	 * this is used when a new client has been added to the simulation
-	 * @return 0
-	 */
-	private int getBestNode() {
-		int lowest = 0xffffff;
-		int current = 0xffffff;
-		int best = 0;
-		clientLocation.forEach( (Integer e, Integer v) -> {
-			System.out.println( "client ID: " + e + ", Node id: " + v);
-		});
-		return best;
-	}
-	/**
-	 * gets a players location in a simulator node and chooses the best node if the client is new 
-	 * @param clientId
-	 * @return a node client id belongs to
-	 */
-	private Node getNodeByClientLocation(int clientId) {
-		Integer clientNodeLocation = clientLocation.get(clientId);
-		// if client is a new connection then add it to clientLocations 
-		if (clientNodeLocation == null) {
-			System.out.println("SimulatorThread: getNodeByClientLocation: new client, putting them some where decent i guess");
-			int best = getBestNode();
-			clientLocation.put(clientId, best);
-			clientNodeLocation = best;
-		}
-		
-		Node node = null;
-		if ((clientNodeLocation >= 0 && clientNodeLocation < Config.NodeLimit) && (nodes[clientNodeLocation] != null))
-			node = nodes[clientNodeLocation];//.nodeThreadMessage.offer(msg);
-		
-		//System.out.println("SimulatorThread: propagateSimulatorThreadMessage: node.id=" + node.id);
-		return node;
-	}
+
 	private void propagateSimulatorThreadMessages() {
 
 		try {
@@ -100,9 +44,10 @@ public class SimulatorThread implements Runnable {
 				int type = msg.getType();
 				int from = msg.getFrom();
 				
-				Node node = this.nodes[0];//getNodeByClientLocation(msg.getClientId());
+				//Node node = getClientNode(msg.getClientId());//this.nodes[0];//getNodeByClientLocation(msg.getClientId());
 				
 				switch (type) {
+				
 					// input processing
 					case SimulatorThreadMessage.Type.None: {
 						if (from == Threads.Main) {
@@ -119,7 +64,9 @@ public class SimulatorThread implements Runnable {
 					case SimulatorThreadMessage.Type.Update: {
 						System.out.println("SimulatorThread: received an Update event");
 						if (from == Threads.Server) {
-							if (node == null) continue; // should never happen but just in case, skip 
+							
+							Node node = getClientNode(msg.getClientId());
+							//if (node == null) continue; // should never happen but just in case, skip 
 							System.out.println("... from Server!");
 							System.out.println("... update sent to node: " + node.id); 
 
@@ -131,7 +78,10 @@ public class SimulatorThread implements Runnable {
 					case SimulatorThreadMessage.Type.Add: {
 						System.out.println("SimulatorThread: received an Add event");
 						if (from == Threads.Server) {
-							
+
+							// choose the best node to place this new user
+							Node node = getBestNode();
+							System.out.println(node);
 							if (node == null) continue; // should never happen but just in case, skip 
 							
 							System.out.println("... from Server!");
@@ -145,6 +95,8 @@ public class SimulatorThread implements Runnable {
 								System.err.println("... something went wrong!!");
 								break;
 							}
+							
+							clientLocation.put(msg.getClientId(), node);
 							node.nodeThreadMessage.offer(msg);
 
 						}
@@ -156,93 +108,60 @@ public class SimulatorThread implements Runnable {
 						System.out.println("SimulatorThread: received an Remove event");
 						if (from == Threads.Server) {
 							
-							if (node == null) continue; // should never happen but just in case, skip 
+							Node node = getClientNode(msg.getClientId());
+							
+							//if (node == null) continue; // should never happen but just in case, skip 
 							
 							System.out.println("... from Server!");
 							System.out.println("... removed character from node: " + node.id);
+							
+							clientLocation.remove(msg.getClientId());
 							node.nodeThreadMessage.offer(msg);
 						}
 						break;
 					}
-					
-					// so
-					
-					// ???
+
 					default: {
 						break;
 					}
 					
 				}
-			
-				
-				/*Integer clientNodeLocation = clientLocation.get(msg.getClientId());
-				// client is a new connection
-				if (clientNodeLocation == null) {
-					int best = getBestNode();
-					clientLocation.put(msg.getClientId(), best);
-					clientNodeLocation = best;
-				}
-				
-				if ((clientNodeLocation >= 0 && clientNodeLocation < Config.NodeLimit) && (nodes[clientNodeLocation] != null))
-					nodes[clientNodeLocation].nodeThreadMessage.offer(msg);*/
-				/*if (clientNodeLocation == 0) {
-					System.out.println("SimulatorThread: simulator thread message belongs to a user in the main node");
-					
-					switch (type) {
-						case SimulatorThreadMessage.Type.None: {
-							if (from == Threads.Main) {
-								String command = msg.getCommand();
-								if (command != null) {
-									System.out.println("SimulatorThread: received command from server");
-									System.out.println("command: " + command);
-								}
-							}
-							break;
-						}
-						case SimulatorThreadMessage.Type.Update: {
-							System.out.println("SimulatorThread: received an Update event");
-							if (from == Threads.Server) {
-								System.out.println("... from Server!");
-								System.out.println("... update sent to node: ???");
-							}
-							break;
-						}
-						case SimulatorThreadMessage.Type.Add: {
-							System.out.println("SimulatorThread: received an Add event");
-							if (from == Threads.Server) {
-								System.out.println("... from Server!");
-								if (msg.getCharacter() == null) {
-									//Threads.getDatabaseQueue().offer(new DatabaseThreadMessage)
-								}
-								else {
-									//new NetObject(world[0], msg.getCharacter());
-									System.out.println("... added character to node: ???");
-								}
-							}
-							break;
-						}
-						case SimulatorThreadMessage.Type.Remove: {
-							System.out.println("SimulatorThread: received an Remove event");
-							if (from == Threads.Server) {
-								System.out.println("... from Server!");
-							}
-							break;
-						}
-						default: {
-							break;
-						}
-					
-					}
-				}
-				else {
-					if (clientNodeLocation >= 0 && clientNodeLocation < Config.NodeLimit)
-						nodes[clientNodeLocation].nodeThreadMessage.offer(msg);
-				}*/
+
 			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
+	/* returns the node the user is currently in */
+	private Node getClientNode(long id) {		
+		return clientLocation.get(id);
+	}
+	
+	/* chooses the first empty node available or defaults to 0 */
+	private Node getBestNode() {
+		for(int i = 0; i < Config.NodeLimit; i++) {
+			if (this.nodes[i] != null && this.nodes[i].getObjectsCount() < Config.NodeSize) {
+				System.out.println("getBestNode: chose " + i);
+				return this.nodes[i];
+			}
+		}
+		return this.nodes[0];
+	}
+	
+	/* creates a new node thread and increases the node counter */
+	private Node spawnNode() {
+		if (this.nodeCount < Config.NodeLimit) {		
+			Node node = new Node(this.nodeCount);
+			this.nodes[this.nodeCount] = node;
+			
+			Thread nodeThread = new Thread(node, "Node-" + this.nodeCount);
+			nodeThread.setDaemon(false);
+			nodeThread.start();
+			this.nodeCount++;
+			
+			return node;
+		}
+		return null;
+	}
 }

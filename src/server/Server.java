@@ -262,6 +262,7 @@ public class Server extends WebSocketServer {
 			dto = new CharacterDto(client, character);
 		else { 
 			dto = new CharacterDto(client, client.getUserAccount().getUserId());
+            Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Server, DatabaseThreadMessage.Type.AddCharacter, dto));
 			// the owner id needs to be filled in for the simulator otherwise owner id will be 0
 			//dto.getCharacterModel().setCharacterOwner(client.getAuthenticationDto().getUserAccount().getUserId());
 		}

@@ -7,13 +7,15 @@ public class Config {
 	public static String DatabaseUsername;
 	public static String DatabasePassword;
 	public static String DatabaseSchema;
+	public static int SnapshotLimit;
 	public static boolean DatabaseReporting = false; // server write to status table
 	public static final boolean UseSSL = true;
 	public static final int CharacterLimit = 3;
-	public static final int NodeLimit = 1; // TODO: how many cpu cores simulator thread can use
-	public static final String SSLCertPath = "E:\\acme";
+	public static int NodeLimit = 4; // TODO: how many cpu cores simulator thread can use
+	public static int NodeSize = 1000; // TODO: 
+	public static String SSLCertPath = "E:\\acme";
 	//public static final String SSLCertPath = "./certs/";
-	public static final String SSLKeyPassword = "";
+	public static String SSLKeyPassword = "";
 	 
 	
 	public Config() {
@@ -22,6 +24,7 @@ public class Config {
 		DatabaseAddress = "localhost:3306";//"jdbc:mysql://localhost:3306/" + DatabaseSchema + "?useSSL=false";
 		DatabaseUsername = "dbuser";
 		DatabasePassword = "dbpassword";
+		SnapshotLimit = 10;
 		
 	}
 	public Config(String[] args) {
@@ -46,8 +49,48 @@ public class Config {
 			else if (o.equals("-address")) {
 				DatabaseAddress = v;//"jdbc:mysql://" + v + "/" + DatabaseSchema + "?useSSL=false";
 			}
+			else if (o.equals("-nodes")) {
+				NodeLimit = Integer.parseInt(v);//"jdbc:mysql://" + v + "/" + DatabaseSchema + "?useSSL=false";
+			}
+			else if (o.equals("-snapshots")) {
+				SnapshotLimit = Integer.parseInt(v);//"jdbc:mysql://" + v + "/" + DatabaseSchema + "?useSSL=false";
+			}
+			else {
+				System.out.println(	"\n============================="
+									+ "\nUnknown argument: " + o
+									+ "\nUse the following instead:"
+									+ "\n-port=29980\t\t- game server port"
+									+ "\n-user=dbuser\t\t- database user"
+									+ "\n-password=dbpassword\t- database password"
+									+ "\n-schema=dbschema\t- database schema"
+									+ "\n-address=dbaddress\t- database connection string <ip>:<port>"
+									+ "\n-nodes=1\t\t- limit of node threads" 
+									+ "\n-snapshots=10\t\t- number of snapshots a node will create for each object" 
+									+ "\n=============================");
+				System.exit(-1);
+			}
 
 		}
+				
+		System.out.println(	"=============================" +
+							"\nstart up config" +
+							"\n=============================" +
+							"\nClientVersion: " + ClientVersion + 
+							"\nServerPort:" + ServerPort +
+							"\nDatabaseAddress: " + DatabaseAddress +
+							"\nDatabaseUsername: " + DatabaseUsername +
+							"\nDatabasePassword: " + "********" +
+							"\nDatabaseSchema: " + DatabaseSchema +
+							"\nDatabaseReporting: " + DatabaseReporting +
+							"\nUseSSL: " + UseSSL +
+							"\nCharacterLimit: " + CharacterLimit +
+							"\nNodeLimit: " + NodeLimit +
+							"\nNodeSize: " + NodeSize +
+							"\nSSLCertPath: " + SSLCertPath +
+							"\nSnapshotLimit: " + SnapshotLimit +
+							"\nSSLKeyPassword: " + "********" +
+							"\n=============================");
+
 	}
 	public static String getConnectionString() {
 		return "jdbc:mysql://" + DatabaseAddress + "/" + DatabaseSchema + "?useSSL=true";

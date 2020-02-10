@@ -21,8 +21,8 @@ public class SimulatorThreadMessage {
 	public String getCommand() { return this.command; }
 	public Object getDto() { return this.dto; }
 	
-	private int clientId;
-	public int getClientId() { return this.clientId; }
+	private long clientId;
+	public long getClientId() { return this.clientId; }
 
 	
 	public SimulatorThreadMessage() {

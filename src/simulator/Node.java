@@ -8,14 +8,13 @@ import server.ServerThreadMessage;
 import threads.Threads;
 import tools.Profiler;
 
+/* nodes are threads which get spawned by simulator thread */
 public class Node implements Runnable {
 	
 
-	public boolean isRunning = false; // if this node is being 
-	public int id = 0;
-	
-	public ArrayList<Integer> clients;
-	
+	public boolean isRunning = false; 
+	public int id = 0; // node id is used just for visual representation 
+		
 	private double dt = 0;
 	private static final double TimeStep = 1000/30;
 	
@@ -32,7 +31,6 @@ public class Node implements Runnable {
 		this.dt = System.nanoTime()/1000000;
 		this.nodeThreadMessage = new LinkedBlockingQueue<>();
 		
-		this.clients = new ArrayList<>();
 		
 		this.id = id;
 		System.out.println("Node-" + id + ": Hello world!");
@@ -90,7 +88,6 @@ public class Node implements Runnable {
 		
 		profiler.start("test1");
 		
-		
 		while (dt < now) {
 			dt += TimeStep;
 			world.step(dt);
@@ -145,5 +142,9 @@ public class Node implements Runnable {
 				}
 			}
 		}
+	}
+	
+	public long getObjectsCount() {
+		return this.world.netObjects.size();
 	}
 }

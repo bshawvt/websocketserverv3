@@ -55,12 +55,12 @@ public class DatabaseThread implements Runnable {
 					// sim
 					case DatabaseThreadMessage.Type.AddCharacter: {
 						System.out.println("DatabaseThread: received an AddCharacter event");
-						if (from == Threads.Simulator) {
-							System.out.println("... from Simulator!");
+						//if (from == Threads.Server) {
+							//System.out.println("... from Simulator!");
 							
 							db.addCharacter((CharacterDto) msg.getDto());
-							break;
-						}
+							//break;
+						//}
 						break;
 					}
 					
