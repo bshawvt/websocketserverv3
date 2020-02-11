@@ -1,14 +1,14 @@
 package simulator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import Models.CharacterModel;
-import server.Client;
+import main.Config;
 import simulator.netobjects.NetObject;
 import simulator.netobjects.Player;
-import tools.Metrics;
 
 public class World {
 	
@@ -20,7 +20,6 @@ public class World {
 	private HashMap<Integer, NetObject> clientNetObjects = new HashMap<>();
 	
 	
-	private HashMap<NetObject, Snapshot> snapshots = new HashMap<>(); 
 	//public Tree nodeTree = new Tree<NetObject>();
 	
 	public World() {
@@ -39,18 +38,38 @@ public class World {
 				it.remove();
 			}			
 			else {
-				Snapshot snap = snapshots.get(netObject);
-				if (snap != null) {
-					snap.last();
-				}
-				netObject.step(this, dt);
-				snap.push(netObject);
 				
+				netObject.step(this, dt);
+				// only push a new snapshot after 100 ms have passed
+				NetObject last = netObject.snapshots.last();// != null ? netObject.snapshots.last()._snapTime : 0;
+				
+				// compare with last state before pushing the next snapshot
+				if (objectStateHasChanged(netObject, last)) {
+					// this object is different than the last frame!
+					System.err.println("the net objects state has changed");
+					//NetObject[] cellContents = world.in
+				}
+				
+				if (last == null || dt > last.snapTime + Config.SnapshotDelay)
+					netObject.snapshots.push(netObject, dt);
 			}
 		}
 		
 	}
-
+	public boolean objectStateHasChanged(NetObject a, NetObject b) {
+		if (b == null) 
+			return true;
+		
+		if ((a.inputState.get() != b.inputState.get()) ||
+				(a.yaw != b.yaw) ||
+				(a.pitch != b.pitch) ||
+				(a.roll != b.roll) ||
+				(a.stateChange != b.stateChange)) {
+			return true;
+			
+		}
+		return false;
+	}
 	
 	/**
 	 * adds a clients character to the simulation
@@ -89,6 +108,7 @@ public class World {
 			netObjects.add(netObject);
 			System.out.println("... added new netobject:\n\tid " + netObject.getId() + 
 					"\n\tclientId " + netObject.getClientId() );
+			netObject.stateChange = !netObject.stateChange;
 			
 		}
 		netObjectsQueue.clear();

@@ -8,6 +8,7 @@ public class Config {
 	public static String DatabasePassword;
 	public static String DatabaseSchema;
 	public static int SnapshotLimit;
+	public static int SnapshotDelay;
 	public static boolean DatabaseReporting = false; // server write to status table
 	public static final boolean UseSSL = true;
 	public static final int CharacterLimit = 3;
@@ -25,6 +26,7 @@ public class Config {
 		DatabaseUsername = "dbuser";
 		DatabasePassword = "dbpassword";
 		SnapshotLimit = 10;
+		SnapshotDelay = 100;
 		
 	}
 	public Config(String[] args) {
@@ -55,6 +57,9 @@ public class Config {
 			else if (o.equals("-snapshots")) {
 				SnapshotLimit = Integer.parseInt(v);//"jdbc:mysql://" + v + "/" + DatabaseSchema + "?useSSL=false";
 			}
+			else if (o.equals("-snapdelay")) {
+				SnapshotDelay = Integer.parseInt(v);//"jdbc:mysql://" + v + "/" + DatabaseSchema + "?useSSL=false";
+			}
 			else {
 				System.out.println(	"\n============================="
 									+ "\nUnknown argument: " + o
@@ -65,7 +70,8 @@ public class Config {
 									+ "\n-schema=dbschema\t- database schema"
 									+ "\n-address=dbaddress\t- database connection string <ip>:<port>"
 									+ "\n-nodes=1\t\t- limit of node threads" 
-									+ "\n-snapshots=10\t\t- number of snapshots a node will create for each object" 
+									+ "\n-snapshots=10\t\t- number of snapshots a node will create for each object"
+									+ "\n-snapdelay=100\t\t- time delay between each snapshot"
 									+ "\n=============================");
 				System.exit(-1);
 			}
@@ -88,6 +94,7 @@ public class Config {
 							"\nNodeSize: " + NodeSize +
 							"\nSSLCertPath: " + SSLCertPath +
 							"\nSnapshotLimit: " + SnapshotLimit +
+							"\nSnapshotDelay: " + SnapshotDelay +
 							"\nSSLKeyPassword: " + "********" +
 							"\n=============================");
 

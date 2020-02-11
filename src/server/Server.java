@@ -3,9 +3,7 @@ package server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
+
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -131,7 +129,7 @@ public class Server extends WebSocketServer {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+
 	@Override
 	public void onMessage(WebSocket connection, String message) {
 		
@@ -179,7 +177,7 @@ public class Server extends WebSocketServer {
 	private void propagateNetworkMessage(Client client, MessageBlob message) {
 		int type = message.getType();
 		if (type > 0 && type < MessageBlob.types.length) {
-			Class<? extends MessageBlob> blobType = MessageBlob.types[message.getType()];
+			//Class<? extends MessageBlob> blobType = MessageBlob.types[message.getType()];
 
 			switch(type) {
 			
