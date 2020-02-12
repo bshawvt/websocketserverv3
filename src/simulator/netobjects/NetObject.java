@@ -1,5 +1,9 @@
 package simulator.netobjects;
 
+import server.blobs.ChatBlob;
+import server.blobs.DefaultBlob;
+import server.blobs.JoinBlob;
+import server.blobs.StateBlob;
 import simulator.Bitfield;
 import simulator.InputState;
 import simulator.Snapshot;
@@ -11,8 +15,15 @@ public abstract class NetObject {
 		public static final int Player = 1;
 		public static final int SentientCube = 2;
 	}
+	@SuppressWarnings("rawtypes")
+	final static public Class[] types = {
+		NetObject.class, // 0 // should never be 0
+		Player.class,  // 1
+		SentientCube.class, // 2
+	};
 	public NetObject parent = null;
 	// synchronized network object state
+	public double[] position = {0.0f, 0.0f, 0.0f};
 	public double[] moveDirection = {0.0f, 0.0f, 0.0f};
 	public double[] speed = {0.0f, 0.0f, 0.0f};
 	
@@ -20,7 +31,7 @@ public abstract class NetObject {
 	public double pitch = 0.0f;
 	public double roll = 0.0f;
 	
-	public long clientId = -1;
+	public int clientId = -1;
 	public long id = 0; // world id, set when added to the simulation
 	public boolean removed = false; 
 	
@@ -33,6 +44,20 @@ public abstract class NetObject {
 	public boolean stateChange = false; // signals to node that the object needs to be updated over network
 
 	
+	public static NetObject copy(NetObject object) {
+		//NetObject copy;
+		int type = object.getType();
+		if (type == NetObject.Types.Player) {
+			return new Player(object);
+		}
+		else if (type == NetObject.Types.SentientCube) {
+			return new SentientCube(object);
+		}
+		else { 
+			System.err.println("tried to take a snapshot of a default type");
+			return null;
+		}
+	}
 	/* integrate state changes like input or actions 
 	 * only called by world */
 	public void integrate(InputState state, double dt) {
@@ -48,6 +73,10 @@ public abstract class NetObject {
 		
 		// copy old object to this one 
 		if (obj == null) return;
+		
+		this.position[0] = obj.position[0];
+		this.position[1] = obj.position[1];
+		this.position[2] = obj.position[2];
 		
 		this.moveDirection[0] = obj.moveDirection[0];
 		this.moveDirection[1] = obj.moveDirection[1];
@@ -82,8 +111,8 @@ public abstract class NetObject {
 	
 	public int getType() { return this.type; };
 	
-	public void setClientId(long v) { this.clientId = v; System.out.println(clientId);};
-	public long getClientId() { return this.clientId; };
+	public void setClientId(int v) { this.clientId = v; System.out.println(clientId);};
+	public int getClientId() { return this.clientId; };
 	
 	
 	

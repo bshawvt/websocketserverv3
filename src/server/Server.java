@@ -3,7 +3,7 @@ package server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-
+import java.util.Iterator;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -15,6 +15,7 @@ import org.java_websocket.ssl.SSL;
 import Dtos.AuthenticationDto;
 import Dtos.CharacterDto;
 import Dtos.NetObjectDto;
+import Dtos.StateChangeDto;
 import Models.CharacterModel;
 import database.DatabaseThreadMessage;
 import main.Config;
@@ -24,8 +25,10 @@ import server.blobs.CharacterBlob;
 import server.blobs.ChatBlob;
 import server.blobs.MessageBlob;
 import server.blobs.NetworkBlob;
+import server.blobs.StateBlob;
 import server.chat.ChatManager;
 import simulator.SimulatorThreadMessage;
+import simulator.netobjects.NetObject;
 import threads.Threads;
 
 public class Server extends WebSocketServer {
@@ -250,8 +253,18 @@ public class Server extends WebSocketServer {
 		}
 	}
 	
-	public void update(NetObjectDto dto) {
+	public void update(StateChangeDto dto) {
+		if (dto == null) return;
+		Iterator<NetObject> it = dto.to.iterator();
 		
+		while (it.hasNext()) {
+			NetObject netObject = it.next();
+			Client client = clients.playerTable.get(netObject.clientId);
+			//if (netObject.clientId == dto.who.clientId) {
+			StateBlob blob = new StateBlob(dto);
+			client.addFrame(blob);
+			//}
+		}
 	}
 
 	private void insertClientIntoSim(Client client, CharacterModel character) {
@@ -376,11 +389,11 @@ public class Server extends WebSocketServer {
 		joinBlob.ready = true;
 
 		int c = 0;
-		for(CharacterModel model : dto.getCharacters()) { 
+		for(CharacterModel model : dto.getCharacters()) {
 			joinBlob.characters.add(new CharacterBlob(model, c++));
 		}
 		// push blob to client
-		client.addFrame(joinBlob);		
+		client.addFrame(joinBlob);
 	}
 	
 	public void flush() {

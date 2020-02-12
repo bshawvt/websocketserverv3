@@ -31,7 +31,7 @@ public class Snapshot {
 		snapshot = snapshot2;
 		
 		// create a copy of the netobject
-		NetObject copy;
+		/*NetObject copy;
 		int type = object.getType();
 		
 		if (type == NetObject.Types.Player) {
@@ -43,7 +43,8 @@ public class Snapshot {
 		else { 
 			System.err.println("tried to take a snapshot of a default type");
 			return;
-		}
+		}*/
+		NetObject copy = NetObject.copy(object);
 		copy.snapTime = dt;
 		snapshot[Config.SnapshotLimit - 1] = copy;
 		

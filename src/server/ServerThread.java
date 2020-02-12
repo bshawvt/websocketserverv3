@@ -1,6 +1,7 @@
 package server;
 
 import Dtos.AuthenticationDto;
+import Dtos.StateChangeDto;
 import threads.Threads;
 
 public class ServerThread implements Runnable {
@@ -50,6 +51,9 @@ public class ServerThread implements Runnable {
 					// state propagation between simulation thread and client
 					case ServerThreadMessage.Type.Update: {
 						System.out.println("ServerThread: ServerQueue: received update event");
+						if (from == Threads.Simulator) {
+							server.update((StateChangeDto) msg.getDto());
+						}
 						//server.update(msg.getDto());
 						break;
 					}

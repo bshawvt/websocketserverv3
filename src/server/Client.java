@@ -11,7 +11,7 @@ import server.blobs.NetworkBlob;
 
 public class Client {
 	
-	private int id = 0;
+	private int id = 0; // int because cant use hash maps with long
 	private boolean ready = false; 
 	private WebSocket connection = null;
 	private boolean removed = false;

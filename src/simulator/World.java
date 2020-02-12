@@ -5,10 +5,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import Dtos.StateChangeDto;
 import Models.CharacterModel;
 import main.Config;
+import server.ServerThreadMessage;
+import server.blobs.MessageBlob;
 import simulator.netobjects.NetObject;
 import simulator.netobjects.Player;
+import threads.Threads;
 
 public class World {
 	
@@ -18,9 +22,13 @@ public class World {
 	
 	//public Metrics metrics = new Metrics();
 	private HashMap<Integer, NetObject> clientNetObjects = new HashMap<>();
+	public Tree tree = new Tree(netObjects);
+	
+	public long frameCount = 0; // increased every time a world step has completed
 	
 	
 	//public Tree nodeTree = new Tree<NetObject>();
+	
 	
 	public World() {
 		
@@ -28,7 +36,7 @@ public class World {
 	
 	public void step(double dt) {
 		flush();
-		
+	
 		Iterator<NetObject> it = netObjects.iterator();
 		while(it.hasNext()) {
 			NetObject netObject = it.next();
@@ -40,33 +48,46 @@ public class World {
 			else {
 				
 				netObject.step(this, dt);
-				// only push a new snapshot after 100 ms have passed
-				NetObject last = netObject.snapshots.last();// != null ? netObject.snapshots.last()._snapTime : 0;
 				
+				NetObject last = netObject.snapshots.last();
 				// compare with last state before pushing the next snapshot
-				if (objectStateHasChanged(netObject, last)) {
-					// this object is different than the last frame!
-					System.err.println("the net objects state has changed");
-					//NetObject[] cellContents = world.in
+				if (compareObjectStates(netObject, last)) {
+					System.out.println("cocks?");
+					updateOverNetwork(netObject);
 				}
 				
+				/* only push a new snapshot after 100 ms have passed 
+				 * since they're limited to 10 per */
 				if (last == null || dt > last.snapTime + Config.SnapshotDelay)
 					netObject.snapshots.push(netObject, dt);
 			}
 		}
+	
+		frameCount++;		
 		
 	}
-	public boolean objectStateHasChanged(NetObject a, NetObject b) {
-		if (b == null) 
+	/* prepares a frame for sending across the network for synchronizing 
+	 * an object with any clients near by */
+	public void updateOverNetwork(NetObject who) {
+		// list of objects
+		ArrayList<NetObject> receivers = tree.getClients(who.position);
+		StateChangeDto dto = new StateChangeDto(who, receivers, frameCount);
+		Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Simulator, ServerThreadMessage.Type.Update, dto));
+		//node.
+		
+	}
+	/* returns true when a variable tied to state has changed */
+	public boolean compareObjectStates(NetObject a, NetObject b) {
+		if (b == null) // b is only null when the object has no previous snapshots
 			return true;
 		
 		if ((a.inputState.get() != b.inputState.get()) ||
 				(a.yaw != b.yaw) ||
 				(a.pitch != b.pitch) ||
 				(a.roll != b.roll) ||
+				(a.removed != b.removed) ||
 				(a.stateChange != b.stateChange)) {
 			return true;
-			
 		}
 		return false;
 	}

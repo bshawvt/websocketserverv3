@@ -18,6 +18,9 @@ public class Player extends NetObject {
 		//super(null);
 		this.model = new CharacterModel(model);
 		type = NetObject.Types.Player;
+		position[0] = -5 + Math.random() * 10;
+		position[1] = -5 + Math.random() * 10;
+		position[2] = -5 + Math.random() * 8;
 	}
 	
 	@Override
