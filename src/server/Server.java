@@ -14,7 +14,7 @@ import org.java_websocket.ssl.SSL;
 
 import Dtos.AuthenticationDto;
 import Dtos.CharacterDto;
-import Dtos.NetObjectDto;
+
 import Dtos.StateChangeDto;
 import Models.CharacterModel;
 import database.DatabaseThreadMessage;
@@ -63,8 +63,7 @@ public class Server extends WebSocketServer {
 			try {
 				System.out.println("Server: using ssl!");
 				this.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(new SSL()
-						.getSSLContextFromLetsEncrypt(Config.SSLCertPath, Config.SSLKeyPassword, new PEMTokenJava11())
-						));
+						.getSSLContextFromLetsEncrypt(Config.SSLCertPath, Config.SSLKeyPassword, new PEMTokenJava11())));
 				
 				System.out.println("Server: bound to port " + Config.ServerPort);
 			}
@@ -260,8 +259,11 @@ public class Server extends WebSocketServer {
 		while (it.hasNext()) {
 			NetObject netObject = it.next();
 			Client client = clients.playerTable.get(netObject.clientId);
-			//if (netObject.clientId == dto.who.clientId) {
+			if (client == null || client.isRemoved()) continue; // prevents broadcasting disconnected user their disconnect event			
 			StateBlob blob = new StateBlob(dto);
+
+			if (netObject.clientId == dto.who.clientId)
+				blob.me = true;
 			client.addFrame(blob);
 			//}
 		}

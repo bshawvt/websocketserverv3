@@ -16,17 +16,9 @@ public class StateBlob extends MessageBlob {
 	public long input;
 	public long getInputState() { return this.input; };
 	
-	@SerializedName("yaw")
-	public double yaw;
-	public double getYaw() { return this.yaw; }
-	
-	@SerializedName("pitch")
-	public double pitch;
-	public double getPitch() { return this.pitch; }
-	
-	@SerializedName("roll")
-	public double roll;
-	public double getRoll() { return this.roll; }
+	@SerializedName("davids")
+	public double[] angles = {0.0f, 0.0f, 0.0f};
+	public double[] getAngles() { return this.angles; }
 	
 	
 	/* net object's id from simulator */
@@ -38,6 +30,11 @@ public class StateBlob extends MessageBlob {
 	@SerializedName("frame")
 	public long frame;
 	public long getFrame() { return this.frame; }
+	
+	/* designates that this netobject belongs to the user it is sent to */
+	@SerializedName("me")
+	public boolean me;
+	public boolean getMe() { return this.me; }
 	
 	@SerializedName("position")
 	public double[] position = {0.0f, 0.0f, 0.0f};
@@ -61,9 +58,12 @@ public class StateBlob extends MessageBlob {
 		this.frame = dto.frame;
 		this.id = dto.who.getId();
 		this.input = dto.who.inputState.get();
-		this.yaw = dto.who.yaw;
-		this.pitch = dto.who.pitch;
-		this.roll = dto.who.roll;
+		 
+		this.angles[0] = dto.who.angles[0];
+		this.angles[1] = dto.who.angles[1];
+		this.angles[2] = dto.who.angles[2];
+		
+	
 		this.speed = dto.who.speed;
 		
 		this.removed = dto.who.removed;

@@ -11,10 +11,15 @@ public class StateChangeDto {
 	public final ArrayList<NetObject> to;
 	public final long frame;
 	
+	public int clientId = -1;
+	public int inputState;
+	public double[] angles;
+	
 	public StateChangeDto() {
 		this.to = null;
 		this.who = null;
 		this.frame = 0;
+		this.angles = null;
 	}
 	public StateChangeDto(NetObject who, ArrayList<NetObject> to, long frame) {
 		this.frame = frame;
@@ -25,6 +30,10 @@ public class StateChangeDto {
 			this.to.add(NetObject.copy(netObject));
 		}
 		this.who = NetObject.copy(who);
+	}
+	
+	public int getClientId() {
+		return this.clientId;
 	}
 	
 }

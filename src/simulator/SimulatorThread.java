@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import Dtos.CharacterDto;
+import Dtos.StateChangeDto;
+
 import database.DatabaseThreadMessage;
 import main.Config;
 import threads.Threads;
@@ -16,7 +18,7 @@ public class SimulatorThread implements Runnable {
 	private Node[] nodes = new Node[Config.NodeLimit];
 	private int nodeCount = 0; // current number of active nodes	
 
-	private HashMap<Long, Node> clientLocation; // which node each server client belongs to
+	private HashMap<Integer, Node> clientLocation; // which node each server client belongs to
 	
 	public SimulatorThread() {
 		this.isRunning = false;
@@ -64,8 +66,8 @@ public class SimulatorThread implements Runnable {
 					case SimulatorThreadMessage.Type.Update: {
 						System.out.println("SimulatorThread: received an Update event");
 						if (from == Threads.Server) {
-							
-							Node node = getClientNode(msg.getClientId());
+							StateChangeDto dto = (StateChangeDto) msg.getDto();
+							Node node = getClientNode(dto.getClientId());
 							//if (node == null) continue; // should never happen but just in case, skip 
 							System.out.println("... from Server!");
 							System.out.println("... update sent to node: " + node.id); 
@@ -96,7 +98,7 @@ public class SimulatorThread implements Runnable {
 								break;
 							}
 							
-							clientLocation.put(msg.getClientId(), node);
+							clientLocation.put(dto.getClientId(), node);
 							node.nodeThreadMessage.offer(msg);
 
 						}
@@ -108,14 +110,20 @@ public class SimulatorThread implements Runnable {
 						System.out.println("SimulatorThread: received an Remove event");
 						if (from == Threads.Server) {
 							
-							Node node = getClientNode(msg.getClientId());
+							CharacterDto dto = (CharacterDto) msg.getDto();
+							Node node = getClientNode(dto.getClientId());
 							
-							//if (node == null) continue; // should never happen but just in case, skip 
+							if (node == null) {
+								System.err.println("... node is null\n"
+										+ "\nclientId: " + dto.getClientId()
+										+ "\nclientLocations: " + clientLocation.size());
+								continue; // should never happen but just in case, skip 
+							}
 							
 							System.out.println("... from Server!");
 							System.out.println("... removed character from node: " + node.id);
 							
-							clientLocation.remove(msg.getClientId());
+							clientLocation.remove(dto.getClientId());
 							node.nodeThreadMessage.offer(msg);
 						}
 						break;
@@ -134,7 +142,7 @@ public class SimulatorThread implements Runnable {
 		}
 	}
 	/* returns the node the user is currently in */
-	private Node getClientNode(long id) {		
+	private Node getClientNode(int id) {		
 		return clientLocation.get(id);
 	}
 	

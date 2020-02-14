@@ -40,27 +40,30 @@ public class World {
 		Iterator<NetObject> it = netObjects.iterator();
 		while(it.hasNext()) {
 			NetObject netObject = it.next();
+
+				
+			netObject.step(this, dt);
+			
+			NetObject last = netObject.snapshots.last();
+			// compare with last state before pushing the next snapshot
+			if (compareObjectStates(netObject, last)) {
+				System.out.println("cocks?");
+				updateOverNetwork(netObject);
+			}
+			
 			if (netObject.isRemoved()) {
 				System.out.println("... found and removed a net object:\n\tid " + netObject.getId() + 
 						"\n\tclientId " + netObject.getClientId() );
 				it.remove();
-			}			
-			else {
-				
-				netObject.step(this, dt);
-				
-				NetObject last = netObject.snapshots.last();
-				// compare with last state before pushing the next snapshot
-				if (compareObjectStates(netObject, last)) {
-					System.out.println("cocks?");
-					updateOverNetwork(netObject);
-				}
-				
-				/* only push a new snapshot after 100 ms have passed 
-				 * since they're limited to 10 per */
-				if (last == null || dt > last.snapTime + Config.SnapshotDelay)
-					netObject.snapshots.push(netObject, dt);
 			}
+			
+			/* only push a new snapshot after 100 ms have passed 
+			 * since they're limited to 10 per */
+			if (last == null || dt > last.snapTime + Config.SnapshotDelay)
+				netObject.snapshots.push(netObject, dt);
+			
+			
+			
 		}
 	
 		frameCount++;		
@@ -82,9 +85,9 @@ public class World {
 			return true;
 		
 		if ((a.inputState.get() != b.inputState.get()) ||
-				(a.yaw != b.yaw) ||
-				(a.pitch != b.pitch) ||
-				(a.roll != b.roll) ||
+				(a.angles[0] != b.angles[0]) ||
+				(a.angles[1] != b.angles[1]) ||
+				(a.angles[2] != b.angles[2]) ||
 				(a.removed != b.removed) ||
 				(a.stateChange != b.stateChange)) {
 			return true;
@@ -115,6 +118,7 @@ public class World {
 		NetObject obj = clientNetObjects.get(clientId);//.setRemoved(true);
 		if (obj != null) {
 			obj.setRemoved(true);
+			//obj.removed = true;
 			clientNetObjects.remove(clientId);
 		}
 		else

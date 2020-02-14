@@ -3,7 +3,7 @@ package simulator;
 import Models.CharacterModel;
 import threads.Threads;
 
-public class SimulatorThreadMessage {
+public final class SimulatorThreadMessage {
 	
 	
 	public static class Type {
@@ -21,15 +21,15 @@ public class SimulatorThreadMessage {
 	public String getCommand() { return this.command; }
 	public Object getDto() { return this.dto; }
 	
-	private long clientId;
-	public long getClientId() { return this.clientId; }
+	//private int clientId;
+	//public int getClientId() { return this.clientId; }
 
 	
 	public SimulatorThreadMessage() {
 		this.from = Threads.None;
 		this.type = Type.None;
 		this.command = null;
-		this.clientId = -1;
+		//this.clientId = -1;
 	}
 	public SimulatorThreadMessage(int from, int type, Object dto) {
 		this.from = from;
@@ -40,7 +40,7 @@ public class SimulatorThreadMessage {
 		this.from = from;
 		this.type = type;
 
-		this.clientId = -1;
+		//this.clientId = -1;
 		this.command = null;
 	}
 	
@@ -49,7 +49,7 @@ public class SimulatorThreadMessage {
 		this.type = type;
 		this.command = command;
 		
-		this.clientId = -1;
+		//this.clientId = -1;
 	}
 	/*public SimulatorThreadMessage(int from, int type, int clientId, CharacterModel character) {
 		this(from, type);

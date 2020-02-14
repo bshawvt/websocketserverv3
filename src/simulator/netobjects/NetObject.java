@@ -27,9 +27,7 @@ public abstract class NetObject {
 	public double[] moveDirection = {0.0f, 0.0f, 0.0f};
 	public double[] speed = {0.0f, 0.0f, 0.0f};
 	
-	public double yaw = 0.0f;
-	public double pitch = 0.0f;
-	public double roll = 0.0f;
+	public double[] angles = {0.0f, 0.0f, 0.0f};
 	
 	public int clientId = -1;
 	public long id = 0; // world id, set when added to the simulation
@@ -86,9 +84,9 @@ public abstract class NetObject {
 		this.speed[1] = obj.speed[1];
 		this.speed[2] = obj.speed[2];
 		
-		this.yaw = obj.yaw;
-		this.pitch = obj.pitch;
-		this.roll = obj.roll;
+		this.angles[0] = obj.angles[0];
+		this.angles[1] = obj.angles[1];
+		this.angles[2] = obj.angles[2];
 		
 		this.clientId = obj.clientId;
 		this.id = obj.id;
