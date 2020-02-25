@@ -16,6 +16,7 @@ public class MainThread {
 	public static void main(String[] args) {
 		new Config(args);
 		new Threads(); // assign queues to the main thread cuz i dont know
+		new UI();
 		
 		System.out.println("MainThread: Hello world!");
 
