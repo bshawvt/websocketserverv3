@@ -2,6 +2,8 @@ package main;
 
 import java.util.Scanner;
 
+import javax.swing.SwingUtilities;
+
 import database.DatabaseThread;
 import database.DatabaseThreadMessage;
 
@@ -10,13 +12,15 @@ import server.ServerThreadMessage;
 import simulator.SimulatorThread;
 import simulator.SimulatorThreadMessage;
 import threads.Threads;
+import ui.Form;
 
 public class MainThread {
 
 	public static void main(String[] args) {
 		new Config(args);
 		new Threads(); // assign queues to the main thread cuz i dont know
-		new UI();
+		Form ui = new Form();
+		ui.display();
 		
 		System.out.println("MainThread: Hello world!");
 
@@ -44,8 +48,11 @@ public class MainThread {
 				}
 				else if (split[0].equals("help")) {
 					System.out.println("exit|end|stop|quit - safely shutdown the server\n" + 
-										"srv|sim|db.<command> - here be dragons\n" + 
+										"srv|sim|db.<command|help> - here be dragons\n" + 
 										"");
+				}
+				else if (split[0].equals("gui")) {
+					ui.display();
 				}
 				else if (split[0].equals("srv")) {
 					Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Main, ServerThreadMessage.Type.None, split[1]));

@@ -30,6 +30,7 @@ import server.chat.ChatManager;
 import simulator.SimulatorThreadMessage;
 import simulator.netobjects.NetObject;
 import threads.Threads;
+import ui.Form;
 
 public class Server extends WebSocketServer {
 	
@@ -330,6 +331,7 @@ public class Server extends WebSocketServer {
 				// todo: flush
 				// todotodo: the server doesn't update clients until a flush event
 				Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Flush));
+				
 				return;
 			}
 			
@@ -383,6 +385,7 @@ public class Server extends WebSocketServer {
 		}
 		
 		System.out.println("... " + dto.getUserAccount().getUsername() + " has authenticated!");
+		Form.addClientToList(dto.getUserAccount().getUsername());
 		// the client is ready to send and receive messages 
 		client.setReady(true);
 		
