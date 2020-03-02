@@ -16,6 +16,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 
 public class Form extends JFrame {
@@ -36,9 +38,14 @@ public class Form extends JFrame {
 		setLocation((dimension.width - width)/2, (dimension.height - height)/2);
 		setFocusable(true);
 		
-		createElements();
+		JTabbedPane tabs = new JTabbedPane();
+		tabs.addTab("Server", new ServerPane(clientsListModel));
+		tabs.addTab("Database", new DatabasePane());
+		tabs.addTab("Simulation", new SimulationPane());
 		
-		//addClientToList("Test");
+		add(tabs);
+		
+		//addClientToList("null");
 		//addClientToList("Test2");
 		
 		
@@ -50,14 +57,20 @@ public class Form extends JFrame {
 			public void run() {
 				// TODO Auto-generated method stub
 				clientsListModel.addElement(t);
-				
 			}
 		});
 	}
-	private void createElements() {
-		makeTabs();		
-		serverPanel.add(makeClientList());
+	public static void removeClientToList(String t) {
+		SwingUtilities.invokeLater( new Runnable() {
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				clientsListModel.remove(clientsListModel.indexOf(t));
+				//clientsListModel.addElement(t);
+			}
+		});
 	}
+	
 	public void display() {
 		SwingUtilities.invokeLater( new Runnable() {
 			@Override
@@ -67,34 +80,7 @@ public class Form extends JFrame {
 			}
 		});
 	}
-	
-	private void makeTabs() {
-		JTabbedPane tabs = new JTabbedPane();
-		
-		serverPanel = new JPanel();
-		serverPanel.setLayout(null);
-		
-		databasePanel = new JPanel();
-		simulatorPanel = new JPanel();
-		
-		tabs.addTab("Server", serverPanel);
-		tabs.addTab("Database", databasePanel);
-		tabs.addTab("Simulation", simulatorPanel);
-		add(tabs);
-		//return tabs;
-	}
-	
-	private JScrollPane makeClientList() {
-		
-		JLabel label = new JLabel("Connected Clients");
-		label.setBounds(new Rectangle(new Point(5, 5), label.getPreferredSize()));
-		serverPanel.add(label);
-		
-		JList<String> list = new JList<>(clientsListModel);
-		JScrollPane pane = new JScrollPane(list);
-		pane.setBounds(5, 25, 150, 50);
-		return pane;
-	}
+
 	/*
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater( new Runnable() {

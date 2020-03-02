@@ -9,6 +9,7 @@ import org.java_websocket.WebSocket;
 
 import Models.UserAccountModel;
 import server.blobs.NetworkBlob;
+import ui.Form;
 
 public class Clients {
 	
@@ -76,6 +77,7 @@ public class Clients {
 			System.out.println("Client: added new client with id " + client.getId());
 			clientList.add(client);
 			System.out.println("... clients list size: " + clientList.size());
+			//Form.addClientToList(client.getUserAccount().getUsername());
 		}
 		clientQueue.clear();
 		
@@ -97,6 +99,21 @@ public class Clients {
 
 		System.out.println("... client by username " + username + " not found");
 		return false;
+	}
+	public Client getClientByUsername(String username) {
+		System.out.println("Clients: getClientByUsername:");
+		Iterator<Client> it = clientList.iterator();
+		while (it.hasNext()) {
+			Client client = it.next();
+			if (client.isReady()) {
+				if (client.getUserAccount().getUsername().equals(username)) {
+					System.out.println("... found client by username!");
+					return client;
+				}
+			}
+		}
+		System.out.println("... did not find client by username!");
+		return null;
 	}
 	public Client getPlayer(int id) {
 		return playerTable.get(id);

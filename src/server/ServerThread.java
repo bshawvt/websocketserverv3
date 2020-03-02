@@ -89,13 +89,22 @@ public class ServerThread implements Runnable {
 		}
 	}
 
-	private void processCommand(String command) {
+	private void processCommand(String data) {
+		String[] split = data.split(" ");
+		String command = split[0];
 		if (command.equals("help")) {
 			System.out.println("you have been helped");
 		}
 		else if (command.equals("f")) {
 			System.out.println("server flushed");
 			server.flush();
+		}
+		else if (command.equals("kick")) {
+			System.out.println("kicked some foo named " + split[1]);
+			Client client = server.clients.getClientByUsername(split[1]);
+			if (client != null) {
+				client.disconnect();
+			}
 		}
 		else {
 			System.out.println("ServerThread: processCommand: unknown command:\n... " + command);

@@ -121,6 +121,7 @@ public class Server extends WebSocketServer {
 		if (client != null) { // clients are only prepared when they have valid auth tokens
 			if (client.isReady()) { // do something special if the user was authenticated
 				//Threads.getSimulatorQueue().offer();
+				Form.removeClientToList(client.getUserAccount().getUsername());
 			}
 			if (client.isActive()) {
 				CharacterDto dto = new CharacterDto(client);
@@ -385,7 +386,6 @@ public class Server extends WebSocketServer {
 		}
 		
 		System.out.println("... " + dto.getUserAccount().getUsername() + " has authenticated!");
-		Form.addClientToList(dto.getUserAccount().getUsername());
 		// the client is ready to send and receive messages 
 		client.setReady(true);
 		
@@ -399,6 +399,8 @@ public class Server extends WebSocketServer {
 		}
 		// push blob to client
 		client.addFrame(joinBlob);
+		
+		Form.addClientToList(client.getUserAccount().getUsername());
 	}
 	
 	public void flush() {
