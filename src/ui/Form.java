@@ -28,7 +28,8 @@ public class Form extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private final int width = 500, height = 500;
 	private final static DefaultListModel<String> clientsListModel = new DefaultListModel<>();
-	private JPanel serverPanel, databasePanel, simulatorPanel;
+	private static boolean active = false;
+	//private JPanel serverPanel, databasePanel, simulatorPanel;
 	
 	public Form() {
 		//setLayout(null);
@@ -39,23 +40,20 @@ public class Form extends JFrame {
 		setFocusable(true);
 		
 		JTabbedPane tabs = new JTabbedPane();
+		
 		tabs.addTab("Server", new ServerPane(clientsListModel));
 		tabs.addTab("Database", new DatabasePane());
 		tabs.addTab("Simulation", new SimulationPane());
 		
-		add(tabs);
-		
-		//addClientToList("null");
-		//addClientToList("Test2");
-		
+		add(tabs);		
 		
 	}
-	
 	public static void addClientToList(String t) {
 		SwingUtilities.invokeLater( new Runnable() {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
+				//if (Form.isInUse())
 				clientsListModel.addElement(t);
 			}
 		});
@@ -65,18 +63,24 @@ public class Form extends JFrame {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
+				//if (Form.isInUse())
 				clientsListModel.remove(clientsListModel.indexOf(t));
 				//clientsListModel.addElement(t);
 			}
 		});
 	}
+	public static boolean isInUse() {
+		return active;
+	}	
 	
-	public void display() {
+	
+	public void display(boolean v) {
 		SwingUtilities.invokeLater( new Runnable() {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				setVisible(true);
+				setVisible(v);
+				active = v;
 			}
 		});
 	}

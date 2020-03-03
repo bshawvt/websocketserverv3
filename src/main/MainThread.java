@@ -20,7 +20,7 @@ public class MainThread {
 		new Config(args);
 		new Threads(); // assign queues to the main thread cuz i dont know
 		Form ui = new Form();
-		ui.display();
+		ui.display(true);
 		
 		System.out.println("MainThread: Hello world!");
 
