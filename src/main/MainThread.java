@@ -1,9 +1,11 @@
 package main;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.swing.SwingUtilities;
 
+import Models.CharacterModel;
 import database.DatabaseThread;
 import database.DatabaseThreadMessage;
 
@@ -11,6 +13,8 @@ import server.ServerThread;
 import server.ServerThreadMessage;
 import simulator.SimulatorThread;
 import simulator.SimulatorThreadMessage;
+import simulator.netobjects.NetObject;
+import simulator.netobjects.Player;
 import threads.Threads;
 import ui.Form;
 
@@ -52,7 +56,19 @@ public class MainThread {
 										"");
 				}
 				else if (split[0].equals("gui")) {
-					ui.display();
+					if (split.length > 1)
+						if (split[1].equals("hide")) {
+							ui.display(false);
+							continue;
+						}
+					ui.display(true);
+				}
+				else if (split[0].equals("testquad")) {
+					final ArrayList<NetObject> objs = new ArrayList<>();
+					objs.add(new Player(new CharacterModel(0)));
+					objs.add(new Player(new CharacterModel(0)));
+					objs.add(new Player(new CharacterModel(0)));
+					Form.UpdateQuadPoints(objs);
 				}
 				else if (split[0].equals("srv")) {
 					Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Main, ServerThreadMessage.Type.None, split[1]));

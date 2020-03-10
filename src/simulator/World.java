@@ -13,6 +13,7 @@ import server.blobs.MessageBlob;
 import simulator.netobjects.NetObject;
 import simulator.netobjects.Player;
 import threads.Threads;
+import ui.Form;
 
 public class World {
 	
@@ -134,6 +135,12 @@ public class World {
 			System.out.println("... added new netobject:\n\tid " + netObject.getId() + 
 					"\n\tclientId " + netObject.getClientId() );
 			netObject.stateChange = !netObject.stateChange;
+			
+			final ArrayList<NetObject> tmpObjs = new ArrayList<>();
+			netObjects.forEach((e) -> {
+				tmpObjs.add(e);
+			});
+			Form.UpdateQuadPoints(tmpObjs);
 			
 		}
 		netObjectsQueue.clear();

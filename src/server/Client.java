@@ -53,9 +53,18 @@ public class Client {
 	public boolean isActive() {
 		return this.active;
 	}
+	
+	/**
+	 * 
+	 * @return safely disconnect the client
+	 */
 	public void setRemoved(boolean state) {
 		this.removed = state;
 	}
+	/**
+	 * 
+	 * @return safely disconnect the client
+	 */
 	public void setRemoved(boolean state, String reason) {
 		this.removed = state;
 		this.reason = reason;
@@ -82,8 +91,13 @@ public class Client {
 	public void setAuthenticationDto(AuthenticationDto dto) {
 		this.authenticationDto = dto;
 	}
+	/**
+	 * 
+	 * @return disconnect clients that have been set for removal
+	 */
 	public void disconnect() {
-		if (!this.connection.isClosed()) {  
+		if (!this.connection.isClosed()) { 
+			// TODO: reason should be set by setRemoved like the reason
 			this.connection.close(Server.Reason.None, this.reason);
 		}
 	}

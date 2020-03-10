@@ -121,14 +121,13 @@ public class Server extends WebSocketServer {
 		if (client != null) { // clients are only prepared when they have valid auth tokens
 			if (client.isReady()) { // do something special if the user was authenticated
 				//Threads.getSimulatorQueue().offer();
-				Form.removeClientToList(client.getUserAccount().getUsername());
+				//Form.UpdateClientList(clients.clientList);
 			}
 			if (client.isActive()) {
 				CharacterDto dto = new CharacterDto(client);
 				Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Remove, dto));
 			}
 			client.setRemoved(true);
-			
 			Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Flush));
 		}
 	}
@@ -399,12 +398,13 @@ public class Server extends WebSocketServer {
 		}
 		// push blob to client
 		client.addFrame(joinBlob);
-		
-		Form.addClientToList(client.getUserAccount().getUsername());
+
+		//Form.UpdateClientList(clients.clientList);
 	}
 	
 	public void flush() {
 		clients.flush();
+		Form.UpdateClientList(clients.clientList);
 	}
 
 

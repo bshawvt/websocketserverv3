@@ -103,7 +103,14 @@ public class ServerThread implements Runnable {
 			System.out.println("kicked some foo named " + split[1]);
 			Client client = server.clients.getClientByUsername(split[1]);
 			if (client != null) {
-				client.disconnect();
+				if (split.length > 2) {
+					String reason = data.split("``")[1];
+					//System.out.println(reason);
+					client.setRemoved(true, reason);
+				}
+				else {
+					client.setRemoved(true);
+				}
 			}
 		}
 		else {
