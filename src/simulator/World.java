@@ -23,7 +23,7 @@ public class World {
 	
 	//public Metrics metrics = new Metrics();
 	private HashMap<Integer, NetObject> clientNetObjects = new HashMap<>();
-	public Tree tree = new Tree(netObjects);
+	//public QuadTree tree = new QuadTree(netObjects);
 	
 	public long frameCount = 0; // increased every time a world step has completed
 	
@@ -74,7 +74,7 @@ public class World {
 	 * an object with any clients near by */
 	public void updateOverNetwork(NetObject who) {
 		// list of objects
-		ArrayList<NetObject> receivers = tree.getClients(who.position);
+		ArrayList<NetObject> receivers = netObjects;//tree.getClients(who.position);
 		StateChangeDto dto = new StateChangeDto(who, receivers, frameCount);
 		Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Simulator, ServerThreadMessage.Type.Update, dto));
 		//node.

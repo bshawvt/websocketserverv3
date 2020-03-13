@@ -29,27 +29,26 @@ public class Form extends JFrame {
 	private final int width = 500, height = 500;
 	private final static DefaultListModel<String> clientsListModel = new DefaultListModel<>();
 	private static boolean active = false;
-	private JPanel serverPanel, databasePanel, simulatorPanel;
-	private static final ArrayList<NetObject> netObjects = new ArrayList<>();
+	private static final ArrayList<ObjectBoundingBox> quadPoints = new ArrayList<>();
 	
 	public Form() {
-		//setLayout(null);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setSize(width, height);
 		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation((dimension.width - width)/2, (dimension.height - height)/2);
 		setFocusable(true);
+		setAlwaysOnTop(true);
 		
 		JTabbedPane tabs = new JTabbedPane();
 		
 		tabs.addTab("Server", new ServerPane(clientsListModel));
 		tabs.addTab("Database", new DatabasePane());
-		tabs.addTab("Simulation", new SimulationPane(netObjects));
+		tabs.addTab("Simulation", new SimulationPane(quadPoints));
 		tabs.setSelectedIndex(2);
 				
-		add(tabs);		
-		
+		add(tabs);
 	}
+	
 	public static void UpdateClientList(ArrayList<Client> list) {
 		
 		final ArrayList<String> copy = new ArrayList<>();
@@ -69,21 +68,23 @@ public class Form extends JFrame {
 			}
 		});
 	}
-	public static boolean isInUse() {
+	public static boolean IsInUse() {
 		return active;
 	}	
 	public static void UpdateQuadPoints(ArrayList<NetObject> objs) {
-		final ArrayList<NetObject> tmpObjs = new ArrayList<>();
+
+		final ArrayList<ObjectBoundingBox> tmpObjs = new ArrayList<>();
 		objs.forEach((e) -> {
-			tmpObjs.add(e);
+			tmpObjs.add(new ObjectBoundingBox(e.position, e.bounds));
 		});
+		
 		SwingUtilities.invokeLater( new Runnable() {
 			
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
 				tmpObjs.forEach((e) -> {
-					netObjects.add(e);
+					quadPoints.add(e);
 				});
 			}
 			
@@ -100,21 +101,4 @@ public class Form extends JFrame {
 			}
 		});
 	}
-
-	/*
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater( new Runnable() {
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				(new Form()).display();
-				
-			}
-		});
-	}
-	*/
-	
-	
-	
-	
 }

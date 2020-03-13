@@ -13,9 +13,9 @@ import simulator.netobjects.NetObject;
 
 public class SimulationPane extends JPanel {
 	private int x, y, width, height;
-	private ArrayList<NetObject> objectsRef; 
+	private ArrayList<ObjectBoundingBox> objectsRef; 
 	
-	public SimulationPane(ArrayList<NetObject> objects) {
+	public SimulationPane(ArrayList<ObjectBoundingBox> objects) {
 		 //setLayout(null);
 		 objectsRef = objects;
 		 x = 50;
@@ -26,7 +26,19 @@ public class SimulationPane extends JPanel {
 		 JButton button = new MyButton("test", (e) -> { 
 			 repaint(); 
 		 });
+		 JButton button2 = new MyButton("do thing", (e) -> {
+			 objectsRef.clear();
+			 double[] pos = {0.0f, 0.0f};
+			 double[] bounds = {5.0f, 5.0f};
+			 for(int i = 0; i < 100; i++) {
+				 pos[0] = Math.random() * width;
+				 pos[1] = Math.random() * height;
+				 objectsRef.add(new ObjectBoundingBox(pos, bounds));
+			 }
+			 repaint();
+		 });
 		 add(button);
+		 add(button2);
 
 	}
 	@Override
@@ -42,8 +54,7 @@ public class SimulationPane extends JPanel {
 		
 		objectsRef.forEach((e) -> {
 			g.setColor(new Color((int) Math.floor(Math.random() * (255 * 255 * 255))));
-			g.fillRect(x + (int) e.position[0], y + (int) e.position[1], 5, 5);
-		});
-		
+			g.fillRect(x + (int) e.x, y + (int) e.y, (int) e.width, (int) e.height);
+		});		
 	}
 }

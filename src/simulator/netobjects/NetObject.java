@@ -26,6 +26,7 @@ public abstract class NetObject {
 	public double[] position = {0.0f, 0.0f, 0.0f};
 	public double[] moveDirection = {0.0f, 0.0f, 0.0f};
 	public double[] speed = {0.0f, 0.0f, 0.0f};
+	public double[] bounds = {2.0f, 2.0f, 2.0f};
 	
 	public double[] angles = {0.0f, 0.0f, 0.0f};
 	
