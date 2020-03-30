@@ -42,7 +42,7 @@ public class ServerPane extends JPanel {
 				 String reason = JOptionPane.showInputDialog("sum fuk?");
 				 if (reason!=null) {
 					 Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Main, ServerThreadMessage.Type.None, "kick " + list.getSelectedValue() +
-						 " ``" + reason + "``"));
+						 " ``" + reason + "``")); // `` is a separator for strings 
 				 }
 			}
 		 });
