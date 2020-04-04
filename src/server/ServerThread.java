@@ -22,6 +22,7 @@ public class ServerThread implements Runnable {
 			Config.ServerPort = 443;
 		}*/
 		//server = new Server();
+		server.setConnectionLostTimeout(5);
 		server.start();
 		
 		// flush thread messages

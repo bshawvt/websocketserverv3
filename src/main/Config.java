@@ -27,7 +27,7 @@ public class Config {
 		DatabasePassword = "dbpassword";
 		SnapshotLimit = 10;
 		SnapshotDelay = 100;
-		
+		//-user="root" -password="My password." -schema="wss_debug"
 	}
 	public Config(String[] args) {
 		this();

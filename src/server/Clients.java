@@ -91,7 +91,13 @@ public class Clients {
 		while(it.hasNext()) {
 			Client client = it.next();
 			UserAccountModel m = client.getUserAccount();
-			if (client.getUserAccount().getUsername().equals(username) && client.getId() != caller ) {
+			if (m == null) {
+				/* TODO: websocket server has a weird issue where a stalled connection can eventually get here and crash things */
+				client.setRemoved(true, "failure wheel robanson");
+				continue; 
+			};
+			if ( client.getUserAccount().getUsername().equals(username) && 
+					client.getId() != caller ) {
 				System.out.println("... found username with id matching caller: " + caller);
 				return true;
 			}

@@ -48,7 +48,6 @@ public class World {
 			NetObject last = netObject.snapshots.last();
 			// compare with last state before pushing the next snapshot
 			if (compareObjectStates(netObject, last)) {
-				System.out.println("cocks?");
 				updateOverNetwork(netObject);
 			}
 			

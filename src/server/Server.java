@@ -53,6 +53,7 @@ public class Server extends WebSocketServer {
 		this.setReuseAddr(true);
 		this.setTcpNoDelay(true);
 		
+		
 		this.chatManager = new ChatManager(this);
 		this.clients = new Clients();
 		
@@ -293,8 +294,14 @@ public class Server extends WebSocketServer {
 
 	@Override
 	public void onOpen(WebSocket connection, ClientHandshake handshake) {
-
-		System.out.println(connection.getRemoteSocketAddress().getHostString()/* + "/" + connection.getLocalSocketAddress().getHostString() */+ " has connected");
+		
+		System.out.println("onOpen connection is " + connection);
+		if (connection.getRemoteSocketAddress() == null) {
+			connection.close(Reason.FailedAuthStep, "Handshake error");
+			return;
+		}
+		//System.out.println("onOpen getRemoteSocketAddress is " + connection.getRemoteSocketAddress());
+		System.out.println(connection.getRemoteSocketAddress().getHostString() + " has connected");
 		String[] connectionString = handshake.getResourceDescriptor().split("/");
 		
 		// connection string must be exact or treat this connection as junk
