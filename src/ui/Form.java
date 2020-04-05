@@ -22,6 +22,7 @@ import javax.swing.event.ListSelectionListener;
 
 import server.Client;
 import simulator.netobjects.NetObject;
+import tools.ObjectBoundingBox;
 
 
 public class Form extends JFrame {

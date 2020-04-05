@@ -6,12 +6,24 @@ import java.util.ArrayList;
 import simulator.netobjects.NetObject;
 
 public class QuadTree {
+	
+	QuadTree divisions[] = {null, null, null, null};
+	
+	/* the initial QuadTree constructor */
+	public QuadTree(ArrayList<ObjectBoundingBox> objects, Graphics g) {
+		int x = 0;
+		int y = 0;
+		int width = 200;
+		int height = 200;
+		
+		
+		
+	}
+	/* */
 	public QuadTree() {
 		
 	}
-	public QuadTree(ArrayList<NetObject> objects, Graphics g) {
-		
-	}
+	
 	/*package simulator;
 
 	import java.util.ArrayList;

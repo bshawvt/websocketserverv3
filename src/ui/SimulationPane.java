@@ -10,6 +10,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import simulator.netobjects.NetObject;
+import tools.ObjectBoundingBox;
+import tools.QuadTree;
 
 public class SimulationPane extends JPanel {
 	private int x, y, width, height;
@@ -55,6 +57,8 @@ public class SimulationPane extends JPanel {
 		objectsRef.forEach((e) -> {
 			g.setColor(new Color((int) Math.floor(Math.random() * (255 * 255 * 255))));
 			g.fillRect(x + (int) e.x, y + (int) e.y, (int) e.width, (int) e.height);
-		});		
+		});
+		
+		new QuadTree(objectsRef, g);
 	}
 }
