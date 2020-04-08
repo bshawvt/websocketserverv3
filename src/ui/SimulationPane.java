@@ -52,13 +52,13 @@ public class SimulationPane extends JPanel {
 	
 	public void drawQuad(Graphics g) {
 		//g.setColor(new Color((int) Math.floor(Math.random() * (255 * 255 * 255))));
-		g.drawRect(x,  y, width, height);
+		//g.drawRect(x,  y, width, height);
 		
 		objectsRef.forEach((e) -> {
 			g.setColor(new Color((int) Math.floor(Math.random() * (255 * 255 * 255))));
 			g.fillRect(x + (int) e.x, y + (int) e.y, (int) e.width, (int) e.height);
 		});
 		
-		new QuadTree(objectsRef, g);
+		new QuadTree(x, y, width, height, objectsRef, g);
 	}
 }
