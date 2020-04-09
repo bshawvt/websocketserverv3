@@ -32,11 +32,18 @@ public class SimulationPane extends JPanel {
 			 objectsRef.clear();
 			 double[] pos = {0.0f, 0.0f};
 			 double[] bounds = {5.0f, 5.0f};
-			 for(int i = 0; i < 100; i++) {
-				 pos[0] = Math.random() * width;
-				 pos[1] = Math.random() * height;
+			 for(int i = 0; i < 5; i++) {
+				 pos[0] = 50 + Math.random() * width;
+				 pos[1] = 50 + Math.random() * height;
 				 objectsRef.add(new ObjectBoundingBox(pos, bounds));
+				 System.out.println("\n");
 			 }
+			 //objectsRef.add(new ObjectBoundingBox(50, 50, 5, 5));
+			 //objectsRef.add(new ObjectBoundingBox(45, 45, 5, 5));
+			 //objectsRef.add(new ObjectBoundingBox(90, 90, 5, 5));
+			 //objectsRef.add(new ObjectBoundingBox(180, 180, 5, 5));
+			 //objectsRef.add(new ObjectBoundingBox(40, 70, 5, 5));
+			 //objectsRef.add(new ObjectBoundingBox(70, 10, 5, 5));
 			 repaint();
 		 });
 		 add(button);
@@ -54,10 +61,10 @@ public class SimulationPane extends JPanel {
 		//g.setColor(new Color((int) Math.floor(Math.random() * (255 * 255 * 255))));
 		//g.drawRect(x,  y, width, height);
 		
-		objectsRef.forEach((e) -> {
+		/*objectsRef.forEach((e) -> {
 			g.setColor(new Color((int) Math.floor(Math.random() * (255 * 255 * 255))));
 			g.fillRect(x + (int) e.x, y + (int) e.y, (int) e.width, (int) e.height);
-		});
+		});*/
 		
 		new QuadTree(x, y, width, height, objectsRef, g);
 	}
