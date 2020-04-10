@@ -31,16 +31,20 @@ public class SimulationPane extends JPanel {
 		 JButton button2 = new MyButton("do thing", (e) -> {
 			 objectsRef.clear();
 			 double[] pos = {0.0f, 0.0f};
-			 double[] bounds = {5.0f, 5.0f};
-			 for(int i = 0; i < 5; i++) {
-				 pos[0] = 50 + Math.random() * width;
-				 pos[1] = 50 + Math.random() * height;
+			 double[] bounds = {10.0f, 10.0f};
+			 for(int i = 0; i < 0; i++) {
+				 pos[0] = Math.random() * width;
+				 pos[1] = Math.random() * height;
 				 objectsRef.add(new ObjectBoundingBox(pos, bounds));
 				 System.out.println("\n");
 			 }
-			 //objectsRef.add(new ObjectBoundingBox(50, 50, 5, 5));
-			 //objectsRef.add(new ObjectBoundingBox(45, 45, 5, 5));
-			 //objectsRef.add(new ObjectBoundingBox(90, 90, 5, 5));
+			 /*objectsRef.add(new ObjectBoundingBox(59, 59, 10, 10));
+			 objectsRef.add(new ObjectBoundingBox(10, 59, 10, 10));
+			 objectsRef.add(new ObjectBoundingBox(40, 59, 10, 10));*/
+			 objectsRef.add(new ObjectBoundingBox(50, 25, 10, 10));
+			 objectsRef.add(new ObjectBoundingBox(25, 10, 10, 10));
+			 objectsRef.add(new ObjectBoundingBox(5, 10, 10, 10));
+			 objectsRef.add(new ObjectBoundingBox(115, 115, 10, 10));
 			 //objectsRef.add(new ObjectBoundingBox(180, 180, 5, 5));
 			 //objectsRef.add(new ObjectBoundingBox(40, 70, 5, 5));
 			 //objectsRef.add(new ObjectBoundingBox(70, 10, 5, 5));
@@ -65,7 +69,10 @@ public class SimulationPane extends JPanel {
 			g.setColor(new Color((int) Math.floor(Math.random() * (255 * 255 * 255))));
 			g.fillRect(x + (int) e.x, y + (int) e.y, (int) e.width, (int) e.height);
 		});*/
+		//JPanel tree = new JPanel();
 		
-		new QuadTree(x, y, width, height, objectsRef, g);
+		QuadTree tree = new QuadTree(x, y, 0, 0, width, height, objectsRef, g);
+		System.out.println(tree.get(new ObjectBoundingBox(25, 10, 100, 100), g).size());
+		//add(tree);
 	}
 }

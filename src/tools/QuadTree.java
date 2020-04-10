@@ -22,13 +22,22 @@ public class QuadTree {
 	
 	private String name = null;
 	
+	private ObjectBoundingBox bb = null;
+	
 	public int x = 0;
 	public int y = 0;
 	public int width = 200;
 	public int height = 200;
 	
+	public int dx = 0;
+	public int dy = 0;
+	public int dwidth = 200;
+	public int dheight = 200;
+	
+	public boolean divided = false;
+	
 	// debug with graphics
-	public QuadTree(int x, int y, int width, int height, ArrayList<ObjectBoundingBox> objects, Graphics g) {
+	public QuadTree(int dx, int dy, int x, int y, int width, int height, ArrayList<ObjectBoundingBox> objects, Graphics g) {
 
 		this.root = this;
 		this.container = new ArrayList<>();
@@ -36,9 +45,19 @@ public class QuadTree {
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		
+		this.dx = dx;
+		this.dy = dy;
+		this.dwidth = width;
+		this.dheight = height;
+		
+		this.divided = false;
+		
+		this.bb = new ObjectBoundingBox(x, y, width, height);
+		
 		this.name = "root";
 		
-		g.drawRect(x, y, width, height);
+		g.drawRect(dx, dy, width, height);
 		//subdivide(g, 0);
 		//insert(objects);
 		objects.forEach((e) -> {
@@ -46,37 +65,6 @@ public class QuadTree {
 		});
 		
 
-	}
-	public QuadTree(QuadTree parent, int x, int y, int width, int height, int level, Graphics g, Color color, String name) {
-		
-		//System.out.println("made quad for " + name);
-		if (parent == null) 
-			return;
-		
-		this.root = parent.root;
-		
-		this.container = new ArrayList<>();
-		this.name = name;
-		this.level = level;
-		
-		
-		this.width = width; //parent.width / 2;
-		this.height = width; //parent.height / 2;
-		
-		this.x = x;
-		this.y = y;
-		
-		//this.currentLevel = parent.currentLevel + 1;
-		
-		
-		g.setColor(new Color(0, 0, 0));
-		//g.setColor(new Color((int) Math.floor(Math.random() * (255 * 255 * 255))));
-		
-		g.drawRect(x, y, width, height);
-		//g.setColor(color);
-		//g.fillRect(x, y, width, height);
-		//insert(objects);
-		
 	}
 	public QuadTree(QuadTree parent, ObjectBoundingBox bb, int level, Graphics g, Color color, String name) {
 			
@@ -86,17 +74,23 @@ public class QuadTree {
 		
 		this.root = parent.root;
 		
+		this.bb = bb;
+		
 		this.container = new ArrayList<>();
 		this.name = name;
 		this.level = level;
 		
 		this.x = (int) Math.floor(bb.x);
 		this.y = (int) Math.floor(bb.y);
-		
 		this.width = (int) Math.floor(bb.width); //parent.width / 2;
 		this.height = (int) Math.floor(bb.height); //parent.height / 2;
 		
+		this.dx = root.dx+x;
+		this.dy = root.dy+y;
+		this.dwidth = width;
+		this.dheight = height;
 		
+		this.divided = false;
 		
 		//this.currentLevel = parent.currentLevel + 1;
 		
@@ -104,70 +98,59 @@ public class QuadTree {
 		g.setColor(new Color(0, 0, 0));
 		//g.setColor(new Color((int) Math.floor(Math.random() * (255 * 255 * 255))));
 		
-		g.drawRect(x, y, width, height);
+		g.drawRect(dx, dy, width, height);
 		//g.setColor(color);
 		//g.fillRect(x, y, width, height);
 		//insert(objects);
 		
 	}
-	/*public void subdivide(Graphics g, int level) {
-		int halfWidth = width/2;
-		int halfHeight = height/2;
-		
-		ne = new QuadTree(this, x, y, 							halfWidth, halfHeight, level+1, g, new Color(255, 0, 0), 	"ne" ); // north east
-		nw = new QuadTree(this, x + halfWidth, y, 				halfWidth, halfHeight, level+1, g, new Color(0, 255, 0), 	"nw" ); // north west
-		se = new QuadTree(this, x, y + halfHeight, 				halfWidth, halfHeight, level+1, g, new Color(0, 0, 255), 	"se" ); // south east
-		sw = new QuadTree(this, x + halfWidth, y + halfHeight, 	halfWidth, halfHeight, level+1, g, new Color(255, 255, 0), "sw" ); // south west
-		
-	}*/
-	
-	public void insert(ObjectBoundingBox object, Graphics g) {
+	private void insert(ObjectBoundingBox object, Graphics g) {
 		System.out.println(level + " of " + levels);
 		if (level < levels) {
 			int halfWidth = width/2;
 			int halfHeight = height/2;
-			
-			g.setColor(new Color(255, 0, 0));
-			g.fillArc((int) object.x, (int) object.y, (int) object.width, (int) object.height, 0, 360);
-			
-			ObjectBoundingBox neBB = new ObjectBoundingBox(x, 				y,				halfWidth, halfHeight);
-			ObjectBoundingBox nwBB = new ObjectBoundingBox(x + halfWidth, 	y, 				halfWidth, halfHeight);
-			ObjectBoundingBox seBB = new ObjectBoundingBox(x, 				y + halfHeight, halfWidth, halfHeight);
-			ObjectBoundingBox swBB = new ObjectBoundingBox(x + halfWidth, 	y + halfHeight, halfWidth, halfHeight);
-			if (ne == null) {
-				ne = new QuadTree(this, neBB, level+1, g, new Color(255, 0, 0), "ne");
-			}
-			if (nw == null) {		
-				nw = new QuadTree(this, nwBB, level+1, g, new Color(255, 0, 0), "nw");
-			}
-			if (se == null) {		
-				se = new QuadTree(this, seBB, level+1, g, new Color(255, 0, 0), "se");
-			}
-			if (sw == null) {		
-				sw = new QuadTree(this, swBB, level+1, g, new Color(255, 0, 0), "sw");
-			}
-			
+								
 			boolean added = false;
 			// ne
+			ObjectBoundingBox neBB = new ObjectBoundingBox(x, y, halfWidth, halfHeight);
 			if (leafContains(neBB, object)) {
+				if (ne == null) {
+					ne = new QuadTree(this, neBB, level+1, g, new Color(255, 0, 0), "ne");
+				}
+				ne.divided = true;
 				ne.insert(object, g);
 				added = true;
 			}
 			
 			// nw
+			ObjectBoundingBox nwBB = new ObjectBoundingBox(x + halfWidth, y, halfWidth, halfHeight);
 			if (leafContains(nwBB, object)) {
+				if (nw == null) {		
+					nw = new QuadTree(this, nwBB, level+1, g, new Color(255, 0, 0), "nw");
+				}
+				nw.divided = true;
 				nw.insert(object, g);
 				added = true;
 			}
 			
 			// se
+			ObjectBoundingBox seBB = new ObjectBoundingBox(x, y + halfHeight, halfWidth, halfHeight);
 			if (leafContains(seBB, object)) {
+				if (se == null) {		
+					se = new QuadTree(this, seBB, level+1, g, new Color(255, 0, 0), "se");
+				}
+				se.divided = true;
 				se.insert(object, g);
 				added = true;
 			}
 			
 			// sw
+			ObjectBoundingBox swBB = new ObjectBoundingBox(x + halfWidth, y + halfHeight, halfWidth, halfHeight);
 			if (leafContains(swBB, object)) {
+				if (sw == null) {		
+					sw = new QuadTree(this, swBB, level+1, g, new Color(255, 0, 0), "sw");
+				}
+				sw.divided = true;
 				sw.insert(object, g);
 				added = true;
 			}
@@ -176,64 +159,129 @@ public class QuadTree {
 		else {
 			add(object);
 		}
+		
+		g.setColor(new Color(255, 0, 0));
+		g.fillArc(root.dx + (int) object.x, root.dy + (int) object.y, (int) object.width, (int) object.height, 0, 360);
+		
 	}
-	/*public boolean leafContains(int x, int y, int width, int height, ObjectBoundingBox object) {
-		ObjectBoundingBox bb = new ObjectBoundingBox(x, y, width, height);
-		if (bb.intersect(object)) {
-			return true;
-		}
-		return false;
-	}*/
-	public boolean leafContains(ObjectBoundingBox leafBB, ObjectBoundingBox objectBB) {
-
+	private boolean leafContains(ObjectBoundingBox leafBB, ObjectBoundingBox objectBB) {
 		if (leafBB.intersect(objectBB)) {
 			return true;
 		}
 		return false;
 	}
-	public void add(ObjectBoundingBox object) {
+	private void add(ObjectBoundingBox object) {
 		System.err.println("added thing");
 		
 		container.add(object);
 	}
-	
-	
-	
-	
-	
-	
-	/*package simulator;
 
-	import java.util.ArrayList;
-	import java.util.Iterator;
-	import java.util.function.Consumer;
-
-	import simulator.netobjects.NetObject;
-
-	public class QuadTree {
-
-		private ArrayList<NetObject> objectsList;
-		public QuadTree(ArrayList<NetObject> ref) {
-			this.objectsList = ref;
-		}
-		
-		public ArrayList<NetObject> get(double[] position) {
-			//ArrayList<NetObject> objects = new ArrayList<>();
-			return objectsList;
-		}
-		public ArrayList<NetObject> getClients(double[] position) {
-			ArrayList<NetObject> objects = new ArrayList<>();
-			Iterator<NetObject> it = objectsList.iterator();
-			while (it.hasNext()) {
-				NetObject netObject = it.next();
-				if (netObject.clientId != -1) {
-					objects.add(netObject);
-				}			
+	private ArrayList<ObjectBoundingBox> get(ObjectBoundingBox rect, ArrayList<ObjectBoundingBox> list, Graphics g) {
+		if (ne != null) {
+			if (leafContains(ne.bb, rect)) {
+				ne.container.forEach((e) -> {
+					g.setColor(new Color(0, 0, 255));
+					g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
+					list.add(e);
+				});
+				if (ne.divided) {
+					ne.get(rect, list, g);
+				}
 			}
-			return objects;
+		}
+		if (nw != null) {
+			if (leafContains(nw.bb, rect)) {
+				nw.container.forEach((e) -> {
+					g.setColor(new Color(0, 0, 255));
+					g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
+					list.add(e);
+				});
+				if (nw.divided) {
+					nw.get(rect, list, g);
+				}
+			}
+		}
+		if (se != null) {
+			if (leafContains(se.bb, rect)) {
+				se.container.forEach((e) -> {
+					g.setColor(new Color(0, 0, 255));
+					g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
+					list.add(e);
+				});
+				if (se.divided) {
+					se.get(rect, list, g);
+				}
+			}
+		}
+		if (sw != null) {
+			if (leafContains(sw.bb, rect)) {
+				sw.container.forEach((e) -> {
+					g.setColor(new Color(0, 0, 255));
+					g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
+					list.add(e);
+				});
+				if (sw.divided) {
+					sw.get(rect, list, g);
+				}
+			}
+		}
+		return list;
+	}
+	public ArrayList<ObjectBoundingBox> get(ObjectBoundingBox rect, Graphics g) {
+		ArrayList<ObjectBoundingBox> list = new ArrayList<>();
+		
+		if (ne != null) {
+			if (leafContains(ne.bb, rect)) {
+				ne.container.forEach((e) -> {
+					g.setColor(new Color(0, 0, 255));
+					g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
+					list.add(e);
+				});
+				if (ne.divided) {
+					ne.get(rect, list, g);
+				}
+			}
+		}
+		if (nw != null) {
+			if (leafContains(nw.bb, rect)) {
+				nw.container.forEach((e) -> {
+					g.setColor(new Color(0, 0, 255));
+					g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
+					list.add(e);
+				});
+				if (nw.divided) {
+					nw.get(rect, list, g);
+				}
+			}
+		}
+		if (se != null) {
+			if (leafContains(se.bb, rect)) {
+				se.container.forEach((e) -> {
+					g.setColor(new Color(0, 0, 255));
+					g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
+					list.add(e);
+				});
+				if (se.divided) {
+					se.get(rect, list, g);
+				}
+			}
+		}
+		if (sw != null) {
+			if (leafContains(sw.bb, rect)) {
+				sw.container.forEach((e) -> {
+					g.setColor(new Color(0, 0, 255));
+					g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
+					list.add(e);
+				});
+				if (sw.divided) {
+					sw.get(rect, list, g);
+				}
+			}
 		}
 		
-
-	}*/
-
+		g.setColor(new Color(255, 0, 255));
+		g.drawRect(root.dx + (int) rect.x - 1, root.dy + (int) rect.y - 1, (int) rect.width + 2, (int) rect.height + 2);
+		g.drawRect(root.dx + (int) rect.x, root.dy + (int) rect.y, (int) rect.width, (int) rect.height);
+		return list;
+	}
 }
