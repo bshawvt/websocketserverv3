@@ -55,15 +55,15 @@ public class Client {
 	}
 	
 	/**
-	 * 
-	 * @return safely disconnect the client
+	 * safely disconnect the client
+	 * @return 
 	 */
 	public void setRemoved(boolean state) {
 		this.removed = state;
 	}
 	/**
-	 * 
-	 * @return safely disconnect the client
+	 * safely disconnect the client
+	 * @return 
 	 */
 	public void setRemoved(boolean state, String reason) {
 		this.removed = state;
@@ -92,8 +92,8 @@ public class Client {
 		this.authenticationDto = dto;
 	}
 	/**
-	 * 
-	 * @return disconnect clients that have been set for removal
+	 * disconnect clients that have been set for removal
+	 * @return 
 	 */
 	public void disconnect() {
 		if (!this.connection.isClosed()) { 

@@ -45,6 +45,7 @@ public class SimulationPane extends JPanel {
 			 objectsRef.add(new ObjectBoundingBox(25, 10, 10, 10));
 			 objectsRef.add(new ObjectBoundingBox(5, 10, 10, 10));
 			 objectsRef.add(new ObjectBoundingBox(115, 115, 10, 10));
+			 objectsRef.add(new ObjectBoundingBox(79, 79, 10, 10));
 			 //objectsRef.add(new ObjectBoundingBox(180, 180, 5, 5));
 			 //objectsRef.add(new ObjectBoundingBox(40, 70, 5, 5));
 			 //objectsRef.add(new ObjectBoundingBox(70, 10, 5, 5));

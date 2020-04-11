@@ -90,9 +90,9 @@ public class MainThread {
 		in.close();
 		
 		// thread cleanup
-		server.interrupt();
-		database.interrupt();
 		simulator.interrupt();
+		database.interrupt();
+		server.interrupt();
 		
 		
 		System.out.println("MainThread: Goodbye world!");

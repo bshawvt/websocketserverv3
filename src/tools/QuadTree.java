@@ -3,6 +3,7 @@ package tools;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import simulator.netobjects.NetObject;
 
@@ -66,6 +67,8 @@ public class QuadTree {
 		
 
 	}
+	
+	/** this constructor should never be used to create the quadtree */
 	public QuadTree(QuadTree parent, ObjectBoundingBox bb, int level, Graphics g, Color color, String name) {
 			
 		//System.out.println("made quad for " + name);
@@ -170,72 +173,75 @@ public class QuadTree {
 		}
 		return false;
 	}
+	/** adds an object to a leaf */
 	private void add(ObjectBoundingBox object) {
 		System.err.println("added thing");
 		
 		container.add(object);
 	}
 
-	private ArrayList<ObjectBoundingBox> get(ObjectBoundingBox rect, ArrayList<ObjectBoundingBox> list, Graphics g) {
+	private void addSearchItem(ObjectBoundingBox rect, QuadTree leaf, HashSet<ObjectBoundingBox> list, Graphics g) {
+		leaf.container.forEach((e) -> {
+			g.setColor(new Color(0, 0, 255));
+			g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
+			if (rect.intersect(e)) {
+				list.add(e);
+				
+			}
+		});
+	}
+	
+	/** recursively calls itself to search for and populate a list reference with all objects within rect */
+	//private void get(ObjectBoundingBox rect, ArrayList<ObjectBoundingBox> list, Graphics g) {
+	private void get(ObjectBoundingBox rect, HashSet<ObjectBoundingBox> list, Graphics g) {		
 		if (ne != null) {
-			if (leafContains(ne.bb, rect)) {
-				ne.container.forEach((e) -> {
-					g.setColor(new Color(0, 0, 255));
-					g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
-					list.add(e);
-				});
+			if (rect.intersect(ne.bb)) {
+				addSearchItem(rect, ne, list, g);
 				if (ne.divided) {
 					ne.get(rect, list, g);
 				}
 			}
 		}
 		if (nw != null) {
-			if (leafContains(nw.bb, rect)) {
-				nw.container.forEach((e) -> {
-					g.setColor(new Color(0, 0, 255));
-					g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
-					list.add(e);
-				});
+			if (rect.intersect(nw.bb)) {
+				addSearchItem(rect, nw, list, g);
 				if (nw.divided) {
 					nw.get(rect, list, g);
 				}
 			}
 		}
 		if (se != null) {
-			if (leafContains(se.bb, rect)) {
-				se.container.forEach((e) -> {
-					g.setColor(new Color(0, 0, 255));
-					g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
-					list.add(e);
-				});
+			if (rect.intersect(se.bb)) {
+				addSearchItem(rect, se, list, g);
 				if (se.divided) {
 					se.get(rect, list, g);
 				}
 			}
 		}
 		if (sw != null) {
-			if (leafContains(sw.bb, rect)) {
-				sw.container.forEach((e) -> {
-					g.setColor(new Color(0, 0, 255));
-					g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
-					list.add(e);
-				});
+			if (rect.intersect(sw.bb)) {
+				addSearchItem(rect, sw, list, g);
 				if (sw.divided) {
 					sw.get(rect, list, g);
 				}
 			}
 		}
-		return list;
+
 	}
-	public ArrayList<ObjectBoundingBox> get(ObjectBoundingBox rect, Graphics g) {
-		ArrayList<ObjectBoundingBox> list = new ArrayList<>();
+	/*private void get(ObjectBoundingBox rect, HashSet<ObjectBoundingBox> list, Graphics g) {
+		
+		HashSet<ObjectBoundingBox> set = new HashSet<>();
 		
 		if (ne != null) {
-			if (leafContains(ne.bb, rect)) {
+			if (rect.intersect(ne.bb)) {
 				ne.container.forEach((e) -> {
 					g.setColor(new Color(0, 0, 255));
 					g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
-					list.add(e);
+					if (rect.intersect(e)&& !e.added) {
+						e.added = true;
+						list.add(e);
+						
+					}
 				});
 				if (ne.divided) {
 					ne.get(rect, list, g);
@@ -243,11 +249,14 @@ public class QuadTree {
 			}
 		}
 		if (nw != null) {
-			if (leafContains(nw.bb, rect)) {
+			if (rect.intersect(nw.bb)) {
 				nw.container.forEach((e) -> {
 					g.setColor(new Color(0, 0, 255));
 					g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
-					list.add(e);
+					if (rect.intersect(e) && !e.added) {
+						e.added = true;
+						list.add(e);
+					}
 				});
 				if (nw.divided) {
 					nw.get(rect, list, g);
@@ -255,11 +264,14 @@ public class QuadTree {
 			}
 		}
 		if (se != null) {
-			if (leafContains(se.bb, rect)) {
+			if (rect.intersect(se.bb)) {
 				se.container.forEach((e) -> {
 					g.setColor(new Color(0, 0, 255));
 					g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
-					list.add(e);
+					if (rect.intersect(e) && !e.added) {
+						e.added = true;
+						list.add(e);
+					}
 				});
 				if (se.divided) {
 					se.get(rect, list, g);
@@ -267,17 +279,35 @@ public class QuadTree {
 			}
 		}
 		if (sw != null) {
-			if (leafContains(sw.bb, rect)) {
+			if (rect.intersect(sw.bb)) {
 				sw.container.forEach((e) -> {
 					g.setColor(new Color(0, 0, 255));
 					g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
-					list.add(e);
+					if (rect.intersect(e) && !e.added) {
+						e.added = true;
+						list.add(e);
+					}
 				});
 				if (sw.divided) {
 					sw.get(rect, list, g);
 				}
 			}
 		}
+
+	}*/
+	/**
+	 * 
+	 * @param rect
+	 * @param g
+	 * @return arraylist of objects within rect
+	 */
+	//public ArrayList<ObjectBoundingBox> get(ObjectBoundingBox rect, Graphics g) {
+	public HashSet<ObjectBoundingBox> get(ObjectBoundingBox rect, Graphics g) {
+		//ArrayList<ObjectBoundingBox> list = new ArrayList<>();
+		HashSet<ObjectBoundingBox> list = new HashSet<>();
+		
+		
+		get(rect, list, g);
 		
 		g.setColor(new Color(255, 0, 255));
 		g.drawRect(root.dx + (int) rect.x - 1, root.dy + (int) rect.y - 1, (int) rect.width + 2, (int) rect.height + 2);
