@@ -45,10 +45,6 @@ public class Node implements Runnable {
 	
 		
 	}
-	
-	public boolean hasClient(int id) {
-		return false;
-	}
 
 	@Override
 	public void run() {
@@ -101,7 +97,16 @@ public class Node implements Runnable {
 		
 		profiler.stop("test1");
 	}
-	
+	private void processCommand(String data) {
+		String[] split = data.split(" ");
+		String command = split[0];
+		if (command.equals("get_view")) {
+			Form.UpdateQuadPoints(world.netObjects);
+		}
+		else {
+			System.out.println("SimulatorThread: Node: processCommand: unknown command:\n... " + command);
+		}
+	}
 	private void flushThreadMessages() {
 		SimulatorThreadMessage msg = null;
 		while ((msg = nodeThreadMessage.poll()) != null) {
@@ -135,8 +140,9 @@ public class Node implements Runnable {
 					break;
 				}
 				
-				// Nodes do not use None, this should never happen
+
 				case SimulatorThreadMessage.Type.None:{
+					processCommand(msg.getCommand());
 					break;
 				}
 				

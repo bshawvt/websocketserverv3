@@ -13,6 +13,7 @@ import server.blobs.MessageBlob;
 import simulator.netobjects.NetObject;
 import simulator.netobjects.Player;
 import threads.Threads;
+import tools.NOQuadTree;
 import ui.Form;
 
 public class World {
@@ -23,7 +24,7 @@ public class World {
 	
 	//public Metrics metrics = new Metrics();
 	private HashMap<Integer, NetObject> clientNetObjects = new HashMap<>();
-	//public QuadTree tree = new QuadTree(netObjects);
+	public NOQuadTree tree = null;
 	
 	public long frameCount = 0; // increased every time a world step has completed
 	
@@ -37,7 +38,9 @@ public class World {
 	
 	public void step(double dt) {
 		flush();
-	
+		
+		tree = new NOQuadTree(4, 0, 0, 500, 500, netObjects);
+		
 		Iterator<NetObject> it = netObjects.iterator();
 		while(it.hasNext()) {
 			NetObject netObject = it.next();
@@ -135,11 +138,11 @@ public class World {
 					"\n\tclientId " + netObject.getClientId() );
 			netObject.stateChange = !netObject.stateChange;
 			
-			final ArrayList<NetObject> tmpObjs = new ArrayList<>();
+			/*final ArrayList<NetObject> tmpObjs = new ArrayList<>();
 			netObjects.forEach((e) -> {
 				tmpObjs.add(e);
 			});
-			Form.UpdateQuadPoints(tmpObjs);
+			Form.UpdateQuadPoints(tmpObjs);*/
 			
 		}
 		netObjectsQueue.clear();

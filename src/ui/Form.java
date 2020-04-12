@@ -30,7 +30,7 @@ public class Form extends JFrame {
 	private final int width = 500, height = 500;
 	private final static DefaultListModel<String> clientsListModel = new DefaultListModel<>();
 	private static boolean active = false;
-	private static final ArrayList<ObjectBoundingBox> quadPoints = new ArrayList<>();
+	private static final ArrayList<NetObject> quadPoints = new ArrayList<>();
 	
 	public Form() {
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -74,17 +74,20 @@ public class Form extends JFrame {
 	}	
 	public static void UpdateQuadPoints(ArrayList<NetObject> objs) {
 
-		final ArrayList<ObjectBoundingBox> tmpObjs = new ArrayList<>();
+		final ArrayList<NetObject> tmpObjs = new ArrayList<>();
 		objs.forEach((e) -> {
-			tmpObjs.add(new ObjectBoundingBox(e.position, e.bounds));
+			System.out.println(e.position[0]);
+			tmpObjs.add(NetObject.copy(e));
 		});
 		
 		SwingUtilities.invokeLater( new Runnable() {
 			
 			@Override
 			public void run() {
+				quadPoints.clear();
 				// TODO Auto-generated method stub
 				tmpObjs.forEach((e) -> {
+					System.out.println(e.position[0]);
 					quadPoints.add(e);
 				});
 			}

@@ -7,19 +7,21 @@ import java.util.HashSet;
 
 import simulator.netobjects.NetObject;
 
-public class QuadTree {
+public class OldQuadTree {
 	
 	
 	private int levels = 4;
 	private int level = 0;
 
 	private ArrayList<ObjectBoundingBox> container = null;
-	private QuadTree root = null;
-	private QuadTree parent = null;
-	private QuadTree ne = null;
-	private QuadTree nw = null;
-	private QuadTree se = null;
-	private QuadTree sw = null;
+	private OldQuadTree root = null;
+	private OldQuadTree parent = null;
+	private OldQuadTree ne = null;
+	private OldQuadTree nw = null;
+	private OldQuadTree se = null;
+	private OldQuadTree sw = null;
+	
+	private OldQuadTree[] divisions = { null, null, null, null};
 	
 	private String name = null;
 	
@@ -38,7 +40,7 @@ public class QuadTree {
 	public boolean divided = false;
 	
 	// debug with graphics
-	public QuadTree(int dx, int dy, int x, int y, int width, int height, ArrayList<ObjectBoundingBox> objects, Graphics g) {
+	public OldQuadTree(int dx, int dy, int x, int y, int width, int height, ArrayList<ObjectBoundingBox> objects, Graphics g) {
 
 		this.root = this;
 		this.container = new ArrayList<>();
@@ -69,7 +71,7 @@ public class QuadTree {
 	}
 	
 	/** this constructor should never be used to create the quadtree */
-	public QuadTree(QuadTree parent, ObjectBoundingBox bb, int level, Graphics g, Color color, String name) {
+	public OldQuadTree(OldQuadTree parent, ObjectBoundingBox bb, int level, Graphics g, Color color, String name) {
 			
 		//System.out.println("made quad for " + name);
 		if (parent == null) 
@@ -116,6 +118,27 @@ public class QuadTree {
 			boolean added = false;
 			// ne
 			ObjectBoundingBox neBB = new ObjectBoundingBox(x, y, halfWidth, halfHeight);
+			ObjectBoundingBox nwBB = new ObjectBoundingBox(x + halfWidth, y, halfWidth, halfHeight);
+			ObjectBoundingBox seBB = new ObjectBoundingBox(x, y + halfHeight, halfWidth, halfHeight);
+			ObjectBoundingBox swBB = new ObjectBoundingBox(x + halfWidth, y + halfHeight, halfWidth, halfHeight);
+			
+			ObjectBoundingBox[] bbs = { neBB, nwBB, seBB, swBB};
+			String[] names = { "ne", "nw", "se", "sw" };
+			
+			for(int i = 0; i < 4; i++) {
+				
+				if (leafContains(bbs[i], object)) {
+					if (divisions[i] == null) {
+						divisions[i] = new OldQuadTree(this, bbs[i], level+1, g, new Color(255, 0, 0), names[i]);
+					}
+					divisions[i].divided = true;
+					divisions[i].insert(object, g);
+					added = true;
+				}
+				
+			}
+			/*
+			// nw
 			if (leafContains(neBB, object)) {
 				if (ne == null) {
 					ne = new QuadTree(this, neBB, level+1, g, new Color(255, 0, 0), "ne");
@@ -126,7 +149,7 @@ public class QuadTree {
 			}
 			
 			// nw
-			ObjectBoundingBox nwBB = new ObjectBoundingBox(x + halfWidth, y, halfWidth, halfHeight);
+			
 			if (leafContains(nwBB, object)) {
 				if (nw == null) {		
 					nw = new QuadTree(this, nwBB, level+1, g, new Color(255, 0, 0), "nw");
@@ -137,7 +160,7 @@ public class QuadTree {
 			}
 			
 			// se
-			ObjectBoundingBox seBB = new ObjectBoundingBox(x, y + halfHeight, halfWidth, halfHeight);
+			
 			if (leafContains(seBB, object)) {
 				if (se == null) {		
 					se = new QuadTree(this, seBB, level+1, g, new Color(255, 0, 0), "se");
@@ -148,7 +171,7 @@ public class QuadTree {
 			}
 			
 			// sw
-			ObjectBoundingBox swBB = new ObjectBoundingBox(x + halfWidth, y + halfHeight, halfWidth, halfHeight);
+			
 			if (leafContains(swBB, object)) {
 				if (sw == null) {		
 					sw = new QuadTree(this, swBB, level+1, g, new Color(255, 0, 0), "sw");
@@ -156,7 +179,7 @@ public class QuadTree {
 				sw.divided = true;
 				sw.insert(object, g);
 				added = true;
-			}
+			}*/
 			System.err.println("was added is " + added);
 		}
 		else {
@@ -180,7 +203,7 @@ public class QuadTree {
 		container.add(object);
 	}
 
-	private void addSearchItem(ObjectBoundingBox rect, QuadTree leaf, HashSet<ObjectBoundingBox> list, Graphics g) {
+	private void addSearchItem(ObjectBoundingBox rect, OldQuadTree leaf, HashSet<ObjectBoundingBox> list, Graphics g) {
 		leaf.container.forEach((e) -> {
 			g.setColor(new Color(0, 0, 255));
 			g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.width + 4 , (int) e.height + 4, 0, 360);
@@ -194,6 +217,19 @@ public class QuadTree {
 	/** recursively calls itself to search for and populate a list reference with all objects within rect */
 	//private void get(ObjectBoundingBox rect, ArrayList<ObjectBoundingBox> list, Graphics g) {
 	private void get(ObjectBoundingBox rect, HashSet<ObjectBoundingBox> list, Graphics g) {		
+		
+		for(int i = 0; i < 4; i++) {
+			if (divisions[i] != null) {
+				if (rect.intersect(divisions[i].bb)) {
+					addSearchItem(rect, divisions[i], list, g);
+					if (divisions[i].divided) {
+						divisions[i].get(rect, list, g);
+					}
+				}
+			}
+		}
+		
+		/*
 		if (ne != null) {
 			if (rect.intersect(ne.bb)) {
 				addSearchItem(rect, ne, list, g);
@@ -225,7 +261,7 @@ public class QuadTree {
 					sw.get(rect, list, g);
 				}
 			}
-		}
+		}*/
 
 	}
 	/*private void get(ObjectBoundingBox rect, HashSet<ObjectBoundingBox> list, Graphics g) {

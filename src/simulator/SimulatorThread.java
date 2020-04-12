@@ -8,8 +8,10 @@ import Dtos.StateChangeDto;
 
 import database.DatabaseThreadMessage;
 import main.Config;
+import server.Client;
 import threads.Threads;
 import tools.Profiler;
+import ui.Form;
 
 public class SimulatorThread implements Runnable {
 	
@@ -37,7 +39,25 @@ public class SimulatorThread implements Runnable {
 		propagateSimulatorThreadMessages();
 		
 	}
-
+	private void processCommand(String data, SimulatorThreadMessage msg) {
+		String[] split = data.split(" ");
+		String command = split[0];
+		if (command.equals("help")) {
+			System.out.println("you have been helped");
+		}
+		else if (command.equals("get_view") && split.length > 1) {
+			int i = Integer.parseInt(split[1]);
+			if (nodes[i] != null) {
+				nodes[i].nodeThreadMessage.offer(msg);
+			}
+		}
+		else if (command.equals("kick")) {
+			
+		}
+		else {
+			System.out.println("SimulatorThread: processCommand: unknown command:\n... " + command);
+		}
+	}
 	private void propagateSimulatorThreadMessages() {
 
 		try {
@@ -57,6 +77,7 @@ public class SimulatorThread implements Runnable {
 							if (command != null) {
 								System.out.println("SimulatorThread: received command from server");
 								System.out.println("command: " + command);
+								processCommand(command, msg);
 							}
 						}
 						break;

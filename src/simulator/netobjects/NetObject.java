@@ -8,6 +8,7 @@ import simulator.Bitfield;
 import simulator.InputState;
 import simulator.Snapshot;
 import simulator.World;
+import tools.ObjectBoundingBox;
 
 public abstract class NetObject {
 	public static class Types {
@@ -23,10 +24,12 @@ public abstract class NetObject {
 	};
 	public NetObject parent = null;
 	// synchronized network object state
-	public double[] position = {0.0f, 0.0f, 0.0f};
+	
 	public double[] moveDirection = {0.0f, 0.0f, 0.0f};
 	public double[] speed = {0.0f, 0.0f, 0.0f};
 	public double[] bounds = {2.0f, 2.0f, 2.0f};
+	public double[] position = {50.0f, 50.0f, 0.0f};
+	//public ObjectBoundingBox boundingBox = new ObjectBoundingBox();
 	
 	public double[] angles = {0.0f, 0.0f, 0.0f};
 	

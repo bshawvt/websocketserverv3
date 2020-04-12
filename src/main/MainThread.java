@@ -63,13 +63,6 @@ public class MainThread {
 						}
 					ui.display(true);
 				}
-				else if (split[0].equals("testquad")) {
-					final ArrayList<NetObject> objs = new ArrayList<>();
-					objs.add(new Player(new CharacterModel(0)));
-					objs.add(new Player(new CharacterModel(0)));
-					objs.add(new Player(new CharacterModel(0)));
-					Form.UpdateQuadPoints(objs);
-				}
 				else if (split[0].equals("srv")) {
 					Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Main, ServerThreadMessage.Type.None, split[1]));
 					
@@ -81,6 +74,14 @@ public class MainThread {
 					Threads.getDatabaseQueue().offer(new DatabaseThreadMessage(Threads.Main, DatabaseThreadMessage.Type.None, split[1]));
 				}
 				else {
+					
+					String[] nsplit = input.split(" ");
+					if (nsplit[0].equals("get_view")) {
+						System.out.println("doing get_view for " + input);
+						Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Main, SimulatorThreadMessage.Type.None, input));
+						continue;
+					}
+					
 					System.out.println("MainThread: unknown command");
 				}
 				
