@@ -75,6 +75,8 @@ public class MainThread {
 				}
 				else {
 					
+					/* main thread command that has no . but requires a space separator instead */
+					
 					String[] nsplit = input.split(" ");
 					if (nsplit[0].equals("get_view")) {
 						System.out.println("doing get_view for " + input);

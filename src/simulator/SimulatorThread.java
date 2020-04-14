@@ -75,7 +75,7 @@ public class SimulatorThread implements Runnable {
 						if (from == Threads.Main) {
 							String command = msg.getCommand();
 							if (command != null) {
-								System.out.println("SimulatorThread: received command from server");
+								System.out.println("SimulatorThread: received command");
 								System.out.println("command: " + command);
 								processCommand(command, msg);
 							}

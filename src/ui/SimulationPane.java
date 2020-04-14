@@ -40,31 +40,6 @@ public class SimulationPane extends JPanel {
 			 Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Main, 
 					 SimulatorThreadMessage.Type.None, 
 					 "get_view 0"));
-			 /*objectsRef.clear();
-			 double[] pos = {0.0f, 0.0f};
-			 double[] bounds = {10.0f, 10.0f};
-			 for(int i = 0; i < 2; i++) {
-				 pos[0] = Math.random() * width;
-				 pos[1] = Math.random() * height;
-				 double size = 5 + Math.random() * 25;
-				 bounds[0] = size;
-				 bounds[1] = size;
-				 Player c = new Player(new CharacterModel(0));
-				 c.boundingBox.set(pos, bounds);
-				 objectsRef.add(c);
-				 System.out.println("\n");
-			 }*/
-			 /*objectsRef.add(new ObjectBoundingBox(59, 59, 10, 10));
-			 objectsRef.add(new ObjectBoundingBox(10, 59, 10, 10));
-			 objectsRef.add(new ObjectBoundingBox(40, 59, 10, 10));*/
-			 /*objectsRef.add(new ObjectBoundingBox(50, 25, 10, 10));
-			 objectsRef.add(new ObjectBoundingBox(25, 10, 10, 10));
-			 objectsRef.add(new ObjectBoundingBox(5, 10, 10, 10));
-			 objectsRef.add(new ObjectBoundingBox(115, 115, 10, 10));
-			 objectsRef.add(new ObjectBoundingBox(79, 79, 10, 10));*/
-			 //objectsRef.add(new ObjectBoundingBox(180, 180, 5, 5));
-			 //objectsRef.add(new ObjectBoundingBox(40, 70, 5, 5));
-			 //objectsRef.add(new ObjectBoundingBox(70, 10, 5, 5));
 			 
 			 repaint();
 		 });
