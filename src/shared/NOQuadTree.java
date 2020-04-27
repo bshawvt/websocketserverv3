@@ -1,4 +1,4 @@
-package tools;
+package shared;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -15,7 +15,7 @@ public class NOQuadTree {
 	private NOQuadTree root = null;
 	private NOQuadTree[] divisions = { null, null, null, null};
 	
-	private ObjectBoundingBox bb = null;
+	private BoundingBox bb = null;
 	
 	public int x = 0;
 	public int y = 0;
@@ -43,7 +43,7 @@ public class NOQuadTree {
 		this.dx = dx;
 		this.dy = dy;
 				
-		this.bb = new ObjectBoundingBox(x, y, width, height);
+		this.bb = new BoundingBox(x, y, width, height);
 		
 		g.drawRect(dx, dy, width, height);
 
@@ -54,7 +54,7 @@ public class NOQuadTree {
 	}
 	
 	/** this constructor should never be used to create the quadtree */
-	public NOQuadTree(NOQuadTree parent, ObjectBoundingBox bb, int depth, Graphics g, Color color) {
+	public NOQuadTree(NOQuadTree parent, BoundingBox bb, int depth, Graphics g, Color color) {
 
 		if (parent == null) 
 			return;
@@ -68,8 +68,8 @@ public class NOQuadTree {
 		
 		this.x = (int) Math.floor(bb.x);
 		this.y = (int) Math.floor(bb.y);
-		this.width = (int) Math.floor(bb.width);
-		this.height = (int) Math.floor(bb.height);
+		this.width = (int) Math.floor(bb.xscale);
+		this.height = (int) Math.floor(bb.yscale);
 		
 		this.dx = root.dx+x;
 		this.dy = root.dy+y;
@@ -87,15 +87,15 @@ public class NOQuadTree {
 			int halfHeight = height/2;
 
 			// the order is important, the tree goes clockwise starting at NE
-			ObjectBoundingBox[] bbs = { 
-					new ObjectBoundingBox(x, y, halfWidth, halfHeight), // ne
-					new ObjectBoundingBox(x + halfWidth, y, halfWidth, halfHeight), // nw 
-					new ObjectBoundingBox(x, y + halfHeight, halfWidth, halfHeight), // se
-					new ObjectBoundingBox(x + halfWidth, y + halfHeight, halfWidth, halfHeight) // sw
+			BoundingBox[] bbs = { 
+					new BoundingBox(x, y, halfWidth, halfHeight), // ne
+					new BoundingBox(x + halfWidth, y, halfWidth, halfHeight), // nw 
+					new BoundingBox(x, y + halfHeight, halfWidth, halfHeight), // se
+					new BoundingBox(x + halfWidth, y + halfHeight, halfWidth, halfHeight) // sw
 			};
 			
 			for(int i = 0; i < 4; i++) {	
-				if (bbs[i].intersect(new ObjectBoundingBox(object.position, object.bounds))) {
+				if (bbs[i].intersect2d(new BoundingBox(object.position, object.bounds))) {
 					if (divisions[i] == null) {
 						divisions[i] = new NOQuadTree(this, bbs[i], depth+1, g, new Color(255, 0, 0));
 					}
@@ -113,14 +113,14 @@ public class NOQuadTree {
 		
 	}
 	/** recursively calls itself to search for and populate a list reference with all objects within rect */
-	private void get(ObjectBoundingBox rect, HashSet<NetObject> list, Graphics g) {		
+	private void get(BoundingBox rect, HashSet<NetObject> list, Graphics g) {		
 		for(int i = 0; i < 4; i++) {
 			if (divisions[i] != null) {
-				if (rect.intersect(divisions[i].bb)) {
+				if (rect.intersect2d(divisions[i].bb)) {
 					divisions[i].container.forEach((e) -> {
 						g.setColor(new Color(0, 0, 255));
 						g.drawArc(root.dx + (int) e.position[0] - 2, root.dy + (int) e.position[1] - 2, (int) e.bounds[0] + 4 , (int) e.bounds[1] + 4, 0, 360);
-						if (rect.intersect(new ObjectBoundingBox(e.position, e.bounds))) {
+						if (rect.intersect2d(new BoundingBox(e.position, e.bounds))) {
 							list.add(e);
 						}
 					});
@@ -137,14 +137,14 @@ public class NOQuadTree {
 	 * @param g
 	 * @return arraylist of objects within rect
 	 */
-	public HashSet<NetObject> get(ObjectBoundingBox rect, Graphics g) {
+	public HashSet<NetObject> get(BoundingBox rect, Graphics g) {
 		HashSet<NetObject> list = new HashSet<>();
 
 		get(rect, list, g);
 		
 		g.setColor(new Color(255, 0, 255));
-		g.drawRect(root.dx + (int) rect.x - 1, root.dy + (int) rect.y - 1, (int) rect.width + 2, (int) rect.height + 2);
-		g.drawRect(root.dx + (int) rect.x, root.dy + (int) rect.y, (int) rect.width, (int) rect.height);
+		g.drawRect(root.dx + (int) rect.x - 1, root.dy + (int) rect.y - 1, (int) rect.xscale + 2, (int) rect.yscale + 2);
+		g.drawRect(root.dx + (int) rect.x, root.dy + (int) rect.y, (int) rect.xscale, (int) rect.yscale);
 		return list;
 	}
 	
@@ -161,7 +161,7 @@ public class NOQuadTree {
 		this.maxDepth = maxDepth;
 		this.depth = 0;
 				
-		this.bb = new ObjectBoundingBox(x, y, width, height);
+		this.bb = new BoundingBox(x, y, width, height);
 		
 		objects.forEach((e) -> {
 			insert(e);
@@ -170,7 +170,7 @@ public class NOQuadTree {
 	}
 	
 	/** this constructor should never be used to create the quadtree */
-	public NOQuadTree(NOQuadTree parent, ObjectBoundingBox bb, int depth) {
+	public NOQuadTree(NOQuadTree parent, BoundingBox bb, int depth) {
 
 		if (parent == null) 
 			return;
@@ -184,8 +184,8 @@ public class NOQuadTree {
 		
 		this.x = (int) Math.floor(bb.x);
 		this.y = (int) Math.floor(bb.y);
-		this.width = (int) Math.floor(bb.width);
-		this.height = (int) Math.floor(bb.height);
+		this.width = (int) Math.floor(bb.xscale);
+		this.height = (int) Math.floor(bb.yscale);
 		
 		this.dx = root.dx+x;
 		this.dy = root.dy+y;
@@ -201,15 +201,15 @@ public class NOQuadTree {
 			int halfHeight = height/2;
 
 			// the order is important, the tree goes clockwise starting at NE
-			ObjectBoundingBox[] bbs = { 
-					new ObjectBoundingBox(x, y, halfWidth, halfHeight), // ne
-					new ObjectBoundingBox(x + halfWidth, y, halfWidth, halfHeight), // nw 
-					new ObjectBoundingBox(x, y + halfHeight, halfWidth, halfHeight), // se
-					new ObjectBoundingBox(x + halfWidth, y + halfHeight, halfWidth, halfHeight) // sw
+			BoundingBox[] bbs = { 
+					new BoundingBox(x, y, halfWidth, halfHeight), // ne
+					new BoundingBox(x + halfWidth, y, halfWidth, halfHeight), // nw 
+					new BoundingBox(x, y + halfHeight, halfWidth, halfHeight), // se
+					new BoundingBox(x + halfWidth, y + halfHeight, halfWidth, halfHeight) // sw
 			};
 			
 			for(int i = 0; i < 4; i++) {	
-				if (bbs[i].intersect(new ObjectBoundingBox(object.position, object.bounds))) {
+				if (bbs[i].intersect2d(new BoundingBox(object.position, object.bounds))) {
 					if (divisions[i] == null) {
 						divisions[i] = new NOQuadTree(this, bbs[i], depth+1);
 					}
@@ -224,12 +224,12 @@ public class NOQuadTree {
 
 	}
 	/** recursively calls itself to search for and populate a list reference with all objects within rect */
-	private void get(ObjectBoundingBox rect, HashSet<NetObject> list) {		
+	private void get(BoundingBox rect, HashSet<NetObject> list) {		
 		for(int i = 0; i < 4; i++) {
 			if (divisions[i] != null) {
-				if (rect.intersect(divisions[i].bb)) {
+				if (rect.intersect2d(divisions[i].bb)) {
 					divisions[i].container.forEach((e) -> {
-						if (rect.intersect(new ObjectBoundingBox(e.position, e.bounds))) {
+						if (rect.intersect2d(new BoundingBox(e.position, e.bounds))) {
 							list.add(e);
 						}
 					});
@@ -246,7 +246,7 @@ public class NOQuadTree {
 	 * @param g
 	 * @return arraylist of objects within rect
 	 */
-	public HashSet<NetObject> get(ObjectBoundingBox rect) {
+	public HashSet<NetObject> get(BoundingBox rect) {
 		HashSet<NetObject> list = new HashSet<>();
 
 		get(rect, list);

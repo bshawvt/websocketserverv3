@@ -1,4 +1,4 @@
-package simulator;
+package shared;
 
 public class Bitfield {
 	

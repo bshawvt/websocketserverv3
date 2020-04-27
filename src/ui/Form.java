@@ -21,8 +21,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import server.Client;
+import shared.BoundingBox;
 import simulator.netobjects.NetObject;
-import tools.ObjectBoundingBox;
 
 
 public class Form extends JFrame {

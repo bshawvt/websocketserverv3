@@ -1,4 +1,4 @@
-package tools;
+package shared;
 
 public class Dimensions {
 	int x;

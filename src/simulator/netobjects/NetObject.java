@@ -4,11 +4,11 @@ import server.blobs.ChatBlob;
 import server.blobs.DefaultBlob;
 import server.blobs.JoinBlob;
 import server.blobs.StateBlob;
-import simulator.Bitfield;
-import simulator.InputState;
+import shared.Bitfield;
+import shared.BoundingBox;
+import shared.InputState;
 import simulator.Snapshot;
 import simulator.World;
-import tools.ObjectBoundingBox;
 
 public abstract class NetObject {
 	public static class Types {

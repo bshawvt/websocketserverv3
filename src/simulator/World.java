@@ -10,10 +10,10 @@ import Models.CharacterModel;
 import main.Config;
 import server.ServerThreadMessage;
 import server.blobs.MessageBlob;
+import shared.NOQuadTree;
 import simulator.netobjects.NetObject;
 import simulator.netobjects.Player;
 import threads.Threads;
-import tools.NOQuadTree;
 import ui.Form;
 
 public class World {

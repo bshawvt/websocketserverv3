@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import Models.CharacterModel;
+import shared.BoundingBox;
 import simulator.World;
-import tools.ObjectBoundingBox;
 
 public class Player extends NetObject {
 	
@@ -45,7 +45,7 @@ public class Player extends NetObject {
 	}
 	
 	private void checkCollision(World world) {
-		HashSet<NetObject> set = world.tree.get(new ObjectBoundingBox(position, bounds, 25));
+		HashSet<NetObject> set = world.tree.get(new BoundingBox(position, bounds, 25));
 		
 	}
 
