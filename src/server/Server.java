@@ -137,9 +137,9 @@ public class Server extends WebSocketServer {
 	@Override
 	public void onMessage(WebSocket connection, String message) {
 		
-		System.out.println(connection + " sent: " + message);
+		//System.out.println(connection + " sent: " + message);
 		Client client = connection.getAttachment();//clients.getClient(connection);
-		System.out.println("connection attachment: " + connection.getAttachment());
+		//System.out.println("connection attachment: " + connection.getAttachment());
 		
 		// filter out messages from users who aren't authenticated
 		if (client != null && client.isReady()) {
@@ -242,6 +242,14 @@ public class Server extends WebSocketServer {
 							System.err.println("User has tried to select a character index that is out of bounds!!");
 						}
 					}
+					break;
+				}
+				
+				case MessageBlob.Type.StateBlob: {
+					System.out.println("Received a user state change");
+					StateBlob stateBlob = (StateBlob) message;
+					StateChangeDto dto = new StateChangeDto(client.getId(), stateBlob);
+					Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Update,  dto));
 					break;
 				}
 				

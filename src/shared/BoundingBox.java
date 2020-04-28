@@ -67,7 +67,7 @@ public class BoundingBox {
 		double bw = bb.x + bb.xscale;
 		double bh = bb.y + bb.yscale;
 	
-		return ((ax <= bw && aw >= bx && ay <= bh && ah >= by));
+		return (ax <= bw && aw >= bx && ay <= bh && ah >= by);
 	}
 	public boolean intersect3d(BoundingBox bb) {
 		double ax = x;

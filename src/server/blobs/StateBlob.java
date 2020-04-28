@@ -13,10 +13,10 @@ public class StateBlob extends MessageBlob {
 	public long getObjectType() { return this.objectType; };
 	
 	@SerializedName("input")
-	public long input;
+	public int input = -1;
 	public long getInputState() { return this.input; };
 	
-	@SerializedName("davids")
+	@SerializedName("angles")
 	public double[] angles = {0.0f, 0.0f, 0.0f};
 	public double[] getAngles() { return this.angles; }
 	
@@ -64,7 +64,9 @@ public class StateBlob extends MessageBlob {
 		this.angles[2] = dto.who.angles[2];
 		
 	
-		this.speed = dto.who.speed;
+		this.speed[0] = dto.who.speed[0];
+		this.speed[1] = dto.who.speed[1];
+		this.speed[2] = dto.who.speed[2];
 		
 		this.removed = dto.who.removed;
 		

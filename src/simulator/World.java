@@ -72,6 +72,9 @@ public class World {
 		frameCount++;		
 		
 	}
+	public NetObject getClientNetObject(int clientId) {
+		return clientNetObjects.get(clientId);
+	}
 	/* prepares a frame for sending across the network for synchronizing 
 	 * an object with any clients near by */
 	public void updateOverNetwork(NetObject who) {

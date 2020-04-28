@@ -92,7 +92,7 @@ public class SimulatorThread implements Runnable {
 							//if (node == null) continue; // should never happen but just in case, skip 
 							System.out.println("... from Server!");
 							System.out.println("... update sent to node: " + node.id); 
-
+							node.nodeThreadMessage.offer(msg);
 						}
 						break;
 					}

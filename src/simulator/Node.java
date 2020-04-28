@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import Dtos.CharacterDto;
+import Dtos.StateChangeDto;
 import Models.CharacterModel;
+import jdk.nashorn.internal.runtime.doubleconv.DtoaBuffer;
 import server.ServerThreadMessage;
+import shared.Bitfield;
 import simulator.netobjects.NetObject;
 import simulator.netobjects.Player;
 import threads.Threads;
@@ -116,8 +119,16 @@ public class Node implements Runnable {
 			
 			switch (type) {
 				
-				// integrate client state to the simulation
+				// client state to the simulation
 				case SimulatorThreadMessage.Type.Update:{
+					StateChangeDto dto = (StateChangeDto) msg.getDto();
+					NetObject client = world.getClientNetObject(dto.clientId);
+					
+					client.inputState = new Bitfield(dto.inputState);
+					client.angles[0] = dto.angles[0];
+					client.angles[1] = dto.angles[1];
+					client.angles[2] = dto.angles[2];
+					
 					break;
 				}
 				
