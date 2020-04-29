@@ -131,6 +131,8 @@ public class Server extends WebSocketServer {
 			client.setRemoved(true);
 			Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Server, ServerThreadMessage.Type.Flush));
 		}
+		Form.UpdateClientList(clients.clientList);
+		
 	}
 
 
@@ -419,7 +421,7 @@ public class Server extends WebSocketServer {
 	
 	public void flush() {
 		clients.flush();
-		Form.UpdateClientList(clients.clientList);
+	
 	}
 
 
