@@ -13,8 +13,8 @@ import server.ServerThread;
 import server.ServerThreadMessage;
 import simulator.SimulatorThread;
 import simulator.SimulatorThreadMessage;
-import simulator.netobjects.NetObject;
-import simulator.netobjects.Player;
+import simulator.sceneobjects.SceneObject;
+import simulator.sceneobjects.ScenePlayer;
 import threads.Threads;
 import ui.Form;
 

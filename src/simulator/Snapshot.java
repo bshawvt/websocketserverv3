@@ -1,13 +1,13 @@
 package simulator;
 
 import main.Config;
-import simulator.netobjects.NetObject;
-import simulator.netobjects.Player;
-import simulator.netobjects.SentientCube;
+import simulator.sceneobjects.SceneObject;
+import simulator.sceneobjects.ScenePlayer;
+import simulator.sceneobjects.SceneTile;
 
 public class Snapshot {
 	
-	private NetObject[] snapshot = new NetObject[Config.SnapshotLimit];
+	private SceneObject[] snapshot = new SceneObject[Config.SnapshotLimit];
 	
 	public Snapshot() {
 		for(int i = 0; i < Config.SnapshotLimit; i++) { 
@@ -16,13 +16,13 @@ public class Snapshot {
 	}
 	
 
-	public NetObject last() {
+	public SceneObject last() {
 		return snapshot[Config.SnapshotLimit - 1];
 	}
 	
 	/* shifts the array left */
-	public void push(NetObject object, double dt) {
-		NetObject[] snapshot2 = new NetObject[Config.SnapshotLimit];
+	public void push(SceneObject object, double dt) {
+		SceneObject[] snapshot2 = new SceneObject[Config.SnapshotLimit];
 		
 		// shift snapshot array to the left
 		for(int i = 1; i < Config.SnapshotLimit; i++) {
@@ -44,7 +44,7 @@ public class Snapshot {
 			System.err.println("tried to take a snapshot of a default type");
 			return;
 		}*/
-		NetObject copy = NetObject.copy(object);
+		SceneObject copy = SceneObject.copy(object);
 		copy.snapTime = dt;
 		snapshot[Config.SnapshotLimit - 1] = copy;
 		

@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import simulator.netobjects.NetObject;
+import simulator.sceneobjects.SceneObject;
 
 public class OldQuadTree {
 	

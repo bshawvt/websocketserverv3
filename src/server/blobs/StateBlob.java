@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.google.gson.annotations.SerializedName;
 
 import Dtos.StateChangeDto;
-import simulator.netobjects.NetObject;
+import simulator.sceneobjects.SceneObject;
 
 public class StateBlob extends MessageBlob {
 	@SerializedName("objectType")
@@ -59,9 +59,9 @@ public class StateBlob extends MessageBlob {
 		this.id = dto.who.getId();
 		this.input = dto.who.inputState.get();
 		 
-		this.angles[0] = dto.who.angles[0];
-		this.angles[1] = dto.who.angles[1];
-		this.angles[2] = dto.who.angles[2];
+		this.angles[0] = dto.who.yaw;
+		this.angles[1] = dto.who.pitch;
+		this.angles[2] = dto.who.roll;
 		
 	
 		this.speed[0] = dto.who.speed[0];
@@ -70,9 +70,9 @@ public class StateBlob extends MessageBlob {
 		
 		this.removed = dto.who.removed;
 		
-		this.position[0] = dto.who.position[0];
-		this.position[1] = dto.who.position[1];
-		this.position[2] = dto.who.position[2];
+		this.position[0] = dto.who.x;
+		this.position[1] = dto.who.y;
+		this.position[2] = dto.who.z;
 		
 	}
 	

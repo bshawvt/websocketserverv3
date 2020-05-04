@@ -1,19 +1,21 @@
 package shared;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import simulator.netobjects.NetObject;
+import simulator.sceneobjects.SceneObject;
 
-public class NOQuadTree {
+public class SOQuadTree {
 	private int maxDepth = 4;
 	private int depth = 0;
 
-	private ArrayList<NetObject> container = null;
-	private NOQuadTree root = null;
-	private NOQuadTree[] divisions = { null, null, null, null};
+	private ArrayList<SceneObject> container = null;
+	private SOQuadTree root = null;
+	private SOQuadTree[] divisions = { null, null, null, null};
 	
 	private BoundingBox bb = null;
 	
@@ -29,7 +31,7 @@ public class NOQuadTree {
 	public boolean divided = false;
 	
 	// debug with graphics
-	public NOQuadTree(int maxDepth, int dx, int dy, int x, int y, int width, int height, ArrayList<NetObject> objects, Graphics g) {
+	public SOQuadTree(int maxDepth, int dx, int dy, int x, int y, int width, int height, ArrayList<SceneObject> objects, Graphics g) {
 
 		this.root = this;
 		this.container = new ArrayList<>();
@@ -54,7 +56,7 @@ public class NOQuadTree {
 	}
 	
 	/** this constructor should never be used to create the quadtree */
-	public NOQuadTree(NOQuadTree parent, BoundingBox bb, int depth, Graphics g, Color color) {
+	public SOQuadTree(SOQuadTree parent, BoundingBox bb, int depth, Graphics g, Color color) {
 
 		if (parent == null) 
 			return;
@@ -80,7 +82,7 @@ public class NOQuadTree {
 		g.drawRect(dx, dy, width, height);
 		
 	}
-	private void insert(NetObject object, Graphics g) {
+	private void insert(SceneObject object, Graphics g) {
 		//System.out.println(depth + " of " + maxDepth);
 		if (depth < maxDepth) {
 			int halfWidth = width/2;
@@ -95,9 +97,10 @@ public class NOQuadTree {
 			};
 			
 			for(int i = 0; i < 4; i++) {	
-				if (bbs[i].intersect2d(new BoundingBox(object.position, object.bounds))) {
+				//if (bbs[i].intersect2d(new BoundingBox(object.position, object.bounds))) {
+				if (bbs[i].intersect2d(object.bb)) {
 					if (divisions[i] == null) {
-						divisions[i] = new NOQuadTree(this, bbs[i], depth+1, g, new Color(255, 0, 0));
+						divisions[i] = new SOQuadTree(this, bbs[i], depth+1, g, new Color(255, 0, 0));
 					}
 					divisions[i].divided = true;
 					divisions[i].insert(object, g);
@@ -108,19 +111,20 @@ public class NOQuadTree {
 			container.add(object);
 		}
 		
-		g.setColor(new Color(255, 0, 0));
-		g.fillArc(root.dx + (int) object.position[0], root.dy + (int) object.position[1], (int) object.bounds[0], (int) object.bounds[1], 0, 360);
+		//g.setColor(new Color(255, 0, 0));
+		//g.fillArc(root.dx + (int) object.x, root.dy + (int) object.y, (int) object.bb.xscale, (int) object.bb.yscale, 0, 360);
 		
 	}
 	/** recursively calls itself to search for and populate a list reference with all objects within rect */
-	private void get(BoundingBox rect, HashSet<NetObject> list, Graphics g) {		
+	private void get(BoundingBox rect, HashSet<SceneObject> list, Graphics g) {
+		
 		for(int i = 0; i < 4; i++) {
 			if (divisions[i] != null) {
 				if (rect.intersect2d(divisions[i].bb)) {
 					divisions[i].container.forEach((e) -> {
 						g.setColor(new Color(0, 0, 255));
-						g.drawArc(root.dx + (int) e.position[0] - 2, root.dy + (int) e.position[1] - 2, (int) e.bounds[0] + 4 , (int) e.bounds[1] + 4, 0, 360);
-						if (rect.intersect2d(new BoundingBox(e.position, e.bounds))) {
+						g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.bb.xscale + 4 , (int) e.bb.yscale + 4, 0, 360);
+						if (rect.intersect2d(e.bb)) {
 							list.add(e);
 						}
 					});
@@ -130,6 +134,7 @@ public class NOQuadTree {
 				}
 			}
 		}
+
 	}
 	/**
 	 * 
@@ -137,8 +142,8 @@ public class NOQuadTree {
 	 * @param g
 	 * @return arraylist of objects within rect
 	 */
-	public HashSet<NetObject> get(BoundingBox rect, Graphics g) {
-		HashSet<NetObject> list = new HashSet<>();
+	public HashSet<SceneObject> get(BoundingBox rect, Graphics g) {
+		HashSet<SceneObject> list = new HashSet<>();
 
 		get(rect, list, g);
 		
@@ -150,7 +155,7 @@ public class NOQuadTree {
 	
 	
 	// no graphics
-	public NOQuadTree(int maxDepth, int x, int y, int width, int height, ArrayList<NetObject> objects) {
+	public SOQuadTree(int maxDepth, int x, int y, int width, int height, ArrayList<SceneObject> objects) {
 
 		this.root = this;
 		this.container = new ArrayList<>();
@@ -170,7 +175,7 @@ public class NOQuadTree {
 	}
 	
 	/** this constructor should never be used to create the quadtree */
-	public NOQuadTree(NOQuadTree parent, BoundingBox bb, int depth) {
+	public SOQuadTree(SOQuadTree parent, BoundingBox bb, int depth) {
 
 		if (parent == null) 
 			return;
@@ -194,7 +199,7 @@ public class NOQuadTree {
 		
 		
 	}
-	private void insert(NetObject object) {
+	private void insert(SceneObject object) {
 		//System.out.println(depth + " of " + maxDepth);
 		if (depth < maxDepth) {
 			int halfWidth = width/2;
@@ -209,9 +214,9 @@ public class NOQuadTree {
 			};
 			
 			for(int i = 0; i < 4; i++) {	
-				if (bbs[i].intersect2d(new BoundingBox(object.position, object.bounds))) {
+				if (bbs[i].intersect2d(object.bb)) {
 					if (divisions[i] == null) {
-						divisions[i] = new NOQuadTree(this, bbs[i], depth+1);
+						divisions[i] = new SOQuadTree(this, bbs[i], depth+1);
 					}
 					divisions[i].divided = true;
 					divisions[i].insert(object);
@@ -224,12 +229,12 @@ public class NOQuadTree {
 
 	}
 	/** recursively calls itself to search for and populate a list reference with all objects within rect */
-	private void get(BoundingBox rect, HashSet<NetObject> list) {		
+	private void get(BoundingBox rect, HashSet<SceneObject> list) {		
 		for(int i = 0; i < 4; i++) {
 			if (divisions[i] != null) {
 				if (rect.intersect2d(divisions[i].bb)) {
 					divisions[i].container.forEach((e) -> {
-						if (rect.intersect2d(new BoundingBox(e.position, e.bounds))) {
+						if (rect.intersect2d(e.bb)) {
 							list.add(e);
 						}
 					});
@@ -246,8 +251,8 @@ public class NOQuadTree {
 	 * @param g
 	 * @return arraylist of objects within rect
 	 */
-	public HashSet<NetObject> get(BoundingBox rect) {
-		HashSet<NetObject> list = new HashSet<>();
+	public HashSet<SceneObject> get(BoundingBox rect) {
+		HashSet<SceneObject> list = new HashSet<>();
 
 		get(rect, list);
 		

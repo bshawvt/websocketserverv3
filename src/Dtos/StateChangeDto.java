@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import server.blobs.StateBlob;
-import simulator.netobjects.NetObject;
+import simulator.sceneobjects.SceneObject;
 
 public class StateChangeDto {
 	
-	public final NetObject who;
-	public final ArrayList<NetObject> to;
+	public final SceneObject who;
+	public final ArrayList<SceneObject> to;
 	public final long frame;
 	
 	public int clientId = -1;
@@ -38,15 +38,15 @@ public class StateChangeDto {
 		
 		
 	}
-	public StateChangeDto(NetObject who, ArrayList<NetObject> to, long frame) {
+	public StateChangeDto(SceneObject who, ArrayList<SceneObject> to, long frame) {
 		this.frame = frame;
 		this.to = new ArrayList<>();
-		Iterator<NetObject> it = to.iterator();
+		Iterator<SceneObject> it = to.iterator();
 		while (it.hasNext()) {
-			NetObject netObject = it.next();
-			this.to.add(NetObject.copy(netObject));
+			SceneObject netObject = it.next();
+			this.to.add(SceneObject.copy(netObject));
 		}
-		this.who = NetObject.copy(who);
+		this.who = SceneObject.copy(who);
 	}
 	
 	public int getClientId() {

@@ -1,4 +1,4 @@
-package simulator.netobjects;
+package simulator.sceneobjects;
 
 import server.blobs.ChatBlob;
 import server.blobs.DefaultBlob;
@@ -9,54 +9,66 @@ import shared.BoundingBox;
 import shared.InputState;
 import simulator.Snapshot;
 import simulator.World;
+import simulator.WorldLoader.WorldLoaderObject.WorldSceneObject.WorldSceneObjectArgs;
 
-public abstract class NetObject {
+public abstract class SceneObject {
 	public static class Types {
 		public static final int Default = 0; // unknown / default type
 		public static final int Player = 1;
-		public static final int SentientCube = 2;
+		public static final int Tile = 2;
 	}
 	@SuppressWarnings("rawtypes")
 	final static public Class[] types = {
-		NetObject.class, // 0 // should never be 0
-		Player.class,  // 1
-		SentientCube.class, // 2
+		SceneObject.class, // 0 // should never be 0
+		ScenePlayer.class,  // 1
+		SceneTile.class, // 2
 	};
-	public NetObject parent = null;
+	public SceneObject parent = null;
 	// synchronized network object state
 	
 	public double[] moveDirection = {0.0f, 0.0f, 0.0f};
 	public double[] speed = {0.0f, 0.0f, 0.0f};
-	public double[] bounds = {2.0f, 2.0f, 2.0f};
-	public double[] position = {50.0f, 50.0f, 0.0f};
+	//public double[] bounds = {2.0f, 2.0f, 2.0f};
+	//public double[] position = {50.0f, 50.0f, 0.0f};
+	public double x = 0.0;
+	public double y = 0.0;
+	public double z = 0.0;
 	//public ObjectBoundingBox boundingBox = new ObjectBoundingBox();
 	
-	public double[] angles = {0.0f, 0.0f, 0.0f};
+	//public double[] angles = {0.0f, 0.0f, 0.0f};
+	public double yaw = 0.0;
+	public double pitch = 0.0;
+	public double roll = 0.0;
+	public double yawAccumulator = 0.0;
+	public double pitchAccumulator = 0.0;
+	public double rollAccumulator = 0.0;
+	public BoundingBox bb = new BoundingBox();
 	
 	public int clientId = -1;
 	public long id = 0; // world id, set when added to the simulation
 	public boolean removed = false; 
 	
-	public int type = NetObject.Types.Default; // object type
+	public int type = SceneObject.Types.Default; // object type
 	
 	public Bitfield inputState = new Bitfield();
 	public Snapshot snapshots = new Snapshot();
 	
 	public double snapTime = 0.0f; // set when a snapshot is taken and not used in state management
 	public boolean stateChange = false; // signals to node that the object needs to be updated over network
-
+	public boolean dynamic = true; // flag tells world if this object never moves or is sync'd over network
 	
-	public static NetObject copy(NetObject object) {
+	
+	public static SceneObject copy(SceneObject object) {
 		//NetObject copy;
 		int type = object.getType();
-		if (type == NetObject.Types.Player) {
-			return new Player(object);
+		if (type == SceneObject.Types.Player) {
+			return new ScenePlayer(object);
 		}
-		else if (type == NetObject.Types.SentientCube) {
-			return new SentientCube(object);
+		else if (type == SceneObject.Types.Tile) {
+			return new SceneTile(object);
 		}
 		else { 
-			System.err.println("tried to take a snapshot of a default type");
+			System.err.println("tried to copy a default type");
 			return null;
 		}
 	}
@@ -68,17 +80,36 @@ public abstract class NetObject {
 
 	/* */
 	
-	public NetObject() {
+	public SceneObject() {
 	}
 	
-	public NetObject(NetObject obj) {
+	/* probably only going to be used by the map loader */
+	public SceneObject(WorldSceneObjectArgs args, int type) {
+		
+		this.x = args.x;
+		this.y = args.y;
+		this.z = args.z;
+		
+		this.yaw = args.yaw;
+		this.pitch = args.pitch;
+		this.roll = args.roll;
+		System.out.println(args.xscale + ", " + args.yscale);
+		this.bb = new BoundingBox(this.x, this.y, this.z, args.xscale, args.yscale, args.zscale);
+		
+
+		
+		this.type = type;
+	}
+	
+	// this method is used for copying/cloning
+	public SceneObject(SceneObject obj) {
 		
 		// copy old object to this one 
 		if (obj == null) return;
 		
-		this.position[0] = obj.position[0];
-		this.position[1] = obj.position[1];
-		this.position[2] = obj.position[2];
+		this.x = obj.x;
+		this.y = obj.y;
+		this.z = obj.z;
 		
 		this.moveDirection[0] = obj.moveDirection[0];
 		this.moveDirection[1] = obj.moveDirection[1];
@@ -88,9 +119,9 @@ public abstract class NetObject {
 		this.speed[1] = obj.speed[1];
 		this.speed[2] = obj.speed[2];
 		
-		this.angles[0] = obj.angles[0];
-		this.angles[1] = obj.angles[1];
-		this.angles[2] = obj.angles[2];
+		this.yaw = obj.yaw;
+		this.pitch = obj.pitch;
+		this.roll = obj.roll;
 		
 		this.clientId = obj.clientId;
 		this.id = obj.id;
@@ -101,7 +132,8 @@ public abstract class NetObject {
 		this.stateChange = obj.stateChange;
 		
 		this.inputState = new Bitfield(obj.inputState.get());
-		this.snapshots = null;
+		this.snapshots = new Snapshot();
+		this.bb = new BoundingBox(this.x, this.y, this.z, obj.bb.xscale, obj.bb.yscale, obj.bb.zscale);
 		
 	}
 	

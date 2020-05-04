@@ -9,8 +9,8 @@ import Models.CharacterModel;
 import jdk.nashorn.internal.runtime.doubleconv.DtoaBuffer;
 import server.ServerThreadMessage;
 import shared.Bitfield;
-import simulator.netobjects.NetObject;
-import simulator.netobjects.Player;
+import simulator.sceneobjects.SceneObject;
+import simulator.sceneobjects.ScenePlayer;
 import threads.Threads;
 import tools.Profiler;
 import ui.Form;
@@ -104,7 +104,7 @@ public class Node implements Runnable {
 		String[] split = data.split(" ");
 		String command = split[0];
 		if (command.equals("get_view")) {
-			Form.UpdateQuadPoints(world.netObjects);
+			Form.UpdateQuadPoints(world.sceneObjects);
 		}
 		else {
 			System.out.println("SimulatorThread: Node: processCommand: unknown command:\n... " + command);
@@ -122,12 +122,12 @@ public class Node implements Runnable {
 				// client state to the simulation
 				case SimulatorThreadMessage.Type.Update:{
 					StateChangeDto dto = (StateChangeDto) msg.getDto();
-					NetObject client = world.getClientNetObject(dto.clientId);
-					
+					SceneObject client = world.getClientSceneObject(dto.clientId);
+					System.out.println(dto.inputState);
 					client.inputState = new Bitfield(dto.inputState);
-					client.angles[0] = dto.angles[0];
-					client.angles[1] = dto.angles[1];
-					client.angles[2] = dto.angles[2];
+					client.yaw = dto.angles[0];
+					client.pitch = dto.angles[1];
+					client.roll = dto.angles[2];
 					
 					break;
 				}
@@ -138,7 +138,7 @@ public class Node implements Runnable {
 					//world.addNetObject(msg.getClientId(), msg.getCharacter());
 					CharacterDto dto = (CharacterDto) msg.getDto();//).getClient().getId()
 					System.out.println("TODO: Node: Node-" + id + ": added net object to simulation for client " + dto.getClient().getId());
-					world.addNetObject(dto.getClient().getId(), dto.getCharacterModel());
+					world.addSceneObject(dto.getClient().getId(), dto.getCharacterModel());
 					//Threads.getServerQueue().offer(new ServerThreadMessage(Threads.Simulator, ServerThreadMessage.Type.Update, dto));
 					break;
 				}
@@ -147,7 +147,7 @@ public class Node implements Runnable {
 				case SimulatorThreadMessage.Type.Remove:{
 					CharacterDto dto = (CharacterDto) msg.getDto();//).getClient().getId()
 					System.out.println("TODO: Node: Node-" + id + ": removed net object for client " + dto.getClient().getId());
-					world.removeNetObject(dto.getClient().getId());
+					world.removeSceneObject(dto.getClient().getId());
 					break;
 				}
 				
@@ -166,6 +166,6 @@ public class Node implements Runnable {
 	}
 	
 	public long getObjectsCount() {
-		return this.world.netObjects.size();
+		return this.world.sceneObjects.size();
 	}
 }

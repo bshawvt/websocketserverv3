@@ -1,6 +1,7 @@
 package main;
 
 public class Config {
+	public static String MapFilename = "E:\\Development\\Projects\\Web\\WSClient\\bin\\client\\data\\map.dat";
 	public static String ClientVersion = "1302020"; // used during client authentication 
 	public static int ServerPort;// game port clients connect through
 	public static String DatabaseAddress; // sql server address

@@ -22,7 +22,7 @@ import javax.swing.event.ListSelectionListener;
 
 import server.Client;
 import shared.BoundingBox;
-import simulator.netobjects.NetObject;
+import simulator.sceneobjects.SceneObject;
 
 
 public class Form extends JFrame {
@@ -30,7 +30,7 @@ public class Form extends JFrame {
 	private final int width = 500, height = 500;
 	private final static DefaultListModel<String> clientsListModel = new DefaultListModel<>();
 	private static boolean active = false;
-	private static final ArrayList<NetObject> quadPoints = new ArrayList<>();
+	private static final ArrayList<SceneObject> quadPoints = new ArrayList<>();
 	
 	public Form() {
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -72,12 +72,12 @@ public class Form extends JFrame {
 	public static boolean IsInUse() {
 		return active;
 	}	
-	public static void UpdateQuadPoints(ArrayList<NetObject> objs) {
+	public static void UpdateQuadPoints(ArrayList<SceneObject> objs) {
 
-		final ArrayList<NetObject> tmpObjs = new ArrayList<>();
+		final ArrayList<SceneObject> tmpObjs = new ArrayList<>();
 		objs.forEach((e) -> {
-			System.out.println(e.position[0]);
-			tmpObjs.add(NetObject.copy(e));
+			//System.out.println(e.position[0]);
+			tmpObjs.add(SceneObject.copy(e));
 		});
 		
 		SwingUtilities.invokeLater( new Runnable() {
@@ -87,7 +87,7 @@ public class Form extends JFrame {
 				quadPoints.clear();
 				// TODO Auto-generated method stub
 				tmpObjs.forEach((e) -> {
-					System.out.println(e.position[0]);
+					//System.out.println(e.x);
 					quadPoints.add(e);
 				});
 			}

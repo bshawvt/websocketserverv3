@@ -8,6 +8,7 @@ public class BoundingBox {
 		z = 0;
 		xscale = 1;
 		yscale = 1;
+		zscale = 1;
 	}
 	public BoundingBox(double[] pos, double[] bounds) {
 		x = pos[0];
@@ -15,12 +16,15 @@ public class BoundingBox {
 		z = pos[2];
 		xscale = bounds[0];
 		yscale = bounds[1];
+		zscale = bounds[2];
 	}
 	public BoundingBox(int[] pos, int[] bounds) {
 		x = pos[0];
 		y = pos[1];
+		z = pos[2];
 		xscale = bounds[0];
 		yscale = bounds[1];
+		zscale = bounds[2];
 	}
 	public BoundingBox(int i, int j, int width, int height) {
 		this.x = i;
@@ -39,8 +43,28 @@ public class BoundingBox {
 		double r2 = radius/2;
 		x = pos[0] - r2;
 		y = pos[1] - r2;
+		z = pos[1] - r2;
 		xscale = bounds[0] + radius;
 		yscale = bounds[1] + radius;
+		zscale = bounds[2] + radius;
+		
+	}
+	public BoundingBox(double x, double y, double z, double xscale, double yscale, double zscale) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.xscale = xscale;
+		this.yscale = yscale;
+		this.zscale = zscale;
+		
+	}
+	public void set(double x, double y, double z, double xscale, double yscale, double zscale) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.xscale = xscale;
+		this.yscale = yscale;
+		this.zscale = zscale;
 	}
 	public void set(double[] pos, double[] bounds) {
 		x = pos[0];
@@ -48,12 +72,15 @@ public class BoundingBox {
 		z = pos[2];
 		xscale = bounds[0];
 		yscale = bounds[1];
+		zscale = bounds[2];
 	}
 	public void set(int[] pos, int[] bounds) {
 		x = pos[0];
 		y = pos[1];
+		z = pos[2];
 		xscale = bounds[0];
 		yscale = bounds[1];
+		zscale = bounds[2];
 	}
 	
 	public boolean intersect2d(BoundingBox bb) {

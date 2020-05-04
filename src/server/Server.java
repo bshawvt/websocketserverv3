@@ -28,7 +28,7 @@ import server.blobs.NetworkBlob;
 import server.blobs.StateBlob;
 import server.chat.ChatManager;
 import simulator.SimulatorThreadMessage;
-import simulator.netobjects.NetObject;
+import simulator.sceneobjects.SceneObject;
 import threads.Threads;
 import ui.Form;
 
@@ -266,10 +266,10 @@ public class Server extends WebSocketServer {
 	
 	public void update(StateChangeDto dto) {
 		if (dto == null) return;
-		Iterator<NetObject> it = dto.to.iterator();
+		Iterator<SceneObject> it = dto.to.iterator();
 		
 		while (it.hasNext()) {
-			NetObject netObject = it.next();
+			SceneObject netObject = it.next();
 			Client client = clients.playerTable.get(netObject.clientId);
 			if (client == null || client.isRemoved()) continue; // prevents broadcasting disconnected user their disconnect event			
 			StateBlob blob = new StateBlob(dto);
@@ -294,7 +294,6 @@ public class Server extends WebSocketServer {
 		
 		// server will await a message from the simulator confirming the user is ready to receive game states
 		Threads.getSimulatorQueue().offer(new SimulatorThreadMessage(Threads.Server, SimulatorThreadMessage.Type.Add, dto));
-		
 		
 		//client.setActive(true);
 		clients.promoteClientToPlayer(client);

@@ -1,0 +1,11 @@
+{
+	"camera": { "classname": "SceneCamera", "args": { "x": 1.01, "y": 2.39, "z": 1.01, "yaw": 17.5, "pitch": 61 } },
+	"static": [
+		{ "classname": "SceneTile", "args": {"x": 1, "y": 0, "z": 1, "xscale": 2, "yscale": 2, "zscale": 3} },
+		{ "classname": "SceneTile", "args": {"x": 3, "y": 2, "z": 1, "xscale": 2, "yscale": 5, "zscale": 1} },
+		{ "classname": "SceneTile", "args": {"x": 3, "y": 3, "z": 4, "xscale": 2, "yscale": 2, "zscale": 4} },
+		{ "classname": "SceneTile", "args": {"x": 3.5, "y": 3.5, "z": 2, "xscale": 0.25, "yscale": 0.25, "zscale": 2} },
+		{ "classname": "SceneTile", "args": {"x": 0, "y": 0, "z": 0, "xscale": 25, "yscale": 25, "zscale": 1.0 } }
+	],
+	"dynamic": [ { "classname": "SceneLight", "args": { "x": 3.6, "y": 3.6, "z": 1.5, parent: "localplayer" } } ]
+}
