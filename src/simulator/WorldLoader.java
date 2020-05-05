@@ -47,6 +47,10 @@ public class WorldLoader {
 				public double pitch;
 				public double roll;
 				
+				public WorldSceneObjectArgs() {
+					
+				}
+				
 			}
 			
 

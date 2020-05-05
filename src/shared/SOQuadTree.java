@@ -7,7 +7,16 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import com.google.gson.annotations.SerializedName;
+
+import simulator.WorldLoader.WorldLoaderObject.WorldSceneObject;
+import simulator.WorldLoader.WorldLoaderObject.WorldSceneObject.WorldSceneObjectArgs;
 import simulator.sceneobjects.SceneObject;
+import simulator.sceneobjects.SceneTile;
+
+import tools.Profiler;
+import tools.Profiler.*;
+
 
 public class SOQuadTree {
 	private int maxDepth = 4;
@@ -258,4 +267,46 @@ public class SOQuadTree {
 		
 		return list;
 	}
+	
+	public static void main(String[] args) {
+		
+		class FWorldSceneObjectArgs {
+			public double x;
+			public double y;
+			public double z;
+			
+			public double xscale;
+			public double yscale;
+			public double zscale;
+			
+			public double yaw;
+			public double pitch;
+			public double roll;
+			
+			public FWorldSceneObjectArgs() {
+				
+			}
+			
+		}
+		
+		
+		Profiler profiler = new Profiler();
+		
+		profiler.start("quadtree");
+		
+		ArrayList<SceneObject> objs = new ArrayList<>();
+		for(int i = 0; i < 1000; i++) {
+			objs.add(new SceneTile());
+		}
+		SOQuadTree tree = new SOQuadTree(5, 0, 0, 200, 200, objs);
+		
+		for(int i = 0; i < 1000; i++) {
+			HashSet<SceneObject> set = tree.get(new BoundingBox(5, 5, 0, 50, 50, 0));
+		}
+		
+		profiler.stop("quadtree");
+		profiler.print("quadtree");
+		
+	}
+	
 }

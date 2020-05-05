@@ -59,9 +59,17 @@ public class Profiler {
 		}
 		return false;
 	}
+	public Profile getProfile(String name) {
+		return profiles.get(name); 
+	}
+	public void print(String name) {
+		Profile p = profiles.get(name);
+		if (p != null)
+			System.out.println("Profile for " + name + " time taken " + p.elapsed);
+	}
 	
 	
-	private class Profile {
+	public class Profile {
 		private long startTime;
 		private long stopTime;
 		private long elapsed;
