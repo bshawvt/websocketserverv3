@@ -15,14 +15,14 @@ public class QuadTree {
 	
 	private BoundingBox bb = null;
 	
-	public int x = 0;
-	public int y = 0;
-	public int width = 200;
-	public int height = 200;
+	public double x = 0;
+	public double y = 0;
+	public double width = 200;
+	public double height = 200;
 	
 	// drawing
-	public int dx = 0;
-	public int dy = 0;
+	public double dx = 0;
+	public double dy = 0;
 	
 	public boolean divided = false;
 	
@@ -64,10 +64,10 @@ public class QuadTree {
 		this.maxDepth = root.maxDepth;
 		this.depth = depth;
 		
-		this.x = (int) Math.floor(bb.x);
-		this.y = (int) Math.floor(bb.y);
-		this.width = (int) Math.floor(bb.xscale);
-		this.height = (int) Math.floor(bb.yscale);
+		this.x = bb.x;
+		this.y = bb.y;
+		this.width = bb.xscale;
+		this.height = bb.yscale;
 		
 		this.dx = root.dx+x;
 		this.dy = root.dy+y;
@@ -75,14 +75,14 @@ public class QuadTree {
 		this.divided = false;
 		
 		g.setColor(new Color(0, 0, 0));
-		g.drawRect(dx, dy, width, height);
+		g.drawRect((int)dx, (int)dy, (int)width, (int)height);
 		
 	}
 	private void insert(BoundingBox object, Graphics g) {
 		//System.out.println(depth + " of " + maxDepth);
 		if (depth < maxDepth) {
-			int halfWidth = width/2;
-			int halfHeight = height/2;
+			double halfWidth = width/2;
+			double halfHeight = height/2;
 
 			// the order is important, quadtree goes clockwise starting at NE
 			BoundingBox[] bbs = { 
@@ -107,7 +107,7 @@ public class QuadTree {
 		}
 		
 		g.setColor(new Color(255, 0, 0));
-		g.fillArc(root.dx + (int) object.x, root.dy + (int) object.y, (int) object.xscale, (int) object.yscale, 0, 360);
+		g.fillArc((int) (root.dx + object.x), (int) (root.dy + object.y), (int) object.xscale, (int) object.yscale, 0, 360);
 		
 	}
 	/** recursively calls itself to search for and populate a list reference with all objects within rect */
@@ -117,7 +117,7 @@ public class QuadTree {
 				if (rect.intersect2d(divisions[i].bb)) {
 					divisions[i].container.forEach((e) -> {
 						g.setColor(new Color(0, 0, 255));
-						g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.xscale + 4 , (int) e.yscale + 4, 0, 360);
+						g.drawArc((int) (root.dx + e.x - 2), (int) (root.dy + e.y - 2), (int) (e.xscale + 4), (int) (e.yscale + 4), 0, 360);
 						if (rect.intersect2d(e)) {
 							list.add(e);
 						}
@@ -141,8 +141,8 @@ public class QuadTree {
 		get(rect, list, g);
 		
 		g.setColor(new Color(255, 0, 255));
-		g.drawRect(root.dx + (int) rect.x - 1, root.dy + (int) rect.y - 1, (int) rect.xscale + 2, (int) rect.yscale + 2);
-		g.drawRect(root.dx + (int) rect.x, root.dy + (int) rect.y, (int) rect.xscale, (int) rect.yscale);
+		g.drawRect((int) (root.dx + rect.x - 1), (int) (root.dy + rect.y - 1), (int) rect.xscale + 2, (int) rect.yscale + 2);
+		g.drawRect((int) (root.dx + rect.x), (int) (root.dy + rect.y), (int) rect.xscale, (int) rect.yscale);
 		return list;
 	}
 }

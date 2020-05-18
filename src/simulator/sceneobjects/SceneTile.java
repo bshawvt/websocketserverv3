@@ -19,6 +19,9 @@ public class SceneTile extends SceneObject {
 		type = SceneObject.Types.Tile;
 	}
 	
+	public SceneTile(int width, int height) {
+		this.bb = new BoundingBox(new double[] {Math.random() * width, Math.random() * height, 0}, new double[] {Math.random() * 15, Math.random() * 15, 0});
+	}
 	@Override
 	public void step(World world, double dt) {
 		// TODO Auto-generated method stub

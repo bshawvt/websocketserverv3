@@ -25,7 +25,7 @@ public class SOQuadTree {
 	
 	public int accumulator = 0;
 
-	private ArrayList<SceneObject> container = null;
+	private ObjectList<SceneObject> container = null;
 	private SOQuadTree root = null;
 	private SOQuadTree[] divisions = { null, null, null, null};
 	
@@ -46,7 +46,7 @@ public class SOQuadTree {
 	public SOQuadTree(int maxDepth, int dx, int dy, int x, int y, int width, int height, ArrayList<SceneObject> objects, Graphics g) {
 
 		this.root = this;
-		this.container = new ArrayList<>();
+		this.container = new ObjectList<>();
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -76,7 +76,7 @@ public class SOQuadTree {
 		this.root = parent.root;
 		this.bb = bb;
 		
-		this.container = new ArrayList<>();
+		this.container = new ObjectList<>();
 		this.maxDepth = root.maxDepth;
 		this.depth = depth;
 		
@@ -128,12 +128,13 @@ public class SOQuadTree {
 		
 	}
 	/** recursively calls itself to search for and populate a list reference with all objects within rect */
-	private void get(BoundingBox rect, HashSet<SceneObject> list, Graphics g) {
+	private void get(BoundingBox rect, ObjectList<SceneObject> list, Graphics g) {
 		
 		for(int i = 0; i < 4; i++) {
 			if (divisions[i] != null) {
 				if (rect.intersect2d(divisions[i].bb)) {
 					divisions[i].container.forEach((e) -> {
+					
 						g.setColor(new Color(0, 0, 255));
 						g.drawArc(root.dx + (int) e.x - 2, root.dy + (int) e.y - 2, (int) e.bb.xscale + 4 , (int) e.bb.yscale + 4, 0, 360);
 						if (rect.intersect2d(e.bb)) {
@@ -154,8 +155,8 @@ public class SOQuadTree {
 	 * @param g
 	 * @return arraylist of objects within rect
 	 */
-	public HashSet<SceneObject> get(BoundingBox rect, Graphics g) {
-		HashSet<SceneObject> list = new HashSet<>();
+	public ObjectList<SceneObject> get(BoundingBox rect, Graphics g) {
+		ObjectList<SceneObject> list = new ObjectList<>();
 
 		get(rect, list, g);
 		
@@ -167,10 +168,10 @@ public class SOQuadTree {
 	
 	
 	// no graphics
-	public SOQuadTree(int maxDepth, int x, int y, int width, int height, ArrayList<SceneObject> objects) {
+	public SOQuadTree(int maxDepth, int x, int y, int width, int height, ObjectList<SceneObject> objects) {
 
 		this.root = this;
-		this.container = new ArrayList<>();
+		this.container = new ObjectList<>();
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -195,7 +196,7 @@ public class SOQuadTree {
 		this.root = parent.root;
 		this.bb = bb;
 		
-		this.container = new ArrayList<>();
+		this.container = new ObjectList<>();
 		this.maxDepth = root.maxDepth;
 		this.depth = depth;
 		
@@ -256,18 +257,19 @@ public class SOQuadTree {
 	}
 
 	/** recursively calls itself to search for and populate a list reference with all objects within rect */
-	private void get(BoundingBox rect, ArrayList<SceneObject> list) {
+	private ObjectList<SceneObject> get(BoundingBox rect, ObjectList<SceneObject> list) {
 		int c = 0;
 		for(int i = 0; i < 4; i++) {
 			if (divisions[i] != null) {
 				if (rect.intersect2d(divisions[i].bb)) {
-					list.addAll(divisions[i].container);
+					list.link(divisions[i].container);
 					if (divisions[i].divided) {
 						divisions[i].get(rect, list);
 					}
 				}
 			}
 		}
+		return list;
 	}
 	/**
 	 * 
@@ -275,8 +277,8 @@ public class SOQuadTree {
 	 * @param g
 	 * @return arraylist of objects within rect
 	 */
-	public ArrayList<SceneObject> get(BoundingBox rect) {
-		ArrayList<SceneObject> list = new ArrayList<>();
+	public ObjectList<SceneObject> get(BoundingBox rect) {
+		ObjectList<SceneObject> list = new ObjectList<>();
 
 		get(rect, list);
 		
@@ -287,30 +289,45 @@ public class SOQuadTree {
 		
 		
 		
-		ArrayList<SceneObject> objs = new ArrayList<>();
-		int objCount = 5000;
+		ObjectList<SceneObject> objs = new ObjectList<>();
+		int objCount = 50000;
+		int width = 200;
+		int height = 200;
 		for(int i = 0; i < objCount; i++) {
-			objs.add(new SceneTile());
+			objs.add(new SceneTile(width, height));
 		}
 		Profiler profiler = new Profiler();
 		int b = 0;
 		profiler.start("quadtree");
-		SOQuadTree tree = new SOQuadTree(1, 0, 0, 200, 200, objs);
-		ArrayList<SceneObject> set = null;
+		SOQuadTree tree = new SOQuadTree(2, 0, 0, width, height, objs);
+		ObjectList<SceneObject> set = null;
+		BoundingBox bb = new BoundingBox(5, 5, 0, 50, 50, 0);
+		
+		System.out.println(tree.get(bb).length);
+		
 		for(int i = 0; i < objCount; i++) {
-			BoundingBox bb = new BoundingBox(5, 5, 0, 50, 50, 0);
+			
 			set = tree.get(bb);
-			for(SceneObject obj : set) {
+			set.forEach((e) -> {
+				if (e.bb.intersect2d(bb)) {
+					//System.err.println(e.clientId);
+				}
+			});
+			
+			/*set.forEach((e) -> {
+				System.out.println(e.clientId);
+			});*/
+			/*for(SceneObject obj : set) {
 				if (obj.bb.intersect2d(bb)) {
 					b++;
 				}
-			}
+			}*/
 		}
 		
 		
 		profiler.stop("quadtree");
 		profiler.print("quadtree");
-		Profiler profiler2 = new Profiler();
+		/*Profiler profiler2 = new Profiler();
 		profiler2.start("ovo");
 		int z = 0;
 		for(SceneObject obj : objs) {
@@ -321,7 +338,7 @@ public class SOQuadTree {
 			}
 		}
 		profiler2.stop("ovo");
-		profiler2.print("ovo");
+		profiler2.print("ovo");*/
 		
 		
 	}
