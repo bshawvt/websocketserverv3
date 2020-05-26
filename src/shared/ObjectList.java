@@ -88,44 +88,41 @@ public class ObjectList<T> {
 	public void forEach(Callback<T> callback) {
 		restart();
 		while(next != null) {
+			//System.out.println("??");
 			T item = next.objRef;
 			callback.fn(item);
+			//System.out.println(callback);
 			getNext();
 		}
 	}
 	public void link(ObjectList<T> b) {
-		/*b.restart();
-		while(b.next != null) {
-			T item = b.next.objRef;
-			add(item);
-			b.getNext();
-		}*/
+		
+		
 		if (b.first != null) {
-			if (last == null) {
-				last = b.first;
+			if (first == null) {
+				first = b.first;
+			}
+			if (last != null) {
+				last.next = b.first;
 			}
 			else {
-				last.next = b.first;
+				last = b.first;
 			}
 			length += b.length;
 		}
 	}
+	
+	/**
+	 * will walk through the given list adding each individial item to the 
+	 * @param b
+	 */
 	public void merge(ObjectList<T> b) {
 		b.restart();
 		while(b.next != null) {
 			T item = b.next.objRef;
 			add(item);
 			b.getNext();
-		}/*
-		if (b.first != null) {
-			if (last == null) {
-				last = b.first;
-			}
-			else {
-				last.next = b.first;
-			}
-			length += b.length;
-		}*/
+		}
 	}
 	
 	static public void main(String[] args) {
@@ -167,25 +164,27 @@ public class ObjectList<T> {
 		}
 		p.stop("p2");
 		p.print("p2");
-
-		ObjectList<BoundingBox> list3 = new ObjectList<BoundingBox>();
-		BoundingBox bb = new BoundingBox();
-		list3.fastAddFirst(bb);
 		
-		for(int i = 0; i < 10; i++ ) { 
-			list3.fastAdd(new BoundingBox(0, 0, 1, 1));
-		}
-		ObjectList<BoundingBox> list4 = new ObjectList<BoundingBox>();
-		BoundingBox bb2 = new BoundingBox();
-		list4.fastAddFirst(bb2);
+		// combine test..
+		ObjectList<String> list3 = new ObjectList<>();
+		list3.fastAddFirst("A");
+		list3.fastAdd("B");
+		list3.fastAdd("C");
+		list3.fastAdd("D");
 		
-		for(int i = 0; i < 10; i++ ) { 
-			list4.fastAdd(new BoundingBox(0, 0, 1, 1));
-		}
+		ObjectList<String> list4 = new ObjectList<>();
+		list4.fastAddFirst("e");
+		list4.fastAdd("f");
+		list4.fastAdd("g");
+		list4.fastAdd("h");
 		
+		list3.link(list4);
 		list3.forEach((e) -> {
-			//System.out.println(e);
+			System.out.println(e);
 		});
+		
+		System.out.println(list3.first);
+		System.out.println(list3.last);
 		
 		
 	}
