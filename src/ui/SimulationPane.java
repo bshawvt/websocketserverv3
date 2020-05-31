@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import Models.CharacterModel;
 import server.ServerThreadMessage;
 import shared.BoundingBox;
+import shared.ObjectList;
 import shared.SOQuadTree;
 import shared.OldQuadTree;
 import shared.QuadTree;
@@ -76,7 +77,7 @@ public class SimulationPane extends JPanel {
 		double[] p = { 16, 16, 0 };
 		double[] bd = { 5, 5, 0 };
 
-		HashSet<SceneObject> b = tree.get(new BoundingBox(p, bd, 32.0f), g);
+		ObjectList<SceneObject> b = tree.get(new BoundingBox(p, bd, 32.0f), g);
 		System.out.println(objectsRef.size());
 		//if (b.size() > 0)
 			//System.out.println(b.toArray()[0]);

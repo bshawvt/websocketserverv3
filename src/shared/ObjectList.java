@@ -185,7 +185,22 @@ public class ObjectList<T> {
 		
 		System.out.println(list3.first);
 		System.out.println(list3.last);
+	
+		list3.forEach((e) -> {
+			if (e.equals("D")) {
+				list3.next.remove();
+			}
+			if (e.equals("C")) {
+				list3.next.remove();
+			}
+			if (e.equals("g")) {
+				list3.next.remove();
+			}
+		});
 		
+		list3.forEach((e) -> {
+			System.out.println(e);
+		});
 		
 	}
 

@@ -27,7 +27,7 @@ public class World {
 	
 	//public Metrics metrics = new Metrics();
 	private HashMap<Integer, SceneObject> clientSceneObjects = new HashMap<>();
-	public SOQuadTree tree = null;
+	//public SOQuadTree tree = null;
 	
 	public long frameCount = 0; // increased every time a world step has completed
 	
@@ -38,7 +38,7 @@ public class World {
 	public void step(double dt) {
 		flush();
 		
-		tree = new SOQuadTree(4, 0, 0, 500, 500, sceneObjects);
+		//tree = new SOQuadTree(4, 0, 0, 500, 500, sceneObjects);
 		
 		Iterator<SceneObject> it = sceneObjects.iterator();
 		while(it.hasNext()) {
