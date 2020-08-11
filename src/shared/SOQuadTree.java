@@ -324,7 +324,7 @@ public class SOQuadTree {
 	public static void main(String[] args) {
 		
 		ObjectList<SceneObject> objs = new ObjectList<>();
-		int objCount = 50000;
+		int objCount = 20000;
 		int width = 5000;
 		int height = 5000;
 		for(int i = 0; i < objCount; i++) {
